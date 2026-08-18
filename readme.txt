@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoicing, Paypal, Stripe, payment
 Requires at least: 6.0
 Tested up to: 7.0
-Stable tag: 2.8.57
+Stable tag: 2.8.58
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -141,6 +141,9 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 9. Single invoice view page.
 
 == Changelog ==
+
+= 2.8.58 - 2026-08-18 =
+* Merge AUI 0.2.52 & SD 1.2.35 - CHANGED
 
 = 2.8.57 - 2026-07-29 =
 * Local File Inclusion via the payment form element type - SECURITY

@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: GetPaid 2.8.57\n"
+"Project-Id-Version: GetPaid 2.8.58\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-29 20:15+0530\n"
-"PO-Revision-Date: 2026-07-29 20:15+0530\n"
+"POT-Creation-Date: 2026-08-18 16:50+0530\n"
+"PO-Revision-Date: 2026-08-18 16:50+0530\n"
 "Last-Translator: AyeCode Ltd\n"
 "Language-Team: AyeCode Ltd <contact@ayecode.io>\n"
 "Language: en_US\n"
@@ -3561,7 +3561,7 @@ msgid "Edit invoice"
 msgstr ""
 
 #: includes/class-getpaid-post-types.php:134
-#: includes/data/email-settings.php:66
+#: includes/data/email-settings.php:67
 msgid "New invoice"
 msgstr ""
 
@@ -6873,43 +6873,31 @@ msgstr ""
 msgid "1 day after Due Date"
 msgstr ""
 
-#: includes/data/email-settings.php:19
+#: includes/data/email-settings.php:20
+msgid "On the renewal date"
+msgstr ""
+
+#: includes/data/email-settings.php:21
+msgid "1 day before the renewal date"
+msgstr ""
+
+#: includes/data/email-settings.php:24
 #, php-format
 msgid "%d days after Due Date"
 msgstr ""
 
-#: includes/data/email-settings.php:24
-msgid "On the renewal date"
-msgstr ""
-
-#: includes/data/email-settings.php:25
-msgid "1 day before the renewal date"
-msgstr ""
-
-#: includes/data/email-settings.php:28
+#: includes/data/email-settings.php:26
 #, php-format
 msgid "%d days before the renewal date"
 msgstr ""
 
-#: includes/data/email-settings.php:37
+#: includes/data/email-settings.php:38
 msgid "New Invoice"
 msgstr ""
 
-#: includes/data/email-settings.php:38
+#: includes/data/email-settings.php:39
 msgid ""
 "These emails are sent to the site admin whenever there is a new invoice."
-msgstr ""
-
-#: includes/data/email-settings.php:44 includes/data/email-settings.php:92
-#: includes/data/email-settings.php:149 includes/data/email-settings.php:197
-#: includes/data/email-settings.php:254 includes/data/email-settings.php:311
-#: includes/data/email-settings.php:376 includes/data/email-settings.php:433
-#: includes/data/email-settings.php:489 includes/data/email-settings.php:545
-#: includes/data/email-settings.php:612 includes/data/email-settings.php:679
-#: includes/data/email-settings.php:735 includes/data/email-settings.php:791
-#: includes/data/email-settings.php:847 includes/data/email-settings.php:903
-#: includes/gateways/class-getpaid-paypal-gateway.php:905
-msgid "Enable/Disable"
 msgstr ""
 
 #: includes/data/email-settings.php:45 includes/data/email-settings.php:93
@@ -6920,20 +6908,20 @@ msgstr ""
 #: includes/data/email-settings.php:613 includes/data/email-settings.php:680
 #: includes/data/email-settings.php:736 includes/data/email-settings.php:792
 #: includes/data/email-settings.php:848 includes/data/email-settings.php:904
-#: includes/gateways/class-getpaid-paypal-gateway.php:906
-msgid "Enable this email notification"
+#: includes/gateways/class-getpaid-paypal-gateway.php:905
+msgid "Enable/Disable"
 msgstr ""
 
-#: includes/data/email-settings.php:52 includes/data/email-settings.php:108
-#: includes/data/email-settings.php:157 includes/data/email-settings.php:213
-#: includes/data/email-settings.php:270 includes/data/email-settings.php:335
-#: includes/data/email-settings.php:392 includes/data/email-settings.php:449
-#: includes/data/email-settings.php:505 includes/data/email-settings.php:571
-#: includes/data/email-settings.php:638 includes/data/email-settings.php:695
-#: includes/data/email-settings.php:751 includes/data/email-settings.php:807
-#: includes/data/email-settings.php:863 includes/data/email-settings.php:919
-#: includes/gateways/class-getpaid-paypal-gateway.php:921
-msgid "Subject"
+#: includes/data/email-settings.php:46 includes/data/email-settings.php:94
+#: includes/data/email-settings.php:151 includes/data/email-settings.php:199
+#: includes/data/email-settings.php:256 includes/data/email-settings.php:313
+#: includes/data/email-settings.php:378 includes/data/email-settings.php:435
+#: includes/data/email-settings.php:491 includes/data/email-settings.php:547
+#: includes/data/email-settings.php:614 includes/data/email-settings.php:681
+#: includes/data/email-settings.php:737 includes/data/email-settings.php:793
+#: includes/data/email-settings.php:849 includes/data/email-settings.php:905
+#: includes/gateways/class-getpaid-paypal-gateway.php:906
+msgid "Enable this email notification"
 msgstr ""
 
 #: includes/data/email-settings.php:53 includes/data/email-settings.php:109
@@ -6941,47 +6929,59 @@ msgstr ""
 #: includes/data/email-settings.php:271 includes/data/email-settings.php:336
 #: includes/data/email-settings.php:393 includes/data/email-settings.php:450
 #: includes/data/email-settings.php:506 includes/data/email-settings.php:572
+#: includes/data/email-settings.php:639 includes/data/email-settings.php:696
+#: includes/data/email-settings.php:752 includes/data/email-settings.php:808
+#: includes/data/email-settings.php:864 includes/data/email-settings.php:920
+#: includes/gateways/class-getpaid-paypal-gateway.php:921
+msgid "Subject"
+msgstr ""
+
+#: includes/data/email-settings.php:54 includes/data/email-settings.php:110
+#: includes/data/email-settings.php:159 includes/data/email-settings.php:215
+#: includes/data/email-settings.php:272 includes/data/email-settings.php:337
+#: includes/data/email-settings.php:394 includes/data/email-settings.php:451
+#: includes/data/email-settings.php:507 includes/data/email-settings.php:573
 msgid "Enter the subject line for the invoice receipt email."
 msgstr ""
 
-#: includes/data/email-settings.php:56
+#: includes/data/email-settings.php:57
 msgid ""
 "[{site_title}] New invoice ({invoice_number}) for {invoice_total} "
 "{invoice_currency}"
 msgstr ""
 
-#: includes/data/email-settings.php:62 includes/data/email-settings.php:118
-#: includes/data/email-settings.php:167 includes/data/email-settings.php:223
-#: includes/data/email-settings.php:280 includes/data/email-settings.php:345
-#: includes/data/email-settings.php:402 includes/data/email-settings.php:459
-#: includes/data/email-settings.php:515 includes/data/email-settings.php:581
-#: includes/data/email-settings.php:648 includes/data/email-settings.php:705
-#: includes/data/email-settings.php:761 includes/data/email-settings.php:817
-#: includes/data/email-settings.php:873 includes/data/email-settings.php:929
+#: includes/data/email-settings.php:63 includes/data/email-settings.php:119
+#: includes/data/email-settings.php:168 includes/data/email-settings.php:224
+#: includes/data/email-settings.php:281 includes/data/email-settings.php:346
+#: includes/data/email-settings.php:403 includes/data/email-settings.php:460
+#: includes/data/email-settings.php:516 includes/data/email-settings.php:582
+#: includes/data/email-settings.php:649 includes/data/email-settings.php:706
+#: includes/data/email-settings.php:762 includes/data/email-settings.php:818
+#: includes/data/email-settings.php:874 includes/data/email-settings.php:930
 #: includes/gateways/class-getpaid-paypal-gateway.php:931
 msgid "Email Heading"
 msgstr ""
 
-#: includes/data/email-settings.php:63 includes/data/email-settings.php:281
-#: includes/data/email-settings.php:346 includes/data/email-settings.php:460
+#: includes/data/email-settings.php:64 includes/data/email-settings.php:282
+#: includes/data/email-settings.php:347 includes/data/email-settings.php:461
 msgid ""
 "Enter the main heading contained within the email notification for the "
 "invoice receipt email."
 msgstr ""
 
-#: includes/data/email-settings.php:72 includes/data/email-settings.php:128
-#: includes/data/email-settings.php:177 includes/data/email-settings.php:233
-#: includes/data/email-settings.php:290 includes/data/email-settings.php:355
-#: includes/data/email-settings.php:412 includes/data/email-settings.php:469
-#: includes/data/email-settings.php:525 includes/data/email-settings.php:591
-#: includes/data/email-settings.php:658 includes/data/email-settings.php:715
-#: includes/data/email-settings.php:771 includes/data/email-settings.php:827
-#: includes/data/email-settings.php:883 includes/data/email-settings.php:939
+#: includes/data/email-settings.php:73 includes/data/email-settings.php:129
+#: includes/data/email-settings.php:178 includes/data/email-settings.php:234
+#: includes/data/email-settings.php:291 includes/data/email-settings.php:356
+#: includes/data/email-settings.php:413 includes/data/email-settings.php:470
+#: includes/data/email-settings.php:526 includes/data/email-settings.php:592
+#: includes/data/email-settings.php:659 includes/data/email-settings.php:716
+#: includes/data/email-settings.php:772 includes/data/email-settings.php:828
+#: includes/data/email-settings.php:884 includes/data/email-settings.php:940
 #: includes/gateways/class-getpaid-paypal-gateway.php:941
 msgid "Email Content"
 msgstr ""
 
-#: includes/data/email-settings.php:75
+#: includes/data/email-settings.php:76
 msgid ""
 "<p>A new invoice <a href=\"{invoice_link}\">({invoice_number})</a> to {name} "
 "for {invoice_total} {invoice_currency} has been created on your site. <a "
@@ -6989,130 +6989,130 @@ msgid ""
 "p>"
 msgstr ""
 
-#: includes/data/email-settings.php:85
+#: includes/data/email-settings.php:86
 msgid "Cancelled Invoice"
 msgstr ""
 
-#: includes/data/email-settings.php:86
+#: includes/data/email-settings.php:87
 msgid "These emails are sent to customers whenever invoices are cancelled."
 msgstr ""
 
-#: includes/data/email-settings.php:100 includes/data/email-settings.php:205
-#: includes/data/email-settings.php:262 includes/data/email-settings.php:327
-#: includes/data/email-settings.php:384 includes/data/email-settings.php:441
-#: includes/data/email-settings.php:497 includes/data/email-settings.php:553
-#: includes/data/email-settings.php:620 includes/data/email-settings.php:687
-#: includes/data/email-settings.php:743 includes/data/email-settings.php:799
-#: includes/data/email-settings.php:855 includes/data/email-settings.php:911
+#: includes/data/email-settings.php:101 includes/data/email-settings.php:206
+#: includes/data/email-settings.php:263 includes/data/email-settings.php:328
+#: includes/data/email-settings.php:385 includes/data/email-settings.php:442
+#: includes/data/email-settings.php:498 includes/data/email-settings.php:554
+#: includes/data/email-settings.php:621 includes/data/email-settings.php:688
+#: includes/data/email-settings.php:744 includes/data/email-settings.php:800
+#: includes/data/email-settings.php:856 includes/data/email-settings.php:912
 #: includes/gateways/class-getpaid-paypal-gateway.php:913
 msgid "Enable Admin BCC"
 msgstr ""
 
-#: includes/data/email-settings.php:101 includes/data/email-settings.php:206
+#: includes/data/email-settings.php:102 includes/data/email-settings.php:207
 msgid "Check if you want to send this notification email to site Admin."
 msgstr ""
 
-#: includes/data/email-settings.php:112
+#: includes/data/email-settings.php:113
 msgid "[{site_title}] Invoice ({invoice_number}) Cancelled"
 msgstr ""
 
-#: includes/data/email-settings.php:119 includes/data/email-settings.php:168
-#: includes/data/email-settings.php:224 includes/data/email-settings.php:403
-#: includes/data/email-settings.php:516 includes/data/email-settings.php:582
-#: includes/data/email-settings.php:649
+#: includes/data/email-settings.php:120 includes/data/email-settings.php:169
+#: includes/data/email-settings.php:225 includes/data/email-settings.php:404
+#: includes/data/email-settings.php:517 includes/data/email-settings.php:583
+#: includes/data/email-settings.php:650
 #: includes/gateways/class-getpaid-paypal-gateway.php:932
 msgid "Enter the main heading contained within the email notification."
 msgstr ""
 
-#: includes/data/email-settings.php:122
+#: includes/data/email-settings.php:123
 msgid "Invoice Cancelled"
 msgstr ""
 
-#: includes/data/email-settings.php:131
+#: includes/data/email-settings.php:132
 msgid ""
 "<p>The invoice <a href=\"{invoice_link}\">#{invoice_number}</a> created for "
 "{name} on {site_title} has been cancelled. <a class=\"btn btn-success\" "
 "href=\"{invoice_link}\">View / Print Invoice</a></p>"
 msgstr ""
 
-#: includes/data/email-settings.php:142
+#: includes/data/email-settings.php:143
 msgid "Failed Invoice"
 msgstr ""
 
-#: includes/data/email-settings.php:143
+#: includes/data/email-settings.php:144
 msgid ""
 "Failed invoice emails are sent to the site admin when invoice payments fail."
 msgstr ""
 
-#: includes/data/email-settings.php:161
+#: includes/data/email-settings.php:162
 msgid "[{site_title}] Invoice ({invoice_number}) Payment Failed"
 msgstr ""
 
-#: includes/data/email-settings.php:171
+#: includes/data/email-settings.php:172
 msgid "Invoice Payment Failed"
 msgstr ""
 
-#: includes/data/email-settings.php:180
+#: includes/data/email-settings.php:181
 msgid ""
 "<p>Payment for the invoice <a href=\"{invoice_link}\">#{invoice_number}</a> "
 "on {site_title} has failed to go through. <a class=\"btn btn-success\" "
 "href=\"{invoice_link}\">View / Print Invoice</a></p>"
 msgstr ""
 
-#: includes/data/email-settings.php:190
+#: includes/data/email-settings.php:191
 msgid "On Hold Invoice"
 msgstr ""
 
-#: includes/data/email-settings.php:191
+#: includes/data/email-settings.php:192
 msgid "These emails are sent to customers whenever their invoices are held."
 msgstr ""
 
-#: includes/data/email-settings.php:217
+#: includes/data/email-settings.php:218
 msgid "[{site_title}] Your invoice is on hold"
 msgstr ""
 
-#: includes/data/email-settings.php:227
+#: includes/data/email-settings.php:228
 msgid "Your invoice is on hold"
 msgstr ""
 
-#: includes/data/email-settings.php:236
+#: includes/data/email-settings.php:237
 msgid ""
 "<p>Hi {name},</p><p>Your invoice is on-hold and will be processed when we "
 "receive your payment. <a class=\"btn btn-success\" "
 "href=\"{invoice_link}\">View / Print Invoice</a></p>"
 msgstr ""
 
-#: includes/data/email-settings.php:247
+#: includes/data/email-settings.php:248
 msgid "Processing Invoice"
 msgstr ""
 
-#: includes/data/email-settings.php:248
+#: includes/data/email-settings.php:249
 msgid ""
 "These emails are sent to users whenever payments for their invoices are "
 "processing."
 msgstr ""
 
-#: includes/data/email-settings.php:263 includes/data/email-settings.php:328
-#: includes/data/email-settings.php:385 includes/data/email-settings.php:498
-#: includes/data/email-settings.php:554 includes/data/email-settings.php:621
-#: includes/data/email-settings.php:688 includes/data/email-settings.php:744
-#: includes/data/email-settings.php:800 includes/data/email-settings.php:856
-#: includes/data/email-settings.php:912
+#: includes/data/email-settings.php:264 includes/data/email-settings.php:329
+#: includes/data/email-settings.php:386 includes/data/email-settings.php:499
+#: includes/data/email-settings.php:555 includes/data/email-settings.php:622
+#: includes/data/email-settings.php:689 includes/data/email-settings.php:745
+#: includes/data/email-settings.php:801 includes/data/email-settings.php:857
+#: includes/data/email-settings.php:913
 #: includes/gateways/class-getpaid-paypal-gateway.php:914
 msgid ""
 "Check if you want to send a copy of this notification email to the site "
 "admin."
 msgstr ""
 
-#: includes/data/email-settings.php:274
+#: includes/data/email-settings.php:275
 msgid "[{site_title}] Your payment is being processed"
 msgstr ""
 
-#: includes/data/email-settings.php:284
+#: includes/data/email-settings.php:285
 msgid "Your payment is being processed"
 msgstr ""
 
-#: includes/data/email-settings.php:293
+#: includes/data/email-settings.php:294
 msgid ""
 "<p>Hi {name},</p><p>I would like to let you know that we have received and "
 "are currently processing your payment for the invoice <a "
@@ -7121,87 +7121,87 @@ msgid ""
 "p>"
 msgstr ""
 
-#: includes/data/email-settings.php:304
+#: includes/data/email-settings.php:305
 msgid "Paid Invoice"
 msgstr ""
 
-#: includes/data/email-settings.php:305
+#: includes/data/email-settings.php:306
 msgid ""
 "These emails are sent to customers when their invoices are marked as paid."
 msgstr ""
 
-#: includes/data/email-settings.php:319
+#: includes/data/email-settings.php:320
 msgid "Enable renewal notification"
 msgstr ""
 
-#: includes/data/email-settings.php:320
+#: includes/data/email-settings.php:321
 msgid "Should this email be sent for renewals too?"
 msgstr ""
 
-#: includes/data/email-settings.php:339
+#: includes/data/email-settings.php:340
 msgid "[{site_title}] Your invoice from {invoice_date} has been paid"
 msgstr ""
 
-#: includes/data/email-settings.php:349
+#: includes/data/email-settings.php:350
 msgid "Your invoice has been paid"
 msgstr ""
 
-#: includes/data/email-settings.php:358
+#: includes/data/email-settings.php:359
 msgid ""
 "<p>Hi {name},</p><p>Your recent invoice on {site_title} has been paid. <a "
 "class=\"btn btn-success\" href=\"{invoice_link}\">View / Print Invoice</a></"
 "p>"
 msgstr ""
 
-#: includes/data/email-settings.php:369
+#: includes/data/email-settings.php:370
 msgid "Refunded Invoice"
 msgstr ""
 
-#: includes/data/email-settings.php:370
+#: includes/data/email-settings.php:371
 msgid ""
 "These emails are sent to users when their invoices are marked as refunded."
 msgstr ""
 
-#: includes/data/email-settings.php:396
+#: includes/data/email-settings.php:397
 msgid "[{site_title}] Your invoice from {invoice_date} has been refunded"
 msgstr ""
 
-#: includes/data/email-settings.php:406
+#: includes/data/email-settings.php:407
 msgid "Your invoice has been refunded"
 msgstr ""
 
-#: includes/data/email-settings.php:415
+#: includes/data/email-settings.php:416
 msgid ""
 "<p>Hi {name},</p><p>Your invoice on {site_title} has been refunded. <a "
 "class=\"btn btn-success\" href=\"{invoice_link}\">View / Print Invoice</a></"
 "p>"
 msgstr ""
 
-#: includes/data/email-settings.php:426
+#: includes/data/email-settings.php:427
 msgid "Customer Invoice"
 msgstr ""
 
-#: includes/data/email-settings.php:427
+#: includes/data/email-settings.php:428
 msgid ""
 "These emails are sent to customers containing their invoice information and "
 "payment links."
 msgstr ""
 
-#: includes/data/email-settings.php:442
+#: includes/data/email-settings.php:443
 msgid ""
 "Check if you want to send a copy of this notification email to to the site "
 "admin."
 msgstr ""
 
-#: includes/data/email-settings.php:453
+#: includes/data/email-settings.php:454
 msgid "[{site_title}] Your invoice from {invoice_date}"
 msgstr ""
 
-#: includes/data/email-settings.php:463
+#: includes/data/email-settings.php:464
 msgid "Your invoice {invoice_number} details"
 msgstr ""
 
-#: includes/data/email-settings.php:472
+#: includes/data/email-settings.php:473
 msgid ""
 "<p>Hi {name},</p><p>An invoice of {invoice_total} has been created for you "
 "on {site_title}. You can <a href=\"{invoice_link}\">view</a> or <a "
@@ -7209,25 +7209,25 @@ msgid ""
 "if you have any questions about the invoice."
 msgstr ""
 
-#: includes/data/email-settings.php:482
+#: includes/data/email-settings.php:483
 msgid "Customer Note"
 msgstr ""
 
-#: includes/data/email-settings.php:483
+#: includes/data/email-settings.php:484
 msgid "These emails are sent when you add a customer note to an invoice/quote."
 msgstr ""
 
-#: includes/data/email-settings.php:509
+#: includes/data/email-settings.php:510
 msgid ""
 "[{site_title}] Note added to your {invoice_label} #{invoice_number} from "
 "{invoice_date}"
 msgstr ""
 
-#: includes/data/email-settings.php:519
+#: includes/data/email-settings.php:520
 msgid "A note has been added to your {invoice_label}"
 msgstr ""
 
-#: includes/data/email-settings.php:528
+#: includes/data/email-settings.php:529
 msgid ""
 "<p>Hi {name},</p><p>The following note has been added to your "
 "{invoice_label} <a href=\"{invoice_link}\">#{invoice_number}</a>:</"
@@ -7235,33 +7235,33 @@ msgid ""
 "class=\"btn btn-success\" href=\"{invoice_link}\">View / Print Invoice</a>"
 msgstr ""
 
-#: includes/data/email-settings.php:538
+#: includes/data/email-settings.php:539
 msgid "Payment Reminder"
 msgstr ""
 
-#: includes/data/email-settings.php:539
+#: includes/data/email-settings.php:540
 msgid ""
 "Payment reminder emails are sent to customers whenever their invoices are "
 "due."
 msgstr ""
 
-#: includes/data/email-settings.php:561 includes/data/email-settings.php:628
+#: includes/data/email-settings.php:562 includes/data/email-settings.php:629
 msgid "When to Send"
 msgstr ""
 
-#: includes/data/email-settings.php:562
+#: includes/data/email-settings.php:563
 msgid "Check when you would like payment reminders sent out."
 msgstr ""
 
-#: includes/data/email-settings.php:575
+#: includes/data/email-settings.php:576
 msgid "[{site_title}] Payment Reminder"
 msgstr ""
 
-#: includes/data/email-settings.php:585
+#: includes/data/email-settings.php:586
 msgid "Payment reminder for your invoice"
 msgstr ""
 
-#: includes/data/email-settings.php:594
+#: includes/data/email-settings.php:595
 msgid ""
 "<p>Hi {full_name},</p><p>This is just a friendly reminder that your invoice "
 "<a href=\"{invoice_link}\">#{invoice_number}</a> {is_was} due on "
@@ -7270,33 +7270,33 @@ msgid ""
 "class=\"btn btn-success\" href=\"{invoice_link}\">View / Pay</a></p>"
 msgstr ""
 
-#: includes/data/email-settings.php:605
+#: includes/data/email-settings.php:606
 msgid "Renewal Reminder"
 msgstr ""
 
-#: includes/data/email-settings.php:606
+#: includes/data/email-settings.php:607
 msgid ""
 "These emails are sent to customers whenever their subscription is about to "
 "renew."
 msgstr ""
 
-#: includes/data/email-settings.php:629
+#: includes/data/email-settings.php:630
 msgid "Check when you would like renewal reminders sent out."
 msgstr ""
 
-#: includes/data/email-settings.php:639
+#: includes/data/email-settings.php:640
 msgid "Enter the subject line for the email."
 msgstr ""
 
-#: includes/data/email-settings.php:642
+#: includes/data/email-settings.php:643
 msgid "[{site_title}] Renewal Reminder"
 msgstr ""
 
-#: includes/data/email-settings.php:652
+#: includes/data/email-settings.php:653
 msgid "Upcoming renewal reminder"
 msgstr ""
 
-#: includes/data/email-settings.php:661
+#: includes/data/email-settings.php:662
 msgid ""
 "<p>Hi {full_name},</p><p>This is just a friendly reminder that your "
 "subscription for invoice <a href=\"{invoice_link}\">#{invoice_number}</a> "
@@ -7304,123 +7304,123 @@ msgid ""
 "{subscription_recurring_amount}.</p>"
 msgstr ""
 
-#: includes/data/email-settings.php:672
+#: includes/data/email-settings.php:673
 msgid "Subscription Active"
 msgstr ""
 
-#: includes/data/email-settings.php:673
+#: includes/data/email-settings.php:674
 msgid "This email is sent when a subscription is activated."
 msgstr ""
 
-#: includes/data/email-settings.php:696
+#: includes/data/email-settings.php:697
 msgid "Enter the subject line for the subscription active email."
 msgstr ""
 
-#: includes/data/email-settings.php:699
+#: includes/data/email-settings.php:700
 msgid "[{site_title}] Your subscription #{subscription_id} has been activated"
 msgstr ""
 
-#: includes/data/email-settings.php:706 includes/data/email-settings.php:762
-#: includes/data/email-settings.php:818 includes/data/email-settings.php:874
-#: includes/data/email-settings.php:930
+#: includes/data/email-settings.php:707 includes/data/email-settings.php:763
+#: includes/data/email-settings.php:819 includes/data/email-settings.php:875
+#: includes/data/email-settings.php:931
 msgid "Enter the main heading of this email."
 msgstr ""
 
-#: includes/data/email-settings.php:709
+#: includes/data/email-settings.php:710
 msgid "Subscription Activated"
 msgstr ""
 
-#: includes/data/email-settings.php:718
+#: includes/data/email-settings.php:719
 msgid ""
 "<p>Hi {first_name},</p><p>Your subscription #{subscription_id} for "
 "{subscription_name} has been activated.</p>"
 msgstr ""
 
-#: includes/data/email-settings.php:728 includes/data/email-settings.php:765
+#: includes/data/email-settings.php:729 includes/data/email-settings.php:766
 msgid "Trial Started"
 msgstr ""
 
-#: includes/data/email-settings.php:729
+#: includes/data/email-settings.php:730
 msgid "These emails are sent when a customer starts a subscription trial."
 msgstr ""
 
-#: includes/data/email-settings.php:752
+#: includes/data/email-settings.php:753
 msgid "Enter the subject line for the subscription trial email."
 msgstr ""
 
-#: includes/data/email-settings.php:755
+#: includes/data/email-settings.php:756
 msgid "[{site_title}] Trial Started"
 msgstr ""
 
-#: includes/data/email-settings.php:774
+#: includes/data/email-settings.php:775
 msgid ""
 "<p>Hi {first_name},</p><p>Your trial for {subscription_name} is now active "
 "and will renew on {subscription_renewal_date}.</p>"
 msgstr ""
 
-#: includes/data/email-settings.php:784 includes/data/email-settings.php:821
+#: includes/data/email-settings.php:785 includes/data/email-settings.php:822
 msgid "Subscription Cancelled"
 msgstr ""
 
-#: includes/data/email-settings.php:785
+#: includes/data/email-settings.php:786
 msgid "These emails are sent when a customer cancels their subscription."
 msgstr ""
 
-#: includes/data/email-settings.php:808
+#: includes/data/email-settings.php:809
 msgid "Enter the subject line for the subscription cancelled email."
 msgstr ""
 
-#: includes/data/email-settings.php:811
+#: includes/data/email-settings.php:812
 msgid "[{site_title}] Subscription Cancelled"
 msgstr ""
 
-#: includes/data/email-settings.php:830
+#: includes/data/email-settings.php:831
 msgid ""
 "<p>Hi {first_name},</p><p>Your subscription for {subscription_name} has been "
 "cancelled and will no longer renew.</p>"
 msgstr ""
 
-#: includes/data/email-settings.php:840 includes/data/email-settings.php:876
+#: includes/data/email-settings.php:841 includes/data/email-settings.php:877
 msgid "Subscription Expired"
 msgstr ""
 
-#: includes/data/email-settings.php:841
+#: includes/data/email-settings.php:842
 msgid ""
 "These emails are sent when a customer's subscription expires and automatic "
 "renewal fails."
 msgstr ""
 
-#: includes/data/email-settings.php:864
+#: includes/data/email-settings.php:865
 msgid "Enter the subject line for the subscription expired email."
 msgstr ""
 
-#: includes/data/email-settings.php:867
+#: includes/data/email-settings.php:868
 msgid "[{site_title}] Subscription Expired"
 msgstr ""
 
-#: includes/data/email-settings.php:886
+#: includes/data/email-settings.php:887
 msgid ""
 "<p>Hi {first_name},</p><p>Your subscription for {subscription_name} has "
 "expired.</p>"
 msgstr ""
 
-#: includes/data/email-settings.php:896 includes/data/email-settings.php:933
+#: includes/data/email-settings.php:897 includes/data/email-settings.php:934
 msgid "Subscription Complete"
 msgstr ""
 
-#: includes/data/email-settings.php:897
+#: includes/data/email-settings.php:898
 msgid "These emails are sent when a customer completes their subscription."
 msgstr ""
 
-#: includes/data/email-settings.php:920
+#: includes/data/email-settings.php:921
 msgid "Enter the subject line for the subscription complete email."
 msgstr ""
 
-#: includes/data/email-settings.php:923
+#: includes/data/email-settings.php:924
 msgid "[{site_title}] Subscription Complete"
 msgstr ""
 
-#: includes/data/email-settings.php:942
+#: includes/data/email-settings.php:943
 msgid ""
 "<p>Hi {first_name},</p><p>Your subscription for {subscription_name} is now "
 "complete.</p>"
