@@ -44,6 +44,9 @@ Here are some ways you can help:
 
 If you're running into an issue with the plugin, please use our [issue tracker](https://github.com/AyeCode/invoicing/issues/new?assignees=&labels=&template=bug_report.md&title=) to open a new issue. If you're able, include steps to reproduce, environment information, and screenshots/screencasts as relevant. *Do not use the issue tracker for support requests. For that, open a [support ticket](https://wpgetpaid.com/support/).*
 
+### Security ###
+To report a security vulnerability, please review our [vulnerability disclosure policy](https://ayecode.io/vulnerability-disclosure-policy/).
+
 ### Suggesting enhancements
 
 New features and enhancements are also managed via [issues](https://github.com/AyeCode/invoicing/issues/new?assignees=&labels=&template=feature_request.md&title=).
