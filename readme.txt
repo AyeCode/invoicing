@@ -3,7 +3,7 @@ Contributors: stiofansisland, paoltaia, ayecode, Ismiaini, picocodes
 Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoicing, Paypal, Stripe, payment
 Requires at least: 6.0
-Tested up to: 7.0
+Tested up to: 7.1
 Stable tag: 2.8.58
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -102,6 +102,10 @@ We worked on the plugin for over a year before it got its first public release, 
 This product includes GeoLite2 data created by MaxMind, available from
 <a href="https://www.maxmind.com">https://www.maxmind.com</a>
 
+== Security ==
+
+To report a security vulnerability, please review our [vulnerability disclosure policy](https://ayecode.io/vulnerability-disclosure-policy/)
+
 == Installation ==
 
 = Minimum Requirements =
@@ -114,11 +118,11 @@ This product includes GeoLite2 data created by MaxMind, available from
 
 The easiest option is automatic installation. To install WP GetPaid automatically, log in to your WordPress dashboard, navigate to the Plugins menu, and click Add New.
 
-In the search field, type WP GetPaid and click Search Plugins. Once you've found the WP GetPaid plugin, you can install it by simply clicking Install Now. [GetPaid  basic installation](http://wpgetpaid.com/docs/basic-installation/)
+In the search field, type WP GetPaid and click Search Plugins. Once you've found the WP GetPaid plugin, you can install it by simply clicking Install Now. [GetPaid  basic installation](https://wpgetpaid.com/docs/basic-installation/)
 
 = Manual installation =
 
-The manual installation method involves downloading our Directory plugin and uploading it to your webserver via your favorite FTP application. The WordPress codex will tell you more [here](http://codex.wordpress.org/Managing_Plugins#Manual_Plugin_Installation). [GetPaid  basic installation](http://wpgetpaid.com/docs/basic-installation/)
+The manual installation method involves downloading our Directory plugin and uploading it to your webserver via your favorite FTP application. The WordPress codex will tell you more [here](https://codex.wordpress.org/Managing_Plugins#Manual_Plugin_Installation). [GetPaid basic installation](https://wpgetpaid.com/docs/basic-installation/)
 
 = Updating =
 
