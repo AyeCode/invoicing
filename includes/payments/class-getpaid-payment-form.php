@@ -796,8 +796,6 @@ $value[ $key ]['description'] = $help_text;}
 	 * @since 1.0.19
 	 */
     public function display( $extra_markup = '' ) {
-		getpaid_enqueue_select2();
-
 		wpinv_get_template(
 			'payment-forms/form.php',
 			array(
