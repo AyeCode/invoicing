@@ -1366,11 +1366,29 @@ function getpaid_convert_items_to_string( $items ) {
 }
 
 /**
+ * Enqueues select2, used by the payment form country and state fields.
+ *
+ * Modal forms are loaded over AJAX, too late for AUI to enqueue it itself.
+ *
+ * @since 2.8.59
+ */
+function getpaid_enqueue_select2() {
+
+    if ( is_admin() || ! apply_filters( 'getpaid_load_select2', true ) ) {
+        return;
+    }
+
+    wp_enqueue_script( 'select2' );
+}
+
+/**
  * Helper function to display a payment item.
  *
  * Provide a label and one of $form, $items or $invoice.
  */
 function getpaid_get_payment_button( $label, $form = null, $items = null, $invoice = null, $variation = null ) {
+    getpaid_enqueue_select2();
+
     $label          = sanitize_text_field( $label );
     $variation_attr = ! empty( $variation ) ? " data-variation='" . esc_attr( $variation ) . "'" : '';
 
