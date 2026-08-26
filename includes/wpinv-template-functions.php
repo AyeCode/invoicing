@@ -1368,8 +1368,7 @@ function getpaid_convert_items_to_string( $items ) {
 /**
  * Enqueues select2, used by the payment form country and state fields.
  *
- * Payment forms are loaded over AJAX, so select2 has to be enqueued by whatever
- * renders first on the page, either the payment button or an inline form.
+ * Modal forms are loaded over AJAX, too late for AUI to enqueue it itself.
  *
  * @since 2.8.59
  */

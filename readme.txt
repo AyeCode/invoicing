@@ -147,7 +147,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 == Changelog ==
 
 = 2.8.59 - TBD =
-* Country and State/Province searchable dropdowns were not working on payment forms - FIXED
+* Country and State/Province dropdowns were not working in the payment form modal - FIXED
 
 = 2.8.58 - 2026-08-18 =
 * Merge AUI 0.2.52 & SD 1.2.35 - CHANGED
