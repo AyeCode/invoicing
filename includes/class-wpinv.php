@@ -360,6 +360,8 @@ class WPInv_Plugin {
 	}
 
 	public function enqueue_scripts() {
+		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
 		// Fires before adding scripts.
 		do_action( 'getpaid_enqueue_scripts' );
 
@@ -391,7 +393,7 @@ class WPInv_Plugin {
 			wp_enqueue_script( 'recaptcha', $recaptcha_js, array(), null, true ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 		}
 
-		wp_enqueue_script( 'wpinv-front-script', WPINV_PLUGIN_URL . 'assets/js/payment-forms.min.js', array( 'jquery' ), WPINV_VERSION, true );
+		wp_enqueue_script( 'wpinv-front-script', WPINV_PLUGIN_URL . 'assets/js/payment-forms' . $suffix . '.js', array( 'jquery' ), WPINV_VERSION, true );
 		wp_localize_script( 'wpinv-front-script', 'WPInv', $localize );
 	}
 
