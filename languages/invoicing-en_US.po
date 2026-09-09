@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: GetPaid 2.8.58\n"
+"Project-Id-Version: GetPaid 2.8.59\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-18 16:50+0530\n"
-"PO-Revision-Date: 2026-08-18 16:50+0530\n"
+"POT-Creation-Date: 2026-09-09 17:23+0530\n"
+"PO-Revision-Date: 2026-09-09 17:23+0530\n"
 "Last-Translator: AyeCode Ltd\n"
 "Language-Team: AyeCode Ltd <contact@ayecode.io>\n"
 "Language: en_US\n"
@@ -281,7 +281,7 @@ msgstr ""
 msgid "Searching"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:194 includes/class-wpinv.php:375
+#: includes/admin/class-getpaid-admin.php:194 includes/class-wpinv.php:377
 #: templates/payment-forms/form.php:120
 msgid "Loading..."
 msgstr ""
@@ -324,15 +324,15 @@ msgstr ""
 msgid "Thank you for using %s!"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:362
+#: includes/admin/class-getpaid-admin.php:363
 msgid "WP Invoicing - an AyeCode product!"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:363
+#: includes/admin/class-getpaid-admin.php:364
 msgid "Please confirm you wish to connect your site?"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:364
+#: includes/admin/class-getpaid-admin.php:365
 #, php-format
 msgid ""
 "<strong>Have a license?</strong> Forget about entering license keys or "
@@ -340,120 +340,120 @@ msgid ""
 "more%2$s"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:365
+#: includes/admin/class-getpaid-admin.php:366
 msgid "Connect Site"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:366
+#: includes/admin/class-getpaid-admin.php:367
 msgid "Connecting..."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:367
+#: includes/admin/class-getpaid-admin.php:368
 msgid "This service will only work with a live domain, not a localhost."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:368
+#: includes/admin/class-getpaid-admin.php:369
 msgid "Something went wrong, please refresh and try again."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:433
+#: includes/admin/class-getpaid-admin.php:434
 msgid "Invoice duplicated successfully."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:448
+#: includes/admin/class-getpaid-admin.php:449
 msgid "There was an error duplicating this invoice. Please try again."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:490
+#: includes/admin/class-getpaid-admin.php:491
 #, php-format
 msgid "Subscription #%s cancelled"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:499
+#: includes/admin/class-getpaid-admin.php:500
 msgid "Invoice refunded successfully."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:526
+#: includes/admin/class-getpaid-admin.php:527
 msgid "(copy)"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:532
+#: includes/admin/class-getpaid-admin.php:533
 msgid "Form duplicated successfully"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:535
+#: includes/admin/class-getpaid-admin.php:536
 msgid "Unable to duplicate form"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:566
+#: includes/admin/class-getpaid-admin.php:567
 msgid "Form stats reset successfully"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:592
+#: includes/admin/class-getpaid-admin.php:593
 msgid "Payment reminder was successfully sent to the customer"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:594
+#: includes/admin/class-getpaid-admin.php:595
 msgid "Could not sent payment reminder to the customer"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:620
+#: includes/admin/class-getpaid-admin.php:621
 msgid "GetPaid pages updated."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:630
+#: includes/admin/class-getpaid-admin.php:631
 msgid "Permalinks refreshed."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:646
+#: includes/admin/class-getpaid-admin.php:647
 msgid "Your GetPaid tables have been updated:"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:648
+#: includes/admin/class-getpaid-admin.php:649
 msgid "Your GetPaid tables have been updated."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:666
+#: includes/admin/class-getpaid-admin.php:667
 msgid "Your invoices have been migrated."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:683
+#: includes/admin/class-getpaid-admin.php:684
 #: includes/reports/class-getpaid-graph-downloader.php:53
 msgid "Unsupported server"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:821
+#: includes/admin/class-getpaid-admin.php:822
 msgid "Discounts have been recalculated."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:843
+#: includes/admin/class-getpaid-admin.php:844
 #, php-format
 msgid "Strings are added in the file <b>%s</b> for translation."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:846
+#: includes/admin/class-getpaid-admin.php:847
 #, php-format
 msgid ""
 "There was a problem creating the file <b>%s</b>. Please check file "
 "permissions."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:982
+#: includes/admin/class-getpaid-admin.php:983
 msgid ""
 "Some GetPaid pages are missing. To use GetPaid without any issues, click the "
 "button below to generate the missing pages."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:983
+#: includes/admin/class-getpaid-admin.php:984
 msgid "Generate Pages"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:995
+#: includes/admin/class-getpaid-admin.php:996
 msgid ""
 "GetPaid Test Gateway is active. Disable it before accepting real payments."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:996
+#: includes/admin/class-getpaid-admin.php:997
 msgid "Disable Test Gateway"
 msgstr ""
 
@@ -2736,7 +2736,7 @@ msgstr ""
 
 #: includes/admin/views/wizard-gateways.php:72
 #: includes/admin/views/wizard-plugins.php:31
-#: includes/admin/views/wizard-settings.php:129 includes/class-wpinv.php:371
+#: includes/admin/views/wizard-settings.php:129 includes/class-wpinv.php:373
 msgid "Continue"
 msgstr ""
 
@@ -3863,7 +3863,7 @@ msgstr ""
 msgid "Installing"
 msgstr ""
 
-#: includes/class-wpinv-addons.php:261 includes/class-wpinv.php:384
+#: includes/class-wpinv-addons.php:261 includes/class-wpinv.php:386
 msgid "Error"
 msgstr ""
 
@@ -3930,7 +3930,7 @@ msgstr ""
 msgid "Invalid upload field."
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:1170 includes/class-wpinv.php:380
+#: includes/class-wpinv-ajax.php:1170 includes/class-wpinv.php:382
 msgid "Unsupported file type."
 msgstr ""
 
@@ -4324,32 +4324,32 @@ msgstr ""
 msgid "Manage Subscription"
 msgstr ""
 
-#: includes/class-wpinv.php:376
+#: includes/class-wpinv.php:378
 msgid "Could not establish a connection to the server."
 msgstr ""
 
-#: includes/class-wpinv.php:377
+#: includes/class-wpinv.php:379
 msgid "Unable to validate VAT number. Please try again."
 msgstr ""
 
-#: includes/class-wpinv.php:378
+#: includes/class-wpinv.php:380
 msgid "Please enter both VAT number and country."
 msgstr ""
 
-#: includes/class-wpinv.php:379
+#: includes/class-wpinv.php:381
 msgid "You have exceeded the number of files you can upload."
 msgstr ""
 
-#: includes/class-wpinv.php:381
+#: includes/class-wpinv.php:383
 msgid "Validating..."
 msgstr ""
 
-#: includes/class-wpinv.php:382
+#: includes/class-wpinv.php:384
 #: templates/payment-forms/elements/address-fields.php:155
 msgid "Valid"
 msgstr ""
 
-#: includes/class-wpinv.php:383
+#: includes/class-wpinv.php:385
 #: templates/payment-forms/elements/address-fields.php:156
 msgid "Invalid"
 msgstr ""
@@ -15861,17 +15861,17 @@ msgstr ""
 msgid "Invoice has already been paid"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1561
+#: includes/wpinv-template-functions.php:1579
 msgid "No active gateways support subscription payments."
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1564
+#: includes/wpinv-template-functions.php:1582
 #, php-format
 msgid "Subscription payments only supported by: %s"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1883
-#: includes/wpinv-template-functions.php:1886
+#: includes/wpinv-template-functions.php:1901
+#: includes/wpinv-template-functions.php:1904
 msgid "Your transaction failed, please try again or contact site support."
 msgstr ""
 

@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoicing, Paypal, Stripe, payment
 Requires at least: 6.0
 Tested up to: 7.1
-Stable tag: 2.8.58
+Stable tag: 2.8.59
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -146,8 +146,9 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
-= 2.8.59 - TBD =
+= 2.8.59 - 2026-09-09 =
 * Country and State/Province dropdowns were not working in the payment form modal - FIXED
+* Upgrade AUI 0.2.53 - CHANGED
 
 = 2.8.58 - 2026-08-18 =
 * Merge AUI 0.2.52 & SD 1.2.35 - CHANGED
