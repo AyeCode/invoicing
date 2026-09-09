@@ -299,7 +299,7 @@ function getpaid_output_frontend_tax_script() {
 				}
 			}
 
-			console.log( "Detected country:", country );
+			$("body").attr('data-gp-country', country);
 
 			var taxName = taxMap[ country ] || defaultTax;
 			var label   = taxName + " " + numberText;

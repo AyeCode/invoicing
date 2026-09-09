@@ -277,23 +277,25 @@ class GetPaid_Admin {
 		exit;
 	}
 
-    /**
+	/**
 	 * Loads payment form js.
 	 *
 	 */
 	protected function load_payment_form_scripts() {
-        global $post;
+		global $post;
 
-        wp_enqueue_script( 'vue', WPINV_PLUGIN_URL . 'assets/js/vue/vue.min.js', array(), WPINV_VERSION );
+		$suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
+		wp_enqueue_script( 'vue', WPINV_PLUGIN_URL . 'assets/js/vue/vue.min.js', array(), WPINV_VERSION );
 		wp_enqueue_script( 'sortable', WPINV_PLUGIN_URL . 'assets/js/sortable.min.js', array(), WPINV_VERSION );
 		wp_enqueue_script( 'vue_draggable', WPINV_PLUGIN_URL . 'assets/js/vue/vuedraggable.min.js', array( 'sortable', 'vue' ), WPINV_VERSION );
 
-		wp_register_script( 'wpinv-admin-payment-form-script', WPINV_PLUGIN_URL . 'assets/js/admin-payment-forms.min.js', array( 'wpinv-admin-script', 'vue_draggable', 'wp-hooks' ), WPINV_VERSION );
+		wp_register_script( 'wpinv-admin-payment-form-script', WPINV_PLUGIN_URL . 'assets/js/admin-payment-forms' . $suffix . '.js', array( 'wpinv-admin-script', 'vue_draggable', 'wp-hooks' ), WPINV_VERSION );
 
 		wp_localize_script(
-            'wpinv-admin-payment-form-script',
-            'wpinvPaymentFormAdmin',
-            array(
+			'wpinv-admin-payment-form-script',
+			'wpinvPaymentFormAdmin',
+			array(
 				'elements'      => wpinv_get_data( 'payment-form-elements' ),
 				'form_elements' => getpaid_get_payment_form_elements( $post->ID ),
 				'currency'      => wpinv_currency_symbol(),
@@ -303,12 +305,11 @@ class GetPaid_Admin {
 				'decimals_sep'  => wpinv_decimal_separator(),
 				'form_items'    => gepaid_get_form_items( $post->ID ),
 				'is_default'    => $post->ID == wpinv_get_default_payment_form(),
-            )
-        );
+			)
+		);
 
-        wp_enqueue_script( 'wpinv-admin-payment-form-script' );
-
-    }
+		wp_enqueue_script( 'wpinv-admin-payment-form-script' );
+	}
 
     /**
 	 * Add our classes to admin pages.
