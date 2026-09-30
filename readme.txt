@@ -146,7 +146,10 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
-= 2.8.59 - 2026-09-16 =
+= 2.8.61 - 2026-09-30 =
+* Update AUI 0.2.56 and SD 1.2.37 - CHANGED
+
+= 2.8.60 - 2026-09-16 =
 * Update AUI 0.2.54 and SD 1.2.36 - CHANGED
 
 = 2.8.59 - 2026-09-09 =
