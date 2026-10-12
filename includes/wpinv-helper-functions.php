@@ -737,6 +737,29 @@ function wpi_sanitize_tooltip( $var ) {
 }
 
 /**
+ * Sanitizes the "item" parameter of an embedded payment form.
+ *
+ * The value must use the "item_id|quantity,item_id|quantity" format. It is parsed
+ * and rebuilt from the parsed values, so the result only contains item IDs, quantities,
+ * "|" and "," and can safely be placed inside a shortcode attribute.
+ *
+ * @since 2.8.62
+ *
+ * @param mixed $item The raw item parameter, e.g. $_GET['item'].
+ * @return string The sanitized items string, or an empty string if invalid.
+ */
+function geodir_sanitize_embed_item( $item ) {
+	// Only accept a non-empty string (rejects arrays such as item[]=1).
+	if ( ! is_string( $item ) || '' === trim( $item ) ) {
+		return '';
+	}
+
+	$items = getpaid_convert_items_to_array( urldecode( wp_unslash( $item ) ) );
+
+	return getpaid_convert_items_to_string( $items );
+}
+
+/**
  * Get all WPI screen ids.
  *
  * @return array
