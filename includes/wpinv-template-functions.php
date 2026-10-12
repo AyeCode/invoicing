@@ -1244,13 +1244,23 @@ function wpinv_oxygen_fix_conflict() {
  * @param GetPaid_Payment_Form $form
  */
 function getpaid_display_payment_form( $form ) {
+	if ( is_numeric( $form ) ) {
+		$form = new GetPaid_Payment_Form( wpinv_translate_post_id( $form ) );
+	}
 
-    if ( is_numeric( $form ) ) {
-        $form = new GetPaid_Payment_Form( wpinv_translate_post_id( $form ) );
-    }
+	// Abort if invalid payment form object.
+	if ( ! $form instanceof GetPaid_Payment_Form || ! $form->exists() ) {
+		aui()->alert(
+			array(
+				'type'    => 'warning',
+				'content' => __( 'Invalid payment form', 'invoicing' ),
+			),
+			true
+		);
+		return;
+	}
 
-    $form->display();
-
+	$form->display();
 }
 
 /**

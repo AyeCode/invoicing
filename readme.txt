@@ -151,6 +151,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 * Validate PayPal IPN amount and currency - CHANGED
 * REST API endpoints now require GetPaid management permissions - SECURITY
 * Single invoice shortcode/block now respects invoice view permissions - SECURITY
+* Payment form request with an invalid form ID causes a fatal error - FIXED
 
 = 2.8.61 - 2026-09-30 =
 * Update AUI 0.2.56 and SD 1.2.37 - CHANGED
