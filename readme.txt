@@ -148,6 +148,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 = 2.8.62 - 2026-10-TBD =
 * Payment forms now reject invalid item quantities and amounts - FIXED
+* Validate PayPal IPN amount and currency - CHANGED
 
 = 2.8.61 - 2026-09-30 =
 * Update AUI 0.2.56 and SD 1.2.37 - CHANGED
