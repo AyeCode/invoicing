@@ -270,6 +270,10 @@ abstract class GetPaid_Authorize_Net_Legacy_Gateway extends GetPaid_Payment_Gate
 		}
 
 		// Hexadecimal Signature Key.
+		if ( ! ctype_xdigit( $signature_key ) || 0 !== strlen( $signature_key ) % 2 ) {
+			return false;
+		}
+
 		$match_hash = 'sha512=' . hash_hmac( 'sha512', $posted, hex2bin( $signature_key ) );
 
 		if ( hash_equals( strtolower( $incoming_hash ), strtolower( $match_hash ) ) ) {
@@ -326,7 +330,14 @@ abstract class GetPaid_Authorize_Net_Legacy_Gateway extends GetPaid_Payment_Gate
 		}
 
 		// Payment status.
-		if ( 1 == $data['x_response_code'] ) {
+		if ( isset( $data['x_response_code'] ) && 1 == $data['x_response_code'] ) {
+			$trans_id = ! empty( $data['x_trans_id'] ) ? sanitize_text_field( $data['x_trans_id'] ) : '';
+
+			// Abort if this transaction has already been recorded (replayed notification).
+			if ( empty( $trans_id ) || wpinv_get_id_by_transaction_id( $trans_id ) ) {
+				exit;
+			}
+
 			// Renew the subscription.
 			$subscription->add_payment(
 				array(
@@ -367,7 +378,7 @@ abstract class GetPaid_Authorize_Net_Legacy_Gateway extends GetPaid_Payment_Gate
 		$amount        = ! empty( $posted['x_amount'] ) ? wpinv_clean( $posted['x_amount'] ) : '';
 
 		// Live mode gives Hexadecimal Signature Key.
-		$secret_key    = $this->is_sandbox() ?  $signature_key : hex2bin( $signature_key );
+		$secret_key    = $this->is_sandbox() || ! ctype_xdigit( $signature_key ) || 0 !== strlen( $signature_key ) % 2 ? $signature_key : hex2bin( $signature_key );
 		$match_hash    = hash_hmac( 'sha512', "^$login_id^$trans_id^$amount^", $secret_key );
 
 		if ( ! hash_equals( strtolower( $incoming_hash ), strtolower( $match_hash ) ) ) {
