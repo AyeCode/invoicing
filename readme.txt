@@ -148,7 +148,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 = 2.8.62 - TBD =
 * Invoices lost their invoice number as the post title whenever they were saved again after being created, including at checkout and when marked paid - FIXED
-* Payment webhooks sent to add-on gateways such as Paystack, Paddle and Creem were never processed - FIXED
+* Payment webhooks sent to add-on gateways were never processed - FIXED
 * Overlay checkouts could not tell which payment form was submitted - FIXED
 * Gateways that answer checkout with a redirect object sent the customer to an invalid url - FIXED
 * Add-ons could not change the gateways shown on a payment form - FIXED
