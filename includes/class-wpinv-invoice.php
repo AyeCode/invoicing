@@ -2309,7 +2309,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 */
 	public function set_name( $value ) {
         $name = sanitize_text_field( $value );
-		$this->set_prop( 'name', $name );
+		$this->set_prop( 'title', $name );
     }
 
     /**
