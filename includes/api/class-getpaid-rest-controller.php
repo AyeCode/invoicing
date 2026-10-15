@@ -94,7 +94,7 @@ class GetPaid_REST_Controller extends WP_REST_Controller {
 		getpaid_doing_it_wrong(
 			__CLASS__ . '::' . __METHOD__,
 			/* translators: %s: register_namespace_routes() */
-			sprintf( __( "Method '%s' must be overridden." ), __METHOD__ ),
+			sprintf( __( "Method '%s' must be overridden.", 'invoicing' ), __METHOD__ ),
 			'1.0.19'
 		);
 

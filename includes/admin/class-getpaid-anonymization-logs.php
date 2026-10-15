@@ -27,9 +27,13 @@ class GetPaid_Anonymization_Logs {
         $page = isset( $_GET['paged'] ) ? absint( $_GET['paged'] ) : 1;
         $per_page = 20;
 
+		// Selected month (YYYYMM) from the date filter.
+		$month = isset( $_GET['m'] ) ? sanitize_text_field( wp_unslash( $_GET['m'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$month = preg_match( '/^\d{6}$/', $month ) ? $month : '';
+
         // Fetch logs
-        $logs = $this->get_logs( $page, $per_page );
-        $total_logs = $this->get_total_logs();
+		$logs       = $this->get_logs( $page, $per_page, $month );
+		$total_logs = $this->get_total_logs( $month );
 
         // Prepare pagination
         $pagination = paginate_links(
@@ -50,14 +54,14 @@ class GetPaid_Anonymization_Logs {
                 <div class="alignleft actions">
                     <form method="get">
                         <input type="hidden" name="page" value="wpinv-anonymization-logs">
-                        <label for="filter-by-date" class="screen-reader-text"><?php _e( 'Filter by date', 'invoicing' ); ?></label>
+						<label for="filter-by-date" class="screen-reader-text"><?php esc_html_e( 'Filter by date', 'invoicing' ); ?></label>
                         <select name="m" id="filter-by-date">
-                            <option value="0"><?php _e( 'All dates', 'invoicing' ); ?></option>
+							<option value="0"><?php esc_html_e( 'All dates', 'invoicing' ); ?></option>
                             <?php
-                            $months = $this->get_log_months();
+							$months        = $this->get_log_months();
+							$current_month = isset( $_GET['m'] ) ? sanitize_text_field( wp_unslash( $_GET['m'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
                             foreach ( $months as $month ) {
-                                $selected = ( isset( $_GET['m'] ) && $_GET['m'] == $month->year_month ) ? ' selected="selected"' : '';
-                                echo '<option value="' . esc_attr( $month->year_month ) . '"' . $selected . '>' . esc_html( $month->month_name . ' ' . $month->year ) . '</option>';
+								echo '<option value="' . esc_attr( $month->year_month ) . '"' . selected( $current_month, $month->year_month, false ) . '>' . esc_html( $month->month_name . ' ' . $month->year ) . '</option>';
                             }
                             ?>
                         </select>
@@ -68,17 +72,17 @@ class GetPaid_Anonymization_Logs {
             <table class="wp-list-table widefat fixed striped">
                 <thead>
                     <tr>
-                        <th><?php _e( 'Log ID', 'invoicing' ); ?></th>
-                        <th><?php _e( 'User', 'invoicing' ); ?></th>
-                        <th><?php _e( 'Action', 'invoicing' ); ?></th>
-                        <th><?php _e( 'Date', 'invoicing' ); ?></th>
-                        <th><?php _e( 'Details', 'invoicing' ); ?></th>
+						<th><?php esc_html_e( 'Log ID', 'invoicing' ); ?></th>
+						<th><?php esc_html_e( 'User', 'invoicing' ); ?></th>
+						<th><?php esc_html_e( 'Action', 'invoicing' ); ?></th>
+						<th><?php esc_html_e( 'Date', 'invoicing' ); ?></th>
+						<th><?php esc_html_e( 'Details', 'invoicing' ); ?></th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if ( empty( $logs ) ) : ?>
                         <tr>
-                            <td colspan="5"><?php _e( 'No anonymization logs found.', 'invoicing' ); ?></td>
+							<td colspan="5"><?php esc_html_e( 'No anonymization logs found.', 'invoicing' ); ?></td>
                         </tr>
                     <?php else : ?>
                         <?php
@@ -101,7 +105,7 @@ class GetPaid_Anonymization_Logs {
                                 <td><?php echo esc_html( get_date_from_gmt( $log->timestamp, 'F j, Y g:i a' ) ); ?></td>
                                 <td>
                                     <button class="button-link toggle-details" type="button" aria-expanded="false">
-                                        <span class="screen-reader-text"><?php _e( 'Show more details', 'invoicing' ); ?></span>
+										<span class="screen-reader-text"><?php esc_html_e( 'Show more details', 'invoicing' ); ?></span>
                                         <span class="dashicons dashicons-arrow-down-alt2"></span>
                                     </button>
                                 </td>
@@ -112,12 +116,12 @@ class GetPaid_Anonymization_Logs {
                                         <table class="widefat fixed">
                                             <tbody>
                                                 <tr>
-                                                    <th><?php _e( 'Data Type', 'invoicing' ); ?></th>
+													<th><?php esc_html_e( 'Data Type', 'invoicing' ); ?></th>
                                                     <td><?php echo esc_html( $log->data_type ); ?></td>
                                                 </tr>
                                                 <?php if ( is_array( $additional_info ) ) : ?>
                                                     <tr>
-                                                        <th><?php _e( 'Additional Information', 'invoicing' ); ?></th>
+														<th><?php esc_html_e( 'Additional Information', 'invoicing' ); ?></th>
                                                         <td>
                                                             <table class="widefat fixed">
                                                                 <tbody>
@@ -144,7 +148,7 @@ class GetPaid_Anonymization_Logs {
             <?php if ( $pagination ) : ?>
                 <div class="tablenav bottom">
                     <div class="tablenav-pages">
-                        <?php echo $pagination; ?>
+						<?php echo wp_kses_post( $pagination ); ?>
                     </div>
                 </div>
             <?php endif; ?>
@@ -157,18 +161,28 @@ class GetPaid_Anonymization_Logs {
      *
      * @param int $page Current page number
      * @param int $per_page Number of logs per page
+	 * @param string $month Optional month to filter by, as YYYYMM.
      * @return array
      */
-    private function get_logs( $page, $per_page ) {
+	private function get_logs( $page, $per_page, $month = '' ) {
         global $wpdb;
         $table_name = $wpdb->prefix . 'getpaid_anonymization_logs';
         $offset = ( $page - 1 ) * $per_page;
 
-        $query = $wpdb->prepare(
-            "SELECT * FROM $table_name ORDER BY timestamp DESC LIMIT %d OFFSET %d",
-            $per_page,
-            $offset
-        );
+		if ( '' !== $month ) {
+			$query = $wpdb->prepare(
+				"SELECT * FROM $table_name WHERE DATE_FORMAT(timestamp, '%%Y%%m') = %s ORDER BY timestamp DESC LIMIT %d OFFSET %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name only.
+				$month,
+				$per_page,
+				$offset
+			);
+		} else {
+			$query = $wpdb->prepare(
+				"SELECT * FROM $table_name ORDER BY timestamp DESC LIMIT %d OFFSET %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name only.
+				$per_page,
+				$offset
+			);
+		}
 
         return $wpdb->get_results( $query );
     }
@@ -176,11 +190,17 @@ class GetPaid_Anonymization_Logs {
     /**
      * Get total number of logs
      *
+	 * @param string $month Optional month to filter by, as YYYYMM.
      * @return int
      */
-    private function get_total_logs() {
+	private function get_total_logs( $month = '' ) {
         global $wpdb;
         $table_name = $wpdb->prefix . 'getpaid_anonymization_logs';
+
+		if ( '' !== $month ) {
+			return $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $table_name WHERE DATE_FORMAT(timestamp, '%%Y%%m') = %s", $month ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name only.
+		}
+
         return $wpdb->get_var( "SELECT COUNT(*) FROM $table_name" );
     }
 
@@ -195,12 +215,12 @@ class GetPaid_Anonymization_Logs {
 
         return $wpdb->get_results(
             "SELECT DISTINCT
-                YEAR(timestamp) AS year,
-                MONTH(timestamp) AS month_num,
-                DATE_FORMAT(timestamp, '%M') AS month_name,
-                DATE_FORMAT(timestamp, '%Y%m') AS year_month
+                YEAR(timestamp) AS `year`,
+                MONTH(timestamp) AS `month_num`,
+                DATE_FORMAT(timestamp, '%M') AS `month_name`,
+                DATE_FORMAT(timestamp, '%Y%m') AS `year_month`
             FROM $table_name
-            ORDER BY year DESC, month_num DESC"
+            ORDER BY `year` DESC, `month_num` DESC"
         );
     }
 }

@@ -8,7 +8,7 @@ defined( 'ABSPATH' ) || exit;
 
 global $aui_bs5;
 ?>
-<div class="card shadow-sm my-5">'
+<div class="card shadow-sm my-5">
 
     <form method="post" class="text-center card-body">
         <div class="gp-wizard-payments">

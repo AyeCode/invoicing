@@ -146,6 +146,15 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
+= 2.8.62 - TBD =
+* Invoices lost their invoice number as the post title whenever they were saved again after being created, including at checkout and when marked paid - FIXED
+* Payment webhooks sent to add-on gateways were never processed - FIXED
+* Overlay checkouts could not tell which payment form was submitted - FIXED
+* Gateways that answer checkout with a redirect object sent the customer to an invalid url - FIXED
+* Add-ons could not change the gateways shown on a payment form - FIXED
+* Refunding a renewal invoice cancelled the whole subscription - FIXED
+* Anonymization log showed all entries whatever month was selected - FIXED
+
 = 2.8.61 - 2026-09-30 =
 * Update AUI 0.2.56 and SD 1.2.37 - CHANGED
 
