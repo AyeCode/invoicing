@@ -1186,8 +1186,16 @@ function getpaid_get_invoice_meta( $invoice ) {
 
 	$additional_meta = get_post_meta( $invoice->get_id(), 'additional_meta_data', true );
 
-	if ( ! empty( $additional_meta ) ) {
+	if ( ! empty( $additional_meta ) && is_array( $additional_meta ) ) {
 		foreach ( $additional_meta as $label => $value ) {
+			if ( is_array( $value ) ) {
+				$value = implode( ', ', array_filter( $value, 'is_scalar' ) );
+			}
+
+			if ( ! is_scalar( $value ) ) {
+				continue;
+			}
+
 			$meta[ sanitize_key( $label ) ] = array(
 				'label' => esc_html( $label ),
 				'value' => esc_html( $value ),

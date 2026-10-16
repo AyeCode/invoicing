@@ -31,7 +31,6 @@ class GetPaid_Checkout {
 	 *
 	 */
 	public function process_checkout() {
-
 		// Validate the submission.
 		$this->validate_submission();
 
@@ -48,7 +47,7 @@ class GetPaid_Checkout {
 		// Save the invoice.
 		$invoice->set_is_viewed( true );
 		$invoice->recalculate_total();
-        $invoice->save();
+		$invoice->save();
 
 		do_action( 'getpaid_checkout_invoice_updated', $invoice );
 
@@ -61,18 +60,17 @@ class GetPaid_Checkout {
 	 *
 	 */
 	protected function validate_submission() {
-
 		$submission = $this->payment_form_submission;
 		$data       = $submission->get_data();
 
 		// Do we have an error?
-        if ( ! empty( $submission->last_error ) ) {
+		if ( ! empty( $submission->last_error ) ) {
 			wp_send_json_error( $submission->last_error );
-        }
+		}
 
 		// We need a billing email.
-        if ( ! $submission->has_billing_email() ) {
-            wp_send_json_error( __( 'Provide a valid billing email.', 'invoicing' ) );
+		if ( ! $submission->has_billing_email() ) {
+			wp_send_json_error( __( 'Provide a valid billing email.', 'invoicing' ) );
 		}
 
 		// Non-recurring gateways should not be allowed to process recurring invoices.
@@ -92,10 +90,9 @@ class GetPaid_Checkout {
 		do_action( 'getpaid_checkout_error_checks', $submission );
 
 		// Do we have any errors?
-        if ( wpinv_get_errors() ) {
-            wp_send_json_error( getpaid_get_errors_html() );
+		if ( wpinv_get_errors() ) {
+			wp_send_json_error( getpaid_get_errors_html() );
 		}
-
 	}
 
 	/**
@@ -107,9 +104,9 @@ class GetPaid_Checkout {
 
 		$items = $this->payment_form_submission->get_items();
 
-        // Ensure that we have items.
-        if ( empty( $items ) && ! $this->payment_form_submission->has_fees() ) {
-            wp_send_json_error( __( 'Please provide at least one item or amount.', 'invoicing' ) );
+		// Ensure that we have items.
+		if ( empty( $items ) && ! $this->payment_form_submission->has_fees() ) {
+			wp_send_json_error( __( 'Please provide at least one item or amount.', 'invoicing' ) );
 		}
 
 		return $items;
@@ -127,7 +124,7 @@ class GetPaid_Checkout {
 			$invoice = new WPInv_Invoice();
 			$invoice->set_created_via( 'payment_form' );
 			return $invoice;
-        }
+		}
 
 		$invoice = $submission->get_invoice();
 
@@ -147,7 +144,6 @@ class GetPaid_Checkout {
 	 * @return WPInv_Invoice
 	 */
 	protected function process_submission_invoice( $invoice, $items ) {
-
 		$submission = $this->payment_form_submission;
 
 		// Set-up the invoice details.
@@ -155,9 +151,9 @@ class GetPaid_Checkout {
 		$invoice->set_user_id( $this->get_submission_customer() );
 		$invoice->set_submission_id( $submission->id );
 		$invoice->set_payment_form( absint( $submission->get_payment_form()->get_id() ) );
-        $invoice->set_items( $items );
-        $invoice->set_fees( $submission->get_fees() );
-        $invoice->set_taxes( $submission->get_taxes() );
+		$invoice->set_items( $items );
+		$invoice->set_fees( $submission->get_fees() );
+		$invoice->set_taxes( $submission->get_taxes() );
 		$invoice->set_discounts( $submission->get_discounts() );
 		$invoice->set_gateway( $submission->get_field( 'wpi-gateway' ) );
 		$invoice->set_currency( $submission->get_currency() );
@@ -170,7 +166,7 @@ class GetPaid_Checkout {
 		$invoice->set_address_confirmed( ! empty( $address_confirmed ) );
 
 		if ( $submission->has_discount_code() ) {
-            $invoice->set_discount_code( $submission->get_discount_code() );
+			$invoice->set_discount_code( $submission->get_discount_code() );
 		}
 
 		getpaid_maybe_add_default_address( $invoice );
@@ -191,16 +187,16 @@ class GetPaid_Checkout {
 		}
 
 		// (Maybe) create the user.
-        $user = get_current_user_id();
+		$user = get_current_user_id();
 
-        if ( empty( $user ) ) {
-            $user = get_user_by( 'email', $submission->get_billing_email() );
-        }
+		if ( empty( $user ) ) {
+			$user = get_user_by( 'email', $submission->get_billing_email() );
+		}
 
-        if ( empty( $user ) ) {
+		if ( empty( $user ) ) {
 			$name = array( $submission->get_field( 'wpinv_first_name', 'billing' ), $submission->get_field( 'wpinv_last_name', 'billing' ) );
 			$name = implode( '', array_filter( $name ) );
-            $user = wpinv_create_user( $submission->get_billing_email(), $name );
+			$user = wpinv_create_user( $submission->get_billing_email(), $name );
 
 			// (Maybe) send new user notification.
 			$should_send_notification = wpinv_get_option( 'disable_new_user_emails' );
@@ -209,67 +205,66 @@ class GetPaid_Checkout {
 			}
 		}
 
-        if ( is_wp_error( $user ) ) {
-            wp_send_json_error( $user->get_error_message() );
-        }
+		if ( is_wp_error( $user ) ) {
+			wp_send_json_error( $user->get_error_message() );
+		}
 
-        if ( is_numeric( $user ) ) {
-            return $user;
+		if ( is_numeric( $user ) ) {
+			return $user;
 		}
 
 		return $user->ID;
-
 	}
 
 	/**
-     * Prepares submission data for saving to the database.
-     *
+	 * Prepares submission data for saving to the database.
+	 *
 	 * @return array
-     */
-    public function prepare_submission_data_for_saving() {
-
+	 */
+	public function prepare_submission_data_for_saving() {
 		$submission = $this->payment_form_submission;
 
 		// Prepared submission details.
-        $prepared = array(
+		$prepared = array(
 			'all'  => array(),
 			'meta' => array(),
 		);
 
-        // Raw submission details.
+		// Raw submission details.
 		$data     = $submission->get_data();
 
 		// Loop through the submitted details.
-        foreach ( $submission->get_payment_form()->get_elements() as $field ) {
-
+		foreach ( $submission->get_payment_form()->get_elements() as $field ) {
 			// Skip premade fields.
-            if ( ! empty( $field['premade'] ) ) {
-                continue;
-            }
+			if ( ! empty( $field['premade'] ) ) {
+				continue;
+			}
 
 			// Ensure address is provided.
 			if ( 'address' === $field['type'] ) {
-                $address_type = isset( $field['address_type'] ) && 'shipping' === $field['address_type'] ? 'shipping' : 'billing';
+				$address_type = isset( $field['address_type'] ) && 'shipping' === $field['address_type'] ? 'shipping' : 'billing';
 
 				foreach ( $field['fields'] as $address_field ) {
-
 					if ( ! empty( $address_field['visible'] ) && ! empty( $address_field['required'] ) && '' === trim( $_POST[ $address_type ][ $address_field['name'] ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
 						wp_send_json_error( __( 'Please fill all required fields.', 'invoicing' ) );
 					}
+				}
 			}
-		}
 
-            // If it is required and not set, abort.
-            if ( ! $submission->is_required_field_set( $field ) ) {
-                wp_send_json_error( __( 'Please fill all required fields.', 'invoicing' ) );
-            }
+			// If it is required and not set, abort.
+			if ( ! $submission->is_required_field_set( $field ) ) {
+				wp_send_json_error( __( 'Please fill all required fields.', 'invoicing' ) );
+			}
 
-            // Handle misc fields.
-            if ( isset( $data[ $field['id'] ] ) ) {
-
+			// Handle misc fields.
+			if ( isset( $data[ $field['id'] ] ) ) {
 				// Uploads.
 				if ( 'file_upload' === $field['type'] ) {
 					$max_file_num = empty( $field['max_file_num'] ) ? 1 : absint( $field['max_file_num'] );
+
+					if ( ! is_array( $data[ $field['id'] ] ) ) {
+						continue;
+					}
 
 					if ( count( $data[ $field['id'] ] ) > $max_file_num ) {
 						wp_send_json_error( __( 'Maximum number of allowed files exceeded.', 'invoicing' ) );
@@ -278,48 +273,81 @@ class GetPaid_Checkout {
 					$value = array();
 
 					foreach ( $data[ $field['id'] ] as $url => $name ) {
+						$url = esc_url_raw( $url, array( 'http', 'https' ) );
+
+						if ( empty( $url ) || ! is_scalar( $name ) ) {
+							continue;
+						}
+
 						$value[] = sprintf(
 							'<a href="%s" target="_blank">%s</a>',
-							esc_url_raw( $url ),
-							esc_html( $name )
+							esc_url( $url, array( 'http', 'https' ) ),
+							esc_html( sanitize_text_field( $name ) )
 						);
 					}
 
 					$value = implode( ' | ', $value );
-
 				} elseif ( 'checkbox' === $field['type'] ) {
 					$value = ! empty( $data[ $field['id'] ] ) ? __( 'Yes', 'invoicing' ) : __( 'No', 'invoicing' );
+				} elseif ( 'textarea' === $field['type'] ) {
+					$value = is_scalar( $data[ $field['id'] ] ) ? sanitize_textarea_field( $data[ $field['id'] ] ) : '';
 				} else {
-					$value = wp_kses_post( $data[ $field['id'] ] );
+					$value = $this->sanitize_custom_field_value( $data[ $field['id'] ] );
 				}
 
-                $label = $field['id'];
+				$label = $field['id'];
 
-                if ( isset( $field['label'] ) ) {
-                    $label = $field['label'];
-                }
+				if ( isset( $field['label'] ) ) {
+					$label = $field['label'];
+				}
+
+				$label = wpinv_clean( $label );
+
+				if ( '' === $label ) {
+					continue;
+				}
 
 				if ( ! empty( $field['add_meta'] ) ) {
-					$prepared['meta'][ wpinv_clean( $label ) ] = wp_kses_post_deep( $value );
+					$prepared['meta'][ $label ] = $value;
 				}
-				$prepared['all'][ wpinv_clean( $label ) ] = wp_kses_post_deep( $value );
 
-            }
+				$prepared['all'][ $label ] = $value;
+			}
 		}
 
 		return $prepared;
-
 	}
 
 	/**
-     * Retrieves address details.
-     *
+	 * Sanitizes a submitted custom field value as plain text.
+	 *
+	 * @param mixed $value
+	 * @return string
+	 */
+	protected function sanitize_custom_field_value( $value ) {
+		if ( is_array( $value ) ) {
+			$values = array();
+
+			foreach ( $value as $sub_value ) {
+				if ( is_scalar( $sub_value ) ) {
+					$values[] = sanitize_text_field( $sub_value );
+				}
+			}
+
+			return implode( ', ', array_filter( $values, 'strlen' ) );
+		}
+
+		return is_scalar( $value ) ? sanitize_text_field( $value ) : '';
+	}
+
+	/**
+	 * Retrieves address details.
+	 *
 	 * @return array
 	 * @param WPInv_Invoice $invoice
 	 * @param string $type
-     */
-    public function prepare_address_details( $invoice, $type = 'billing' ) {
-
+	 */
+	public function prepare_address_details( $invoice, $type = 'billing' ) {
 		$data     = $this->payment_form_submission->get_data();
 		$type     = sanitize_key( $type );
 		$address  = array();
@@ -342,32 +370,28 @@ class GetPaid_Checkout {
 
 		// Remove non-whitelisted values.
 		return array_filter( $prepared, 'getpaid_is_address_field_whitelisted', ARRAY_FILTER_USE_KEY );
-
 	}
 
 	/**
-     * Prepares the billing details.
-     *
+	 * Prepares the billing details.
+	 *
 	 * @return array
 	 * @param WPInv_Invoice $invoice
-     */
-    protected function prepare_billing_info( &$invoice ) {
-
+	 */
+	protected function prepare_billing_info( &$invoice ) {
 		$billing_address = $this->prepare_address_details( $invoice, 'billing' );
 
 		// Update the invoice with the billing details.
 		$invoice->set_props( $billing_address );
-
 	}
 
 	/**
-     * Prepares the shipping details.
-     *
+	 * Prepares the shipping details.
+	 *
 	 * @return array
 	 * @param WPInv_Invoice $invoice
-     */
-    protected function prepare_shipping_info( $invoice ) {
-
+	 */
+	protected function prepare_shipping_info( $invoice ) {
 		$data = $this->payment_form_submission->get_data();
 
 		if ( empty( $data['same-shipping-address'] ) ) {
@@ -375,7 +399,6 @@ class GetPaid_Checkout {
 		}
 
 		return $this->prepare_address_details( $invoice, 'billing' );
-
 	}
 
 	/**
@@ -386,18 +409,17 @@ class GetPaid_Checkout {
 	 * @param array $shipping
 	 */
 	protected function post_process_submission( $invoice, $prepared_payment_form_data, $shipping ) {
-
 		// Ensure the invoice exists.
-        if ( ! $invoice->exists() ) {
-            wp_send_json_error( __( 'An error occured while saving your invoice. Please try again.', 'invoicing' ) );
-        }
+		if ( ! $invoice->exists() ) {
+			wp_send_json_error( __( 'An error occured while saving your invoice. Please try again.', 'invoicing' ) );
+		}
 
 		// Save payment form data.
 		$prepared_payment_form_data = apply_filters( 'getpaid_prepared_payment_form_data', $prepared_payment_form_data, $invoice );
-        delete_post_meta( $invoice->get_id(), 'payment_form_data' );
+		delete_post_meta( $invoice->get_id(), 'payment_form_data' );
 		delete_post_meta( $invoice->get_id(), 'additional_meta_data' );
-		if ( ! empty( $prepared_payment_form_data ) ) {
 
+		if ( ! empty( $prepared_payment_form_data ) ) {
 			if ( ! empty( $prepared_payment_form_data['all'] ) ) {
 				update_post_meta( $invoice->get_id(), 'payment_form_data', $prepared_payment_form_data['all'] );
 			}
@@ -409,12 +431,13 @@ class GetPaid_Checkout {
 
 		// Save payment form data.
 		$shipping = apply_filters( 'getpaid_checkout_shipping_details', $shipping, $this->payment_form_submission );
-        if ( ! empty( $shipping ) ) {
-            update_post_meta( $invoice->get_id(), 'shipping_address', $shipping );
+
+		if ( ! empty( $shipping ) ) {
+			update_post_meta( $invoice->get_id(), 'shipping_address', $shipping );
 		}
 
 		// Backwards compatibility.
-        add_filter( 'wp_redirect', array( $this, 'send_redirect_response' ) );
+		add_filter( 'wp_redirect', array( $this, 'send_redirect_response' ) );
 
 		try {
 			$this->process_payment( $invoice );
@@ -422,9 +445,8 @@ class GetPaid_Checkout {
 			wpinv_set_error( 'payment_error', $e->getMessage() );
 		}
 
-        // If we are here, there was an error.
+		// If we are here, there was an error.
 		wpinv_send_back_to_checkout( $invoice );
-
 	}
 
 	/**
@@ -433,7 +455,6 @@ class GetPaid_Checkout {
 	 * @param WPInv_Invoice $invoice
 	 */
 	protected function process_payment( $invoice ) {
-
 		// Clear any checkout errors.
 		wpinv_clear_errors();
 
@@ -467,7 +488,6 @@ class GetPaid_Checkout {
 
 		// Backwards compatibility.
 		wpinv_send_to_gateway( $submission_gateway, $invoice );
-
 	}
 
 	/**
@@ -476,7 +496,6 @@ class GetPaid_Checkout {
 	 * @param WPInv_Invoice $invoice
 	 */
 	protected function process_free_payment( $invoice ) {
-
 		$invoice->set_gateway( 'none' );
 		$invoice->add_note( __( "This is a free invoice and won't be sent to the payment gateway", 'invoicing' ), false, false, true );
 		$invoice->mark_paid();
@@ -485,12 +504,12 @@ class GetPaid_Checkout {
 	}
 
 	/**
-     * Sends a redrect response to payment details.
-     *
-     */
-    public function send_redirect_response( $url ) {
-        $url = rawurlencode( $url );
-        wp_send_json_success( $url );
-    }
+	 * Sends a redrect response to payment details.
+	 *
+	 */
+	public function send_redirect_response( $url ) {
+		$url = rawurlencode( $url );
+		wp_send_json_success( $url );
+	}
 
 }
