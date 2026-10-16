@@ -5,7 +5,7 @@
  *
  * This template can be overridden by copying it to yourtheme/invoicing/subscriptions/subscription-details.php.
  *
- * @version 2.8.43
+ * @version 2.8.62
  *
  * @var WPInv_Subscription $subscription
  * @var WPInv_Subscriptions_Widget $widget
@@ -122,5 +122,5 @@ do_action( 'getpaid_before_single_subscription', $subscription, $subscription_gr
 		}
 		do_action( 'getpaid-single-subscription-page-actions', $subscription );
 	?>
-	<a href="<?php echo esc_url( getpaid_get_tab_url( 'gp-subscriptions', get_permalink( (int) wpinv_get_option( 'invoice_subscription_page' ) ) ) ); ?>" class="btn btn-secondary btn-sm"><?php esc_html_e( 'Go Back', 'invoicing' ); ?></a>
+	<a href="<?php echo esc_url( getpaid_get_tab_url( 'gp-subscriptions', get_permalink( (int) wpinv_get_option( 'invoice_subscription_page' ) ) ) ); ?>" class="btn btn-secondary btn-sm"><?php esc_html_e( 'Back to Subscriptions', 'invoicing' ); ?></a>
 </div>

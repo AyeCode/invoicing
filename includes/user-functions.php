@@ -269,14 +269,23 @@ function getpaid_prepare_user_content_tab( $tab ) {
  * @return array
  */
 function getpaid_get_tab_url( $tab, $default ) {
-    global $getpaid_tab_url;
+	global $getpaid_tab_url;
 
-    if ( empty( $getpaid_tab_url ) ) {
-        return $default;
-    }
+	if ( empty( $getpaid_tab_url ) ) {
+		$url = $default;
+	} else {
+		$url = sprintf( $getpaid_tab_url, $tab );
+	}
 
-    return sprintf( $getpaid_tab_url, $tab );
-
+	/**
+	 * Filters the integrations tab URL.
+	 *
+	 * @since 2.8.62
+	 * @param string $url     Tab URL.
+	 * @param string $tab     Tab slug.
+	 * @param string $default Default URL used when no integration tab URL is set.
+	 */
+	return apply_filters( 'getpaid_get_tab_url', $url, $tab, $default );
 }
 
 /**
@@ -651,6 +660,36 @@ function getpaid_userswp_overwrite_invoice_history_page( $url, $post_type ) {
 
 }
 add_filter( 'wpinv_get_history_page_uri', 'getpaid_userswp_overwrite_invoice_history_page', 10, 2 );
+
+/**
+ * Links GetPaid tabs on the UsersWP profile page to the UsersWP account page.
+ *
+ * @since  2.8.62
+ *
+ * @param  string $url     Current tab URL.
+ * @param  string $tab     Tab slug.
+ * @param  string $default Default URL.
+ * @return string
+ */
+function getpaid_userswp_filter_profile_tab_url( $url, $tab, $default ) {
+	global $getpaid_tab_url;
+
+	if ( ! in_array( $tab, array( 'gp-subscriptions' ) ) ) {
+		return $url;
+	}
+
+	// Abort if we're already rendering a UsersWP account tab.
+	if ( ! empty( $getpaid_tab_url ) || ! getpaid_is_userswp_integration_active() ) {
+		return $url;
+	}
+
+	if ( ! function_exists( 'is_uwp_profile_page' ) || ! is_uwp_profile_page() ) {
+		return $url;
+	}
+
+	return add_query_arg( 'type', $tab, uwp_get_account_page_url() );
+}
+add_filter( 'getpaid_get_tab_url', 'getpaid_userswp_filter_profile_tab_url', 10, 3 );
 
 /**
  * Checks if the integration is enabled.
