@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoicing, Paypal, Stripe, payment
 Requires at least: 6.0
 Tested up to: 7.1
-Stable tag: 2.8.61
+Stable tag: 2.8.62
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -146,7 +146,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
-= 2.8.62 - 2026-10-TBD =
+= 2.8.62 - 2026-10-16 =
 * PayPal simultaneous subscr_signup and subscr_payment IPNs send the invoice paid email multiple times - FIXED
 * Fixed stored XSS via payment form field data - SECURITY
 * Update AUI 0.2.57 - CHANGED
