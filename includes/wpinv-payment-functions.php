@@ -387,7 +387,14 @@ function getpaid_validate_recaptcha_response( $submission ) {
 
 	$result = json_decode( wp_remote_retrieve_body( $result ), true );
 
-	if ( empty( $result['success'] ) && ! in_array( 'missing-input-secret', $result['error-codes'], true ) && ! in_array( 'invalid-input-secret', $result['error-codes'], true ) ) {
+	// Site returned an unexpected response, give benefit of doubt.
+	if ( ! is_array( $result ) ) {
+		return;
+	}
+
+	$error_codes = isset( $result['error-codes'] ) && is_array( $result['error-codes'] ) ? $result['error-codes'] : array();
+
+	if ( empty( $result['success'] ) && ! in_array( 'missing-input-secret', $error_codes, true ) && ! in_array( 'invalid-input-secret', $error_codes, true ) ) {
 		wp_send_json_error( __( "Unable to verify that you're not a robot. Please try again.", 'invoicing' ) );
 	}
 

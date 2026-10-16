@@ -871,9 +871,9 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 		$redirect = empty( $data['redirect'] ) ? admin_url( 'admin.php?page=wpinv-settings&tab=gateways&section=paypal' ) : urldecode( $data['redirect'] );
 
 		if ( isset( $data['step'] ) ) {
-			$redirect = add_query_arg( 'step', $data['step'], $redirect );
+			$redirect = add_query_arg( 'step', sanitize_key( $data['step'] ), $redirect );
 		}
-		wp_redirect( $redirect );
+		wp_safe_redirect( $redirect );
 		exit;
 	}
 

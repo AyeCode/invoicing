@@ -62,8 +62,12 @@ class GetPaid_Graph_Downloader {
 	 * @return string
 	 */
 	public function prepare_file_type( $graph ) {
+		$file_type = empty( $_REQUEST['file_type'] ) ? 'csv' : sanitize_key( $_REQUEST['file_type'] );
 
-		$file_type = empty( $_REQUEST['file_type'] ) ? 'csv' : sanitize_text_field( $_REQUEST['file_type'] );
+		if ( ! in_array( $file_type, array( 'csv', 'xml', 'json' ), true ) ) {
+			$file_type = 'csv';
+		}
+
 		$file_name = wpinv_sanitize_key( "getpaid-$graph-" . current_time( 'Y-m-d' ) );
 
 		header( "Content-Type:application/$file_type" );
@@ -106,17 +110,19 @@ class GetPaid_Graph_Downloader {
 	 * @since       1.0.19
 	 */
 	public function download_csv( $stats, $stream, $headers ) {
+		$enclosure = getpaid_get_csv_enclose();
+		$escape    = getpaid_get_csv_escape();
 
 		// Output the csv column headers.
-		fputcsv( $stream, $headers );
+		fputcsv( $stream, $headers, ',', $enclosure, $escape );
 
 		// Loop through
 		foreach ( $stats as $stat ) {
 			$row  = array_values( $this->prepare_row( $stat, $headers ) );
 			$row  = array_map( 'maybe_serialize', $row );
-			fputcsv( $stream, $row );
+			$row  = array_map( 'getpaid_escape_csv_value', $row );
+			fputcsv( $stream, $row, ',', $enclosure, $escape );
 		}
-
 	}
 
 	/**
@@ -187,7 +193,7 @@ class GetPaid_Graph_Downloader {
 				$this->convert_array_xml( $value, $subnode );
 
 			} else {
-				$xml->addChild( $key, $value ?  htmlspecialchars( $value ) : $value );
+				$xml->addChild( $key, $value ?  htmlspecialchars( $value, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401 ) : $value );
 			}
 }
 

@@ -46,7 +46,7 @@ function wpinv_user_can_view_invoice( $invoice ) {
     }
 
     // If users are not required to login to check out, compare the invoice keys.
-    if ( ! wpinv_require_login_to_checkout() && isset( $_GET['invoice_key'] ) && sanitize_text_field( $_GET['invoice_key'] ) == $invoice->get_key() ) {
+    if ( ! wpinv_require_login_to_checkout() && ! empty( $_GET['invoice_key'] ) && is_string( $_GET['invoice_key'] ) && '' !== (string) $invoice->get_key() && hash_equals( (string) $invoice->get_key(), sanitize_text_field( wp_unslash( $_GET['invoice_key'] ) ) ) ) {
         return true;
     }
 

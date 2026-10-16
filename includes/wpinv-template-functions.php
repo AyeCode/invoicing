@@ -1244,13 +1244,23 @@ function wpinv_oxygen_fix_conflict() {
  * @param GetPaid_Payment_Form $form
  */
 function getpaid_display_payment_form( $form ) {
+	if ( is_numeric( $form ) ) {
+		$form = new GetPaid_Payment_Form( wpinv_translate_post_id( $form ) );
+	}
 
-    if ( is_numeric( $form ) ) {
-        $form = new GetPaid_Payment_Form( wpinv_translate_post_id( $form ) );
-    }
+	// Abort if invalid payment form object.
+	if ( ! $form instanceof GetPaid_Payment_Form || ! $form->exists() ) {
+		aui()->alert(
+			array(
+				'type'    => 'warning',
+				'content' => __( 'Invalid payment form', 'invoicing' ),
+			),
+			true
+		);
+		return;
+	}
 
-    $form->display();
-
+	$form->display();
 }
 
 /**
@@ -1330,27 +1340,27 @@ function getpaid_display_invoice_payment_form( $invoice_id ) {
  * Helper function to convert item string to array.
  */
 function getpaid_convert_items_to_array( $items ) {
-    $items    = array_filter( array_map( 'trim', explode( ',', $items ) ) );
-    $prepared = array();
+	$items    = array_filter( array_map( 'trim', explode( ',', $items ) ) );
+	$prepared = array();
 
-    foreach ( $items as $item ) {
-        $data = array_map( 'trim', explode( '|', $item ) );
+	foreach ( $items as $item ) {
+		$data = array_map( 'trim', explode( '|', $item ) );
 
-        if ( empty( $data[0] ) || ! is_numeric( $data[0] ) ) {
-            continue;
-        }
+		if ( empty( $data[0] ) || ! is_numeric( $data[0] ) ) {
+			continue;
+		}
 
-        $quantity = 1;
-        if ( isset( $data[1] ) && is_numeric( $data[1] ) ) {
-            $quantity = (float) $data[1];
-        }
+		$quantity = 1;
+		if ( isset( $data[1] ) && is_numeric( $data[1] ) && (float) $data[1] >= 0 && is_finite( (float) $data[1] ) ) {
+			$quantity = (float) $data[1];
+		}
 
-        // WPML support.
-        $prepared[ wpinv_translate_post_id( $data[0] ) ] = $quantity;
+		// WPML support.
+		$prepared[ wpinv_translate_post_id( $data[0] ) ] = $quantity;
 
-    }
+	}
 
-    return $prepared;
+	return $prepared;
 }
 
 /**
