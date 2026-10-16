@@ -382,6 +382,7 @@ class WPInv_Ajax {
      * @since 1.0.18
      */
     public static function get_payment_form_states_field() {
+
         if ( empty( $_GET['country'] ) || empty( $_GET['form'] ) ) {
             exit;
         }
@@ -393,7 +394,6 @@ class WPInv_Ajax {
         }
 
         $address_fields = array();
-
         foreach ( $elements as $element ) {
             if ( 'address' === $element['type'] ) {
                 $address_fields = $element;
@@ -406,7 +406,9 @@ class WPInv_Ajax {
         }
 
         foreach ( $address_fields['fields'] as $address_field ) {
+
             if ( 'wpinv_state' == $address_field['name'] ) {
+
                 $wrap_class  = getpaid_get_form_element_grid_class( $address_field );
                 $wrap_class  = esc_attr( "$wrap_class getpaid-address-field-wrapper" );
                 $placeholder = empty( $address_field['placeholder'] ) ? '' : esc_attr( $address_field['placeholder'] );
@@ -426,11 +428,12 @@ class WPInv_Ajax {
                     $description,
                     ! empty( $address_field['required'] ),
                     $wrap_class,
-                    isset( $_GET['name'] ) ? sanitize_text_field( wp_unslash( $_GET['name'] ) ) : 'wpinv_state'
+                    sanitize_text_field( $_GET['name'] )
                 );
 
                 wp_send_json_success( $html );
                 exit;
+
             }
         }
 

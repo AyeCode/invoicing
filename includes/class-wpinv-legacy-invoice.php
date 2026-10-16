@@ -264,7 +264,7 @@ final class WPInv_Legacy_Invoice {
 
     public function __construct( $invoice_id = false ) {
         if ( empty( $invoice_id ) ) {
-            return;
+            return false;
         }
 
         $this->setup_invoice( $invoice_id );
