@@ -108,6 +108,7 @@ class GetPaid_Payment_Form_Submission_Items {
 	 * @param GetPaid_Payment_Form_Submission $submission
 	 */
 	public function process_item( $item, $selected_items, $submission ) {
+
 		// Abort if this is an optional item and it has not been selected.
 		if ( ! $item->is_required() && ! isset( $selected_items[ $item->get_id() ] ) ) {
 			return;
@@ -115,28 +116,22 @@ class GetPaid_Payment_Form_Submission_Items {
 
 		// (maybe) let customers change the quantities and prices.
 		if ( isset( $selected_items[ $item->get_id() ] ) ) {
+
 			// Maybe change the quantities.
 			if ( $item->allows_quantities() ) {
-				$quantity = isset( $selected_items[ $item->get_id() ]['quantity'] ) ? $selected_items[ $item->get_id() ]['quantity'] : 0;
-
-				// Reject negative or non-numeric quantities to prevent price manipulation.
-				if ( ! is_numeric( $quantity ) || (float) $quantity < 0 || ! is_finite( (float) $quantity ) ) {
-					throw new Exception( __( 'Please provide a valid quantity.', 'invoicing' ) );
-				}
-
-				$item->set_quantity( (float) $quantity );
+				$item->set_quantity( (float) $selected_items[ $item->get_id() ]['quantity'] );
 			}
 
 			// Maybe change the price.
 			if ( $item->user_can_set_their_price() ) {
-				$price = isset( $selected_items[ $item->get_id() ]['price'] ) ? $selected_items[ $item->get_id() ]['price'] : 0;
-				$price = (float) wpinv_sanitize_amount( $price );
+				$price = (float) wpinv_sanitize_amount( $selected_items[ $item->get_id() ]['price'] );
 
-				if ( $item->get_minimum_price() > $price || $price < 0 ) {
+				if ( $item->get_minimum_price() > $price ) {
 					throw new Exception( sprintf( __( 'The minimum allowed amount is %s', 'invoicing' ), getpaid_unstandardize_amount( $item->get_minimum_price() ) ) );
 				}
 
 				$item->set_price( $price );
+
 			}
 		}
 
@@ -146,6 +141,7 @@ class GetPaid_Payment_Form_Submission_Items {
 
 		// Save the item.
 		$this->items[] = apply_filters( 'getpaid_payment_form_submission_processed_item', $item, $submission );
+
 	}
 
 }

@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: GetPaid 2.8.61\n"
+"Project-Id-Version: GetPaid 2.8.62\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-30 12:07+0530\n"
-"PO-Revision-Date: 2026-09-30 12:07+0530\n"
+"POT-Creation-Date: 2026-10-16 17:38+0530\n"
+"PO-Revision-Date: 2026-10-16 17:38+0530\n"
 "Last-Translator: AyeCode Ltd\n"
 "Language-Team: AyeCode Ltd <contact@ayecode.io>\n"
 "Language: en_US\n"
@@ -1135,7 +1135,7 @@ msgid "Selected subscriptions updated to %s."
 msgstr ""
 
 #: includes/admin/class-wpinv-users.php:38
-#: includes/wpinv-helper-functions.php:746
+#: includes/wpinv-helper-functions.php:769
 msgid "Invoicing"
 msgstr ""
 
@@ -2001,7 +2001,6 @@ msgid "Select tax class"
 msgstr ""
 
 #: includes/admin/meta-boxes/class-getpaid-meta-box-payment-form.php:36
-#: templates/subscriptions/subscription-details.php:125
 msgid "Go Back"
 msgstr ""
 
@@ -2466,7 +2465,7 @@ msgstr ""
 msgid "End Date"
 msgstr ""
 
-#: includes/admin/subscriptions.php:362 includes/invoice-functions.php:1236
+#: includes/admin/subscriptions.php:362 includes/invoice-functions.php:1244
 msgid "Renews On"
 msgstr ""
 
@@ -3364,32 +3363,32 @@ msgstr ""
 msgid "is"
 msgstr ""
 
-#: includes/class-getpaid-invoice-notification-emails.php:198
+#: includes/class-getpaid-invoice-notification-emails.php:196
 #: includes/class-getpaid-subscription-notification-emails.php:192
 msgid " - ADMIN BCC COPY"
 msgstr ""
 
-#: includes/class-getpaid-invoice-notification-emails.php:208
+#: includes/class-getpaid-invoice-notification-emails.php:206
 #: includes/class-getpaid-subscription-notification-emails.php:201
 #, php-format
 msgid "Successfully sent %1$s notification email to %2$s."
 msgstr ""
 
-#: includes/class-getpaid-invoice-notification-emails.php:210
-#: includes/class-getpaid-invoice-notification-emails.php:219
+#: includes/class-getpaid-invoice-notification-emails.php:208
+#: includes/class-getpaid-invoice-notification-emails.php:217
 #: includes/class-getpaid-subscription-notification-emails.php:203
 #: includes/class-getpaid-subscription-notification-emails.php:211
 msgid "admin"
 msgstr ""
 
-#: includes/class-getpaid-invoice-notification-emails.php:210
-#: includes/class-getpaid-invoice-notification-emails.php:219
+#: includes/class-getpaid-invoice-notification-emails.php:208
+#: includes/class-getpaid-invoice-notification-emails.php:217
 #: includes/class-getpaid-subscription-notification-emails.php:203
 #: includes/class-getpaid-subscription-notification-emails.php:211
 msgid "the customer"
 msgstr ""
 
-#: includes/class-getpaid-invoice-notification-emails.php:217
+#: includes/class-getpaid-invoice-notification-emails.php:215
 #: includes/class-getpaid-subscription-notification-emails.php:209
 #, php-format
 msgid "Failed sending %1$s notification email to %2$s."
@@ -14287,60 +14286,60 @@ msgstr ""
 msgid "There was an error connecting to the PayPal API endpoint."
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:166
-#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:167
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:255
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:256
 #, php-format
 msgid "Validation error: PayPal currencies do not match (code %s)."
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:185
-#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:186
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:274
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:275
 #, php-format
 msgid "Validation error: PayPal amounts do not match (gross %s)."
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:207
-#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:208
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:296
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:297
 #, php-format
 msgid ""
 "Validation error: PayPal IPN response from a different email address (%s). "
 "Your PayPal email is %s."
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:237
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:326
 msgid "Processing invoice IPN"
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:263
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:352
 #, php-format
 msgid "PayPal Transaction Fee %s."
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:267
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:356
 #, php-format
 msgid "Buyer status %s."
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:279
-#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:280
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:368
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:369
 #, php-format
 msgid "Payment pending (%s)."
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:286
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:375
 #, php-format
 msgid "Payment %s via IPN."
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:333
-#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:378
-#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:403
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:422
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:467
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:492
 #, php-format
 msgid "PayPal Transaction ID: %s"
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:340
-#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:404
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:429
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:493
 #, php-format
 msgid "PayPal Subscription ID: %s"
 msgstr ""
@@ -14727,57 +14726,57 @@ msgstr ""
 msgid "Transaction ID"
 msgstr ""
 
-#: includes/invoice-functions.php:1222
+#: includes/invoice-functions.php:1230
 #, php-format
 msgid "Parent %s"
 msgstr ""
 
-#: includes/invoice-functions.php:1241
+#: includes/invoice-functions.php:1249
 msgid "(View Subscription)"
 msgstr ""
 
-#: includes/invoice-functions.php:1249
+#: includes/invoice-functions.php:1257
 msgid "Recurring Amount"
 msgstr ""
 
-#: includes/invoice-functions.php:1258
+#: includes/invoice-functions.php:1266
 msgid "Total Amount"
 msgstr ""
 
-#: includes/payments/class-getpaid-checkout.php:75
+#: includes/payments/class-getpaid-checkout.php:73
 msgid "Provide a valid billing email."
 msgstr ""
 
-#: includes/payments/class-getpaid-checkout.php:80
+#: includes/payments/class-getpaid-checkout.php:78
 msgid "The selected payment gateway does not support subscription payments."
 msgstr ""
 
-#: includes/payments/class-getpaid-checkout.php:85
+#: includes/payments/class-getpaid-checkout.php:83
 msgid "The selected payment gateway is not active"
 msgstr ""
 
-#: includes/payments/class-getpaid-checkout.php:112
+#: includes/payments/class-getpaid-checkout.php:109
 msgid "Please provide at least one item or amount."
 msgstr ""
 
-#: includes/payments/class-getpaid-checkout.php:136
+#: includes/payments/class-getpaid-checkout.php:133
 msgid "This invoice has already been paid for."
 msgstr ""
 
-#: includes/payments/class-getpaid-checkout.php:257
-#: includes/payments/class-getpaid-checkout.php:264
+#: includes/payments/class-getpaid-checkout.php:249
+#: includes/payments/class-getpaid-checkout.php:256
 msgid "Please fill all required fields."
 msgstr ""
 
-#: includes/payments/class-getpaid-checkout.php:275
+#: includes/payments/class-getpaid-checkout.php:270
 msgid "Maximum number of allowed files exceeded."
 msgstr ""
 
-#: includes/payments/class-getpaid-checkout.php:392
+#: includes/payments/class-getpaid-checkout.php:414
 msgid "An error occured while saving your invoice. Please try again."
 msgstr ""
 
-#: includes/payments/class-getpaid-checkout.php:481
+#: includes/payments/class-getpaid-checkout.php:500
 msgid "This is a free invoice and won't be sent to the payment gateway"
 msgstr ""
 
@@ -15313,45 +15312,45 @@ msgstr ""
 msgid "This tab has no content or content callback."
 msgstr ""
 
-#: includes/user-functions.php:294
+#: includes/user-functions.php:303
 msgid "Your must be logged in to view this section"
 msgstr ""
 
-#: includes/user-functions.php:378
+#: includes/user-functions.php:387
 msgid "Other email addresses"
 msgstr ""
 
-#: includes/user-functions.php:383
+#: includes/user-functions.php:392
 msgid ""
 "Optionally provide other email addresses where we should send payment "
 "notifications"
 msgstr ""
 
-#: includes/user-functions.php:394
+#: includes/user-functions.php:403
 msgid "Save Address"
 msgstr ""
 
-#: includes/user-functions.php:395
+#: includes/user-functions.php:404
 msgid "New invoices will use this address as the billing address."
 msgstr ""
 
-#: includes/user-functions.php:609 includes/user-functions.php:614
+#: includes/user-functions.php:618 includes/user-functions.php:623
 msgid "UsersWP"
 msgstr ""
 
-#: includes/user-functions.php:620 includes/user-functions.php:699
+#: includes/user-functions.php:629 includes/user-functions.php:738
 msgid "Enable Integration"
 msgstr ""
 
-#: includes/user-functions.php:621
+#: includes/user-functions.php:630
 msgid "Display GetPaid items on UsersWP account page."
 msgstr ""
 
-#: includes/user-functions.php:688 includes/user-functions.php:693
+#: includes/user-functions.php:727 includes/user-functions.php:732
 msgid "BuddyPress"
 msgstr ""
 
-#: includes/user-functions.php:700
+#: includes/user-functions.php:739
 msgid "Display GetPaid items on BuddyPress account pages."
 msgstr ""
 
@@ -16719,6 +16718,10 @@ msgstr ""
 
 #: templates/subscriptions/subscription-details.php:120
 msgid "Cancel Subscription"
+msgstr ""
+
+#: templates/subscriptions/subscription-details.php:125
+msgid "Back to Subscriptions"
 msgstr ""
 
 #: templates/subscriptions/subscriptions-table-body.php:34

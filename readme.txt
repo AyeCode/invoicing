@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoicing, Paypal, Stripe, payment
 Requires at least: 6.0
 Tested up to: 7.1
-Stable tag: 2.8.61
+Stable tag: 2.8.62
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -146,14 +146,10 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
-= 2.8.62 - 2026-10-TBD =
-* REST API and invoice shortcode/block now check permissions; added sanitization and escaping - SECURITY
-* Payment forms validate the item parameter, quantities, amounts and form ID - FIXED
-* PayPal IPN now validates the amount and currency - CHANGED
-* Fixed add-on gateway webhooks, redirects and gateway lists, and overlay checkout form detection - FIXED
-* Invoices no longer lose their invoice number title when saved again - FIXED
-* Renewal refunds no longer cancel the subscription; anonymization log filters by month - FIXED
+= 2.8.62 - 2026-10-16 =
 * PayPal simultaneous subscr_signup and subscr_payment IPNs send the invoice paid email multiple times - FIXED
+* Fixed stored XSS via payment form field data - SECURITY
+* Update AUI 0.2.57 - CHANGED
 
 = 2.8.61 - 2026-09-30 =
 * Update AUI 0.2.56 and SD 1.2.37 - CHANGED
