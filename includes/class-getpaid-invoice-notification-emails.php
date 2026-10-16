@@ -129,7 +129,7 @@ class GetPaid_Invoice_Notification_Emails {
 			'{full_name}'            => sanitize_text_field( $invoice->get_user_full_name() ),
 			'{first_name}'           => sanitize_text_field( $invoice->get_first_name() ),
 			'{last_name}'            => sanitize_text_field( $invoice->get_last_name() ),
-			'{email}'                => sanitize_email( $invoice->get_email() ),
+			'{email}'                => sanitize_email( (string) $invoice->get_email() ),
 			'{invoice_number}'       => sanitize_text_field( $invoice->get_number() ),
 			'{invoice_currency}'     => sanitize_text_field( $invoice->get_currency() ),
 			'{invoice_total}'        => sanitize_text_field( wpinv_price( $invoice->get_total(), $invoice->get_currency() ) ),
@@ -148,14 +148,12 @@ class GetPaid_Invoice_Notification_Emails {
 		$payment_form_data = $invoice->get_meta( 'payment_form_data', true );
 
 		if ( is_array( $payment_form_data ) ) {
-
 			foreach ( $payment_form_data as $label => $value ) {
-
 				$label = preg_replace( '/[^a-z0-9]+/', '_', strtolower( $label ) );
-				$value = is_array( $value ) ? implode( ', ', $value ) : $value;
+				$value = is_array( $value ) ? implode( ', ', array_filter( $value, 'is_scalar' ) ) : $value;
 
 				if ( is_scalar( $value ) ) {
-					$merge_tags[ "{{$label}}" ] = wp_kses_post( $value );
+					$merge_tags[ "{{$label}}" ] = wp_kses_post( getpaid_remove_unsafe_attrs( (string) $value ) );
 				}
 			}
 		}

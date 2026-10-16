@@ -737,6 +737,29 @@ function wpi_sanitize_tooltip( $var ) {
 }
 
 /**
+ * Sanitizes the "item" parameter of an embedded payment form.
+ *
+ * The value must use the "item_id|quantity,item_id|quantity" format. It is parsed
+ * and rebuilt from the parsed values, so the result only contains item IDs, quantities,
+ * "|" and "," and can safely be placed inside a shortcode attribute.
+ *
+ * @since 2.8.62
+ *
+ * @param mixed $item The raw item parameter, e.g. $_GET['item'].
+ * @return string The sanitized items string, or an empty string if invalid.
+ */
+function geodir_sanitize_embed_item( $item ) {
+	// Only accept a non-empty string (rejects arrays such as item[]=1).
+	if ( ! is_string( $item ) || '' === trim( $item ) ) {
+		return '';
+	}
+
+	$items = getpaid_convert_items_to_array( urldecode( wp_unslash( $item ) ) );
+
+	return getpaid_convert_items_to_string( $items );
+}
+
+/**
  * Get all WPI screen ids.
  *
  * @return array
@@ -1186,4 +1209,337 @@ function getpaid_strtoupper( $string, $charset = 'UTF-8' ) {
 	} else {
 		return strtoupper( $string );
 	}
+}
+
+/**
+ * Get the enclosure character used to read and write CSV files.
+ *
+ * @since 2.8.62
+ *
+ * @return string Enclosure character.
+ */
+function getpaid_get_csv_enclose() {
+	/**
+	 * Filters the CSV enclosure character used by import/export.
+	 *
+	 * @since 2.8.62
+	 *
+	 * @param string $enclosure Enclosure character. Default '"'.
+	 */
+	$enclosure = apply_filters( 'getpaid_get_csv_enclose', '"' );
+
+	// fgetcsv()/fputcsv() require exactly one character, and it can't be the delimiter.
+	if ( ! is_string( $enclosure ) || strlen( $enclosure ) !== 1 || $enclosure === ',' ) {
+		$enclosure = '"';
+	}
+
+	return $enclosure;
+}
+
+/**
+ * Get the escape character used to read and write CSV files.
+ *
+ * @since 2.8.62
+ *
+ * @return string Escape character.
+ */
+function getpaid_get_csv_escape() {
+	/**
+	 * Filters the CSV escape character used by import/export.
+	 *
+	 * @since 2.8.62
+	 *
+	 * @param string $escape Escape character. Default '\\'. An empty string disables escaping (PHP 7.4+ only).
+	 */
+	$escape = apply_filters( 'getpaid_get_csv_escape', '\\' );
+
+	// fgetcsv()/fputcsv() accept a single character, or an empty string only on PHP 7.4+.
+	if ( ! is_string( $escape ) || strlen( $escape ) > 1 || $escape === ',' || ( $escape === '' && version_compare( PHP_VERSION, '7.4.0', '<' ) ) ) {
+		$escape = '\\';
+	}
+
+	return $escape;
+}
+
+/**
+ * Escapes a value before it is written to a CSV file.
+ *
+ * Prevents spreadsheet applications from evaluating cell values that start
+ * with a formula character (CSV/formula injection).
+ *
+ * @since 2.8.62
+ *
+ * @param mixed $value The value to escape.
+ * @return mixed
+ */
+function getpaid_escape_csv_value( $value ) {
+	if ( ! is_string( $value ) || '' === $value || is_numeric( $value ) ) {
+		return $value;
+	}
+
+	if ( in_array( $value[0], array( '=', '+', '-', '@', "\t", "\r" ), true ) ) {
+		return "'" . $value;
+	}
+
+	return $value;
+}
+
+/**
+ * Strip event-handler attributes (onerror, onclick, ...), dangerous URL
+ * schemes in href/src, and a blacklist of dangerous tags from $content,
+ * IN PLACE, without touching anything else in the string.
+ *
+ * @since 2.8.62
+ *
+ * @param string $content Content to strip.
+ *
+ * @return string Content with dangerous constructs removed.
+ */
+function getpaid_esc_unsafe_attrs_strip( $content ) {
+	// An unquoted attribute value / tag body ends at whitespace, a literal
+	// '>', or an entity-encoded '>' (&gt; or its numeric forms) -- matching
+	// only a literal '>' would let content past an entity-encoded '&gt;'
+	// (which has no literal '>' anywhere) get swallowed into the match.
+	$gt = '&gt;|&#0*62;?|&#[xX]0*3[eE];?';
+
+	// Event-handler attributes, quoted or unquoted.
+	$content = preg_replace( '/[\s\/"\']+on[a-z0-9]+\s*=\s*(?:"[^"]*"|\'[^\']*\'|(?:(?!' . $gt . '|>|\s).)*)/i', '', $content );
+
+	// javascript:/data:/vbscript: URLs in href/src, quoted or unquoted.
+	$content = preg_replace( '/\b(href|src)(\s*=\s*)(["\']?)\s*(?:javascript|data|vbscript)\s*:(?:(?!' . $gt . '|>|["\'\s]).)*/i', '$1$2$3', $content );
+
+	// Dangerous tags outright, raw or entity-encoded, opening or closing.
+	// Delimiter is '~' (not '#') because the $gt alternation contains literal '#' characters.
+	$dangerous_tags = array( 'script', 'style', 'iframe', 'object', 'embed', 'svg', 'math', 'link', 'meta', 'base', 'form', 'video', 'audio', 'source', 'template', 'noscript', 'applet', 'frame', 'frameset' );
+	foreach ( $dangerous_tags as $tag ) {
+		$content = preg_replace( '~(?:<|&lt;)\s*/?\s*' . $tag . '\b(?:(?!' . $gt . '|>).)*(?:>|' . $gt . ')~i', '', $content );
+	}
+
+	return $content;
+}
+
+/**
+ * Remove JS-executing attributes/tags from $content while leaving the rest
+ * of the string exactly as given — including its original entity-encoding
+ * (raw "<img>" stays raw, "&lt;img&gt;" stays "&lt;img&gt;"). Only the
+ * dangerous parts (onerror=, javascript: URLs, <script> etc.) are removed.
+ *
+ * @since 2.8.62
+ *
+ * @param string $content The (possibly HTML-entity-encoded) content to sanitize.
+ * @param array  $args    Optional context passed to the allowed_html/protocols filters (fallback path only).
+ *
+ * @return string Sanitized content, same encoding as input unless the fallback path is used.
+ */
+function getpaid_esc_unsafe_attrs( $content, $args = array() ) {
+	$content = is_scalar( $content ) ? (string) $content : '';
+
+	if ( '' === trim( $content ) ) {
+		return $content;
+	}
+
+	// Skip the escaping when not required.
+	if ( strpos( $content, '<' ) === false && strpos( $content, '&' ) === false ) {
+		return $content;
+	}
+
+	$orig_content = $content;
+	$cleaned      = getpaid_esc_unsafe_attrs_strip( $content );
+
+	// Decode the cleaned string to a fixed point and re-check it: if anything
+	// dangerous is still hiding there, it was nested behind extra encoding
+	// layers that the direct pass above couldn't see as plain text.
+	$decoded = $cleaned;
+
+	if ( false !== strpos( $decoded, '&' ) ) {
+		for ( $i = 0; $i < 10; $i++ ) {
+			$next = html_entity_decode( $decoded, ENT_QUOTES, 'UTF-8' );
+			if ( $next === $decoded ) {
+				break;
+			}
+			$decoded = $next;
+		}
+	}
+
+	if ( getpaid_esc_unsafe_attrs_strip( $decoded ) !== $decoded ) {
+		if ( is_array( $args ) && ! empty( $args['allowed_html'] ) && is_array( $args['allowed_html'] ) ) {
+			$allowed_html = $args['allowed_html'];
+		} else {
+			$allowed_html = getpaid_allowed_html();
+		}
+
+		/**
+		 * Filter the allowed HTML for getpaid_esc_unsafe_attrs() fallback path.
+		 *
+		 * @param array  $allowed_html Allowed tags/attributes for wp_kses().
+		 * @param string $decoded      Fully decoded content about to be sanitized.
+		 * @param string $content      Original content before any processing.
+		 * @param array  $args         Optional context.
+		 */
+		$allowed_html = apply_filters( 'getpaid_esc_unsafe_attrs_allowed_html', $allowed_html, $decoded, $content, $args, $orig_content );
+
+		$allowed_protocols = apply_filters(
+			'getpaid_esc_unsafe_attrs_allowed_protocols',
+			array( 'http', 'https', 'mailto', 'tel' ),
+			$args
+		);
+
+		$safe = wp_kses( getpaid_esc_unsafe_attrs_strip( $decoded ), $allowed_html, $allowed_protocols );
+
+		return esc_attr( $safe );
+	}
+
+	// kses-free path cannot ADD attributes, so enforce noopener on
+	// target=_blank links (raw or entity-encoded) to prevent reverse tabnabbing.
+	$cleaned = preg_replace_callback(
+		'#(?:<|&lt;)\s*a\b[^>]*\btarget\s*=\s*(["\'])_blank\1[^>]*(?:>|&gt;)#i',
+		function ( $m ) {
+			if ( false !== stripos( $m[0], 'rel=' ) ) {
+				return $m[0];
+			}
+			return preg_replace( '#(<|&lt;)\s*a\b#i', '$1a rel="noopener noreferrer"', $m[0], 1 );
+		},
+		$cleaned
+	);
+
+	return $cleaned;
+}
+
+/**
+ * Returns the attributes to remove from HTML tags.
+ *
+ * @since 2.8.62
+ *
+ * @param array  $attributes Attributes to add to or override the defaults.
+ * @param string $context    Where the HTML is used, e.g. 'payment_form_data'.
+ * @return array
+ */
+function getpaid_get_unsafe_html_attrs( $attributes = array(), $context = '' ) {
+	$defaults = array(
+		'data-embed-url'  => null,
+		'data-src'        => null,
+		'data-embed'      => null,
+		'data-bs-toggle'  => array( 'popover-html' ),
+		'data-bs-content' => null
+	);
+
+	$attributes = array_merge( $defaults, is_array( $attributes ) ? $attributes : array() );
+
+	/**
+	 * Filters the attributes removed from HTML tags.
+ *
+ * @since 2.8.62
+ *
+	 * @param array  $attributes Attribute name => null (any value), values array or false (keep).
+	 * @param string $context    Where the HTML is used.
+	 */
+	$attributes = apply_filters( 'getpaid_get_unsafe_html_attrs', $attributes, $context );
+
+	$prepared = array();
+
+	foreach ( (array) $attributes as $name => $values ) {
+		$name = strtolower( trim( (string) $name ) );
+
+		if ( '' === $name || false === $values ) {
+			continue;
+		}
+
+		if ( null !== $values ) {
+			$values = array_map( 'strtolower', array_map( 'trim', array_filter( (array) $values, 'is_scalar' ) ) );
+		}
+
+		$prepared[ $name ] = $values;
+	}
+
+	return $prepared;
+}
+
+/**
+ * Removes unsafe attributes from HTML tags.
+ *
+ * @since 2.8.62
+ *
+ * @param string $html       The HTML to clean.
+ * @param array  $attributes Attributes to add to or override the defaults.
+ * @param string $context    Where the HTML is used, passed to the filter.
+ * @return string
+ */
+function getpaid_remove_unsafe_attrs( $html, $attributes = array(), $context = '' ) {
+	if ( ! is_string( $html ) || '' === $html ) {
+		return $html;
+	}
+
+	$attributes = getpaid_get_unsafe_html_attrs( $attributes, $context );
+
+	if ( empty( $attributes ) ) {
+		return $html;
+	}
+
+	// WP_HTML_Tag_Processor is available since WP 6.2.
+	if ( ! class_exists( 'WP_HTML_Tag_Processor' ) ) {
+		return getpaid_remove_unsafe_attrs_regex( $html, $attributes );
+	}
+
+	$processor = new WP_HTML_Tag_Processor( $html );
+
+	while ( $processor->next_tag() ) {
+		foreach ( $attributes as $name => $values ) {
+			$value = $processor->get_attribute( $name );
+
+			if ( null === $value ) {
+				continue;
+			}
+
+			// get_attribute() returns the decoded value, or true for an attribute without a value.
+			if ( null === $values || ( is_string( $value ) && in_array( strtolower( trim( $value ) ), $values, true ) ) ) {
+				$processor->remove_attribute( $name );
+			}
+		}
+	}
+
+	return $processor->get_updated_html();
+}
+
+/**
+ * Removes attributes from HTML tags on sites without WP_HTML_Tag_Processor.
+ *
+ * @since 2.8.62
+ *
+ * @param string $html       The HTML to clean.
+ * @param array  $attributes Prepared attributes from getpaid_get_unsafe_html_attrs().
+ * @return string
+ */
+function getpaid_remove_unsafe_attrs_regex( $html, $attributes ) {
+	if ( false === strpos( $html, '<' ) ) {
+		return $html;
+	}
+
+	$attr_regex = '/(\s+)([^\s"\'>\/=]+)(?:\s*=\s*("[^"]*"|\'[^\']*\'|[^\s"\'>]+))?/';
+
+	return preg_replace_callback(
+		'/<[a-zA-Z][^\s>\/]*(?:\s+[^\s"\'>\/=]+(?:\s*=\s*(?:"[^"]*"|\'[^\']*\'|[^\s"\'>]+))?)*\s*\/?>/',
+		function ( $tag ) use ( $attributes, $attr_regex ) {
+			return preg_replace_callback(
+				$attr_regex,
+				function ( $attr ) use ( $attributes ) {
+					$name = strtolower( $attr[2] );
+
+					if ( ! array_key_exists( $name, $attributes ) ) {
+						return $attr[0];
+					}
+
+					if ( null === $attributes[ $name ] ) {
+						return '';
+					}
+
+					$value = isset( $attr[3] ) ? trim( $attr[3], '"\'' ) : '';
+					$value = strtolower( trim( html_entity_decode( $value, ENT_QUOTES ) ) );
+
+					return in_array( $value, $attributes[ $name ], true ) ? '' : $attr[0];
+				},
+				$tag[0]
+			);
+		},
+		$html
+	);
 }

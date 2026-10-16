@@ -46,7 +46,7 @@ function wpinv_user_can_view_invoice( $invoice ) {
     }
 
     // If users are not required to login to check out, compare the invoice keys.
-    if ( ! wpinv_require_login_to_checkout() && isset( $_GET['invoice_key'] ) && sanitize_text_field( $_GET['invoice_key'] ) == $invoice->get_key() ) {
+    if ( ! wpinv_require_login_to_checkout() && ! empty( $_GET['invoice_key'] ) && is_string( $_GET['invoice_key'] ) && '' !== (string) $invoice->get_key() && hash_equals( (string) $invoice->get_key(), sanitize_text_field( wp_unslash( $_GET['invoice_key'] ) ) ) ) {
         return true;
     }
 
@@ -1186,8 +1186,16 @@ function getpaid_get_invoice_meta( $invoice ) {
 
 	$additional_meta = get_post_meta( $invoice->get_id(), 'additional_meta_data', true );
 
-	if ( ! empty( $additional_meta ) ) {
+	if ( ! empty( $additional_meta ) && is_array( $additional_meta ) ) {
 		foreach ( $additional_meta as $label => $value ) {
+			if ( is_array( $value ) ) {
+				$value = implode( ', ', array_filter( $value, 'is_scalar' ) );
+			}
+
+			if ( ! is_scalar( $value ) ) {
+				continue;
+			}
+
 			$meta[ sanitize_key( $label ) ] = array(
 				'label' => esc_html( $label ),
 				'value' => esc_html( $value ),
