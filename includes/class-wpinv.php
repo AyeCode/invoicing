@@ -120,6 +120,7 @@ class WPInv_Plugin {
 		// Init the plugin after WordPress inits.
 		add_action( 'init', array( $this, 'init' ), 1 );
 		add_action( 'init', array( $this, 'maybe_process_ipn' ), 100 );
+		add_action( 'init', array( $this, 'maybe_process_webhook' ), 100 );
 		add_action( 'init', array( $this, 'wpinv_actions' ) );
 		add_action( 'init', array( $this, 'maybe_do_authenticated_action' ), 100 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ), 11 );
@@ -356,6 +357,30 @@ class WPInv_Plugin {
 
 		do_action( 'wpinv_verify_payment_ipn', $gateway );
 		do_action( "wpinv_verify_{$gateway}_ipn" );
+		exit;
+	}
+
+	/**
+	 * Hands a POST to a gateway's webhook URL (index.php?wpi-gateway=<id>) to that gateway.
+	 */
+	public function maybe_process_webhook() {
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
+		if ( empty( $_GET['wpi-gateway'] ) || isset( $_GET['wpi-listener'] ) || isset( $_GET['invoice_key'] ) ) {
+			return;
+		}
+
+		if ( ! isset( $_SERVER['REQUEST_METHOD'] ) || 'POST' !== $_SERVER['REQUEST_METHOD'] ) {
+			return;
+		}
+
+		$gateway = sanitize_key( wp_unslash( $_GET['wpi-gateway'] ) );
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
+
+		if ( ! has_action( "getpaid_authenticated_webhook_{$gateway}" ) ) {
+			return;
+		}
+
+		do_action( "getpaid_authenticated_webhook_{$gateway}" );
 		exit;
 	}
 

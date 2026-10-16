@@ -160,6 +160,7 @@ class GetPaid_Anonymization_Logs {
      *
      * @param int $page Current page number
      * @param int $per_page Number of logs per page
+	 * @param string $month Optional month to filter by, as YYYYMM.
      * @return array
      */
     private function get_logs( $page, $per_page, $month = '' ) {
@@ -188,6 +189,7 @@ class GetPaid_Anonymization_Logs {
     /**
      * Get total number of logs
      *
+	 * @param string $month Optional month to filter by, as YYYYMM.
      * @return int
      */
     private function get_total_logs( $month = '' ) {
@@ -217,7 +219,7 @@ class GetPaid_Anonymization_Logs {
                 DATE_FORMAT(timestamp, '%M') AS month_name,
                 DATE_FORMAT(timestamp, '%Y%m') AS log_year_month
             FROM $table_name
-            ORDER BY year DESC, month_num DESC"
+            ORDER BY `year` DESC, `month_num` DESC"
         );
     }
 }

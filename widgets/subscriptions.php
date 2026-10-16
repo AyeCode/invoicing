@@ -288,7 +288,7 @@ class WPInv_Subscriptions_Widget extends WP_Super_Duper {
 				'start_date'       => __( 'Start date', 'invoicing' ),
 				'expiry_date'      => __( 'Next payment', 'invoicing' ),
 				'payments'         => __( 'Payments', 'invoicing' ),
-				'item'             => $items_count > 1 ? __( 'Items', $items_count, 'invoicing' ) : __( 'Item', 'invoicing' )
+				'item'             => $items_count > 1 ? __( 'Items', 'invoicing' ) : __( 'Item', 'invoicing' )
 			),
 			$subscription,
 			$items_count

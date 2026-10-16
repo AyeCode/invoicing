@@ -178,7 +178,6 @@ class GetPaid_Admin {
             'status_publish'            => wpinv_status_nicename( 'publish' ),
             'status_pending'            => wpinv_status_nicename( 'wpi-pending' ),
             'delete_tax_rate'           => __( 'Are you sure you wish to delete this tax rate?', 'invoicing' ),
-            'status_pending'            => wpinv_status_nicename( 'wpi-pending' ),
             'FillBillingDetails'        => __( 'Fill the user\'s billing information? This will remove any currently entered billing information', 'invoicing' ),
             'confirmCalcTotals'         => __( 'Recalculate totals? This will recalculate totals based on the user billing country. If no billing country is set it will use the base country.', 'invoicing' ),
             'AreYouSure'                => __( 'Are you sure?', 'invoicing' ),

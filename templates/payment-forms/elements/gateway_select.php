@@ -17,6 +17,9 @@ if ( empty( $text ) ) {
 // An array of active payment methods.
 $gateways = wpinv_get_enabled_payment_gateways( true );
 
+// Make it possible to filter active gateways.
+$gateways = apply_filters( 'getpaid_payment_form_gateways', $gateways, $form );
+
 // The current invoice id.
 $invoice_id     = 0;
 $chosen_gateway = wpinv_get_default_gateway();
