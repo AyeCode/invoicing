@@ -27,6 +27,13 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 	protected $gateway;
 
 	/**
+	 * Name of the database lock held while processing the IPN.
+	 *
+	 * @var string
+	 */
+	protected $lock_name = '';
+
+	/**
 	 * Class constructor.
 	 *
 	 * @param GetPaid_Paypal_Gateway $gateway
@@ -42,7 +49,6 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 	 * @return void
 	 */
 	public function verify_ipn() {
-
 		wpinv_error_log( 'GetPaid PayPal IPN Handler', false );
 
 		// Validate the IPN.
@@ -54,9 +60,17 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 		$posted  = wp_unslash( $_POST );
 		$invoice = $this->get_ipn_invoice( $posted );
 
+		// PayPal may send several IPNs (e.g. subscr_signup and subscr_payment) at the same time.
+		// Process them one at a time to prevent the invoice from being marked as paid twice.
+		$this->acquire_invoice_lock( $invoice->get_id() );
+
+		// Reload the invoice in case another IPN updated it while we were waiting.
+		$invoice = $this->refresh_ipn_invoice( $invoice->get_id(), $posted );
+
 		// Abort if it was not paid by our gateway.
 		if ( $this->id != $invoice->get_gateway() ) {
 			wpinv_error_log( 'Aborting, Invoice was not paid via PayPal', false );
+			$this->release_invoice_lock();
 			wp_die( 'Invoice not paid via PayPal', 200 );
 		}
 
@@ -69,12 +83,89 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 		if ( method_exists( $this, 'ipn_txn_' . $posted['txn_type'] ) ) {
 			call_user_func( array( $this, 'ipn_txn_' . $posted['txn_type'] ), $invoice, $posted );
 			wpinv_error_log( 'Done processing IPN', false );
+			$this->release_invoice_lock();
 			wp_die( 'Processed', 200 );
 		}
 
 		wpinv_error_log( 'Aborting, Unsupported IPN type:' . $posted['txn_type'], false );
+		$this->release_invoice_lock();
 		wp_die( 'Unsupported IPN type', 200 );
+	}
 
+	/**
+	 * Acquires a database lock for the invoice being processed.
+	 *
+	 * Ensures that simultaneous IPNs for the same invoice are processed one after the other.
+	 *
+	 * @since 2.8.62
+	 *
+	 * @param int $invoice_id Invoice ID.
+	 * @return void
+	 */
+	protected function acquire_invoice_lock( $invoice_id ) {
+		global $wpdb;
+
+		$lock_name = 'getpaid_paypal_ipn_' . md5( DB_NAME . $wpdb->prefix . absint( $invoice_id ) );
+
+		/**
+		 * Filters the number of seconds to wait for another IPN of the same invoice to finish processing.
+		 *
+		 * @since 2.8.62
+		 *
+		 * @param int $timeout    Lock timeout in seconds.
+		 * @param int $invoice_id Invoice ID.
+		 */
+		$timeout = absint( apply_filters( 'getpaid_paypal_ipn_lock_timeout', 20, $invoice_id ) );
+		$locked  = $wpdb->get_var( $wpdb->prepare( 'SELECT GET_LOCK( %s, %d )', $lock_name, $timeout ) );
+
+		if ( '1' === (string) $locked ) {
+			$this->lock_name = $lock_name;
+			return;
+		}
+
+		// Timed out waiting for the other IPN, ask PayPal to resend this one later.
+		if ( '0' === (string) $locked ) {
+			wpinv_error_log( 'Aborting, Another IPN for the invoice ' . $invoice_id . ' is being processed', false );
+			wp_die( 'Another IPN for this invoice is being processed', 503 );
+		}
+
+		// Locks are not supported by the database, process without a lock.
+		wpinv_error_log( 'Could not acquire the IPN lock for the invoice ' . $invoice_id, false );
+	}
+
+	/**
+	 * Releases the invoice database lock.
+	 *
+	 * @since 2.8.62
+	 *
+	 * @return void
+	 */
+	protected function release_invoice_lock() {
+		global $wpdb;
+
+		if ( empty( $this->lock_name ) ) {
+			return;
+		}
+
+		$wpdb->query( $wpdb->prepare( 'SELECT RELEASE_LOCK( %s )', $this->lock_name ) );
+		$this->lock_name = '';
+	}
+
+	/**
+	 * Clears the invoice caches and reloads the IPN invoice from the database.
+	 *
+	 * @since 2.8.62
+	 *
+	 * @param int   $invoice_id Invoice ID.
+	 * @param array $posted     Posted data.
+	 * @return WPInv_Invoice
+	 */
+	protected function refresh_ipn_invoice( $invoice_id, $posted ) {
+		clean_post_cache( $invoice_id );
+		wp_cache_delete( $invoice_id, 'getpaid_invoice_special_fields' );
+		wp_cache_delete( $invoice_id, 'getpaid_invoice_cart_details' );
+
+		return $this->get_ipn_invoice( $posted );
 	}
 
 	/**
@@ -84,7 +175,6 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 	 * @return WPInv_Invoice
 	 */
 	protected function get_ipn_invoice( $posted ) {
-
 		wpinv_error_log( 'Retrieving PayPal IPN Response Invoice', false );
 
 		if ( ! empty( $posted['custom'] ) ) {
@@ -104,7 +194,6 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 	 * Check PayPal IPN validity.
 	 */
 	protected function validate_ipn() {
-
 		wpinv_error_log( 'Validating PayPal IPN response', false );
 
 		// Retrieve the associated invoice.
@@ -149,7 +238,6 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 		$invoice->add_note( 'Received invalid response from PayPal IPN: ' . $response['body'], false, false, true );
 		wpinv_error_log( $response['body'], 'Received invalid response from PayPal IPN' );
 		return false;
-
 	}
 
 	/**
@@ -161,7 +249,6 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 	 * @return string
 	 */
 	protected function get_ipn_business_email( $posted ) {
-
 		if ( isset( $posted['business'] ) && is_email( $posted['business'] ) ) {
 			return trim( $posted['business'] );
 		}
@@ -179,6 +266,7 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 		$currency = sanitize_text_field( (string) $currency );
 
 		if ( strtolower( $invoice->get_currency() ) !== strtolower( $currency ) ) {
+
 			/* translators: %s: currency code. */
 			$invoice->update_status( 'wpi-onhold', wp_sprintf( __( 'Validation error: PayPal currencies do not match (code %s).', 'invoicing' ), $currency ) );
 			$invoice->add_note( wp_sprintf( __( 'Validation error: PayPal currencies do not match (code %s).', 'invoicing' ), $currency ), false, false, true );
@@ -348,6 +436,7 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 		// Validate the IPN.
 		$business_email = $this->get_ipn_business_email( $posted );
 		$currency       = isset( $posted['mc_currency'] ) ? $posted['mc_currency'] : '';
+																   
 
 		if ( ! $this->validate_ipn_receiver_email( $invoice, $business_email ) || ! $this->validate_ipn_currency( $invoice, $currency ) ) {
 			return;
@@ -381,7 +470,6 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 	 * @param array    $posted Posted data.
 	 */
 	protected function ipn_txn_subscr_payment( $invoice, $posted ) {
-
 		// Make sure the invoice has a subscription.
 		$subscription = getpaid_subscriptions()->get_invoice_subscription( $invoice );
 
@@ -451,7 +539,6 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 
 		$subscription->renew();
 		wpinv_error_log( 'Subscription renewed.', false );
-
 	}
 
 	/**
@@ -460,7 +547,6 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 	 * @param WPInv_Invoice $invoice  Invoice object.
 	 */
 	protected function ipn_txn_subscr_cancel( $invoice ) {
-
 		// Make sure the invoice has a subscription.
 		$subscription = getpaid_subscriptions()->get_invoice_subscription( $invoice );
 
@@ -471,7 +557,6 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 		wpinv_error_log( 'Processing subscription cancellation for the invoice ' . $invoice->get_id(), false );
 		$subscription->cancel();
 		wpinv_error_log( 'Subscription cancelled.', false );
-
 	}
 
 	/**
@@ -481,7 +566,6 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 	 * @param array    $posted Posted data.
 	 */
 	protected function ipn_txn_subscr_eot( $invoice ) {
-
 		// Make sure the invoice has a subscription.
 		$subscription = getpaid_subscriptions()->get_invoice_subscription( $invoice );
 
@@ -492,7 +576,6 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 		wpinv_error_log( 'Processing subscription end of life for the invoice ' . $invoice->get_id(), false );
 		$subscription->complete();
 		wpinv_error_log( 'Subscription completed.', false );
-
 	}
 
 	/**
@@ -502,7 +585,6 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 	 * @param array    $posted Posted data.
 	 */
 	protected function ipn_txn_subscr_failed( $invoice ) {
-
 		// Make sure the invoice has a subscription.
 		$subscription = getpaid_subscriptions()->get_invoice_subscription( $invoice );
 
@@ -513,7 +595,6 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 		wpinv_error_log( 'Processing subscription payment failure for the invoice ' . $invoice->get_id(), false );
 		$subscription->failing();
 		wpinv_error_log( 'Subscription marked as failing.', false );
-
 	}
 
 	/**
@@ -523,7 +604,6 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 	 * @param array    $posted Posted data.
 	 */
 	protected function ipn_txn_recurring_payment_suspended_due_to_max_failed_payment( $invoice ) {
-
 		// Make sure the invoice has a subscription.
 		$subscription = getpaid_subscriptions()->get_invoice_subscription( $invoice );
 
@@ -535,5 +615,4 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 		$subscription->cancel();
 		wpinv_error_log( 'Subscription cancelled.', false );
 	}
-
 }
