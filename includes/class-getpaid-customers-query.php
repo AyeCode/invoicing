@@ -299,7 +299,10 @@ class GetPaid_Customers_Query {
 
 		foreach ( array_keys( GetPaid_Customer_Data_Store::get_database_fields() ) as $col ) {
 			if ( 'id' === $col || 'user_id' === $col ) {
-				$searches[] = $wpdb->prepare( "$col = %s", $string );  // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				// MySQL compares text with a number column as 0, which matched every guest customer (user_id 0).
+				if ( ctype_digit( $string ) ) {
+					$searches[] = $wpdb->prepare( "$col = %d", $string );  // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				}
 			} else {
 				$searches[] = $wpdb->prepare( "$col LIKE %s", $like );  // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			}
