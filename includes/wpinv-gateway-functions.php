@@ -412,6 +412,8 @@ function wpinv_gateway_support_subscription( $gateway ) {
 /**
  * Filters payment form gateways.
  *
+ * Not hooked: the payment form script already hides gateways the cart cannot use.
+ *
  * @param array $gateways an array of gateways.
  * @param GetPaid_Payment_Form $form payment form.
  */
@@ -429,4 +431,3 @@ function wpinv_payment_gateways_on_cart( $gateways, $form ) {
 
     return $gateways;
 }
-add_filter( 'getpaid_payment_form_gateways', 'wpinv_payment_gateways_on_cart', 10, 2 );

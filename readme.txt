@@ -146,6 +146,14 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
+= 2.8.63 - 2026-10-TBD =
+* REST API and invoice shortcode/block now check permissions; added sanitization and escaping - SECURITY
+* Payment forms validate the item parameter, quantities, amounts and form ID - FIXED
+* PayPal IPN now validates the amount and currency - CHANGED
+* Fixed add-on gateway webhooks, redirects and gateway lists, and overlay checkout form detection - FIXED
+* Invoices no longer lose their invoice number title when saved again - FIXED
+* Renewal refunds no longer cancel the subscription; anonymization log filters by month - FIXED
+
 = 2.8.62 - 2026-10-16 =
 * PayPal simultaneous subscr_signup and subscr_payment IPNs send the invoice paid email multiple times - FIXED
 * Fixed stored XSS via payment form field data - SECURITY

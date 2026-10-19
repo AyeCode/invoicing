@@ -194,7 +194,7 @@ class WPInv_Session_Handler extends WPInv_Session {
 			return false;
 		}
 
-		list( $customer_id, $session_expiration, $session_expiring, $cookie_hash ) = explode( '||', $cookie_value );
+		list( $customer_id, $session_expiration, $session_expiring, $cookie_hash ) = array_pad( explode( '||', $cookie_value ), 4, '' );
 
 		if ( empty( $customer_id ) ) {
 			return false;

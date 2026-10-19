@@ -91,6 +91,11 @@ class WPInv_Subscriptions {
             return;
         }
 
+		// Refunding one renewal payment does not cancel the subscription.
+		if ( ! empty( $invoice ) && $invoice->is_renewal() && $invoice->has_status( 'wpi-refunded' ) ) {
+			return;
+		}
+
         $subscriptions = getpaid_get_invoice_subscriptions( $invoice );
 
         if ( empty( $subscriptions ) ) {
