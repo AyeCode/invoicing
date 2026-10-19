@@ -127,7 +127,7 @@ function wpinv_discount_filters() {
 				selected( $name, sanitize_text_field( $_GET['discount_type'] ) );
                 }
 
-			echo '>' . esc_html__( $type, 'invoicing' ) . '</option>';
+			echo '>' . esc_html( $type ) . '</option>';
             }
         ?>
     </select>

@@ -26,26 +26,20 @@ if ( empty( $_GET['form'] ) && empty( $_GET['item'] ) && empty( $_GET['invoice']
 
 // Payment form, invoice, or buy-item button?
 if ( ! empty( $_GET['form'] ) ) {
-
 	$shortcode = sprintf(
 		'[getpaid form=%s]',
 		(int) $_GET['form']
 	);
-
 } elseif ( ! empty( $_GET['invoice'] ) ) {
-
 	$shortcode = sprintf(
 		'[getpaid_invoice id=%s]',
 		(int) $_GET['invoice']
 	);
-
 } else {
-
 	$shortcode = sprintf(
 		'[getpaid item=%s]',
-		esc_attr( urldecode( $_GET['item'] ) )
+		esc_attr( geodir_sanitize_embed_item( $_GET['item'] ) )
 	);
-
 }
 
 // Keep embed URLs out of search indexes. The bare skeleton hard-codes a <meta robots>;

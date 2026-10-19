@@ -78,7 +78,7 @@ class GetPaid_REST_Posts_Controller extends GetPaid_REST_CRUD_Controller {
 
 		$cap              = $contexts[ $context ];
 		$post_type_object = get_post_type_object( $this->post_type );
-		$permission       = current_user_can( $post_type_object->cap->$cap, $object_id );
+		$permission       = wpinv_current_user_can_manage_invoicing() && current_user_can( $post_type_object->cap->$cap, $object_id );
 
 		return apply_filters( 'getpaid_rest_check_permissions', $permission, $context, $object_id, $this->post_type );
 	}

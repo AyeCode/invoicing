@@ -144,6 +144,9 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 
 			$invoice->maybe_set_number();
 
+			// Keep the title in step with the post, or the next save blanks it.
+			$invoice->set_title( $invoice->get_number( 'edit' ) );
+
 			wp_update_post(
 				array(
 					'ID'         => $invoice->get_id(),
@@ -240,7 +243,7 @@ class GetPaid_Invoice_Data_Store extends GetPaid_Data_Store_WP {
 		$changes = $invoice->get_changes();
 
 		// Only update the post when the post data changes.
-		if ( array_intersect( array( 'date_created', 'date_modified', 'status', 'name', 'author', 'description', 'parent_id', 'post_excerpt', 'path' ), array_keys( $changes ) ) ) {
+		if ( array_intersect( array( 'date_created', 'date_modified', 'status', 'name', 'title', 'author', 'description', 'parent_id', 'post_excerpt', 'path' ), array_keys( $changes ) ) ) {
 			$post_data = array(
 				'post_date'     => $invoice->get_date_created( 'edit' ),
 				'post_date_gmt' => $invoice->get_date_created_gmt( 'edit' ),

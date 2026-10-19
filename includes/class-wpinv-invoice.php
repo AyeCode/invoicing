@@ -2309,7 +2309,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 */
 	public function set_name( $value ) {
         $name = sanitize_text_field( $value );
-		$this->set_prop( 'name', $name );
+		$this->set_prop( 'title', $name );
     }
 
     /**
@@ -4113,28 +4113,25 @@ class WPInv_Invoice extends GetPaid_Data {
 
 		// Set the new status.
 		$gateway = sanitize_text_field( $this->get_gateway_title() );
-		if ( $this->is_renewal() || ! $this->is_parent() ) {
 
+		if ( $this->is_renewal() || ! $this->is_parent() ) {
 			$_note = wp_sprintf( __( 'Renewed via %s', 'invoicing' ), $gateway );
-			$_note = $_note . empty( $note ) ? '' : " ($note)";
+			$_note = $_note . ( empty( $note ) ? '' : " ($note)" );
 
 			if ( 'none' == $this->get_gateway() ) {
 				$_note = $note;
 			}
 
 			$this->set_status( 'wpi-renewal', $_note );
-
 		} else {
-
 			$_note = wp_sprintf( __( 'Paid via %s', 'invoicing' ), $gateway );
-			$_note = $_note . empty( $note ) ? '' : " ($note)";
+			$_note = $_note . ( empty( $note ) ? '' : " ($note)" );
 
 			if ( 'none' == $this->get_gateway() ) {
 				$_note = $note;
 			}
 
 			$this->set_status( 'publish', $_note );
-
 		}
 
 		// Set checkout mode.

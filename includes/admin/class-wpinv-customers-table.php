@@ -227,10 +227,15 @@ class WPInv_Customers_Table extends WP_List_Table {
 			'paged'  => $this->get_paged(),
 		);
 
-		foreach ( array( 'orderby', 'order', 's' ) as $field ) {
+		foreach ( array( 'orderby', 'order' ) as $field ) {
 			if ( isset( $_GET[ $field ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 				$query[ $field ] = wpinv_clean( rawurlencode_deep( $_GET[ $field ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 			}
+		}
+
+		// The search term as typed: URL-encoding it turned "@" into "%40", so no email address ever matched.
+		if ( isset( $_GET['s'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$query['s'] = sanitize_text_field( wp_unslash( $_GET['s'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		}
 
 		foreach ( GetPaid_Customer_Data_Store::get_database_fields() as $field => $type ) {

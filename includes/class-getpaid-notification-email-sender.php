@@ -172,9 +172,10 @@ class GetPaid_Notification_Email_Sender {
 	 *
 	 */
 	public function default_from_address() {
-
 		// Get the site domain and get rid of www.
-		$sitename = strtolower( $_SERVER['SERVER_NAME'] );
+		$sitename = wp_parse_url( network_home_url(), PHP_URL_HOST );
+		$sitename = strtolower( is_string( $sitename ) ? $sitename : '' );
+
 		if ( substr( $sitename, 0, 4 ) == 'www.' ) {
 			$sitename = substr( $sitename, 4 );
 		}
