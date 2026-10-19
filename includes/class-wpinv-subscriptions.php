@@ -91,10 +91,11 @@ class WPInv_Subscriptions {
             return;
         }
 
-		// Refunding one renewal payment does not cancel the subscription.
-		if ( ! empty( $invoice ) && $invoice->is_renewal() && $invoice->has_status( 'wpi-refunded' ) ) {
-			return;
-		}
+        // A refund does not stop the subscription at the gateway, so it does not cancel it here either. Cancelling is a
+        // separate choice: the "Cancel subscription" option when refunding, or the gateway's own cancellation notice.
+        if ( ! empty( $invoice ) && $invoice->has_status( 'wpi-refunded' ) && ! apply_filters( 'getpaid_cancel_subscription_on_refund', false, $invoice ) ) {
+            return;
+        }
 
         $subscriptions = getpaid_get_invoice_subscriptions( $invoice );
 
