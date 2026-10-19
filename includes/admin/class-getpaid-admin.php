@@ -178,7 +178,6 @@ class GetPaid_Admin {
             'status_publish'            => wpinv_status_nicename( 'publish' ),
             'status_pending'            => wpinv_status_nicename( 'wpi-pending' ),
             'delete_tax_rate'           => __( 'Are you sure you wish to delete this tax rate?', 'invoicing' ),
-            'status_pending'            => wpinv_status_nicename( 'wpi-pending' ),
             'FillBillingDetails'        => __( 'Fill the user\'s billing information? This will remove any currently entered billing information', 'invoicing' ),
             'confirmCalcTotals'         => __( 'Recalculate totals? This will recalculate totals based on the user billing country. If no billing country is set it will use the base country.', 'invoicing' ),
             'AreYouSure'                => __( 'Are you sure?', 'invoicing' ),
@@ -690,25 +689,25 @@ class GetPaid_Admin {
 		/** @var GetPaid_Customer[] $customers */
 		$customers = getpaid_get_customers( array( 'number' => -1 ) );
 		$columns   = array_keys( GetPaid_Customer_Data_Store::get_database_fields() );
+		$enclosure = getpaid_get_csv_enclose();
+		$escape    = getpaid_get_csv_escape();
 
 		// Output the csv column headers.
-		fputcsv( $output, $columns );
+		fputcsv( $output, $columns, ',', $enclosure, $escape );
 
 		// Loop through
 		foreach ( $customers as $customer ) {
-
-			$row  = array();
+			$row = array();
 
 			foreach ( $columns as $column ) {
-				$row[]  = (string) maybe_serialize( $customer->get( $column, 'edit' ) );
+				$row[] = getpaid_escape_csv_value( (string) maybe_serialize( $customer->get( $column, 'edit' ) ) );
 			}
 
-			fputcsv( $output, $row );
+			fputcsv( $output, $row, ',', $enclosure, $escape );
 		}
 
 		fclose( $output );
 		exit;
-
 	}
 
 	/**
@@ -717,12 +716,23 @@ class GetPaid_Admin {
 	 * @param array $data
      */
     public function admin_install_plugin( $data ) {
+		// Check plugin core capabilities.
+		if ( ! current_user_can( 'install_plugins' ) || ! current_user_can( 'activate_plugins' ) ) {
+			wp_die( esc_html__( 'Sorry, you are not allowed to install plugins on this site.', 'invoicing' ), 403 );
+		}
 
-		if ( ! empty( $data['plugins'] ) ) {
+		if ( ! empty( $data['plugins'] ) && is_array( $data['plugins'] ) ) {
 			include_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
 			wp_cache_flush();
 
 			foreach ( $data['plugins'] as $slug => $file ) {
+				$slug = sanitize_key( $slug );
+				$file = sanitize_text_field( wp_unslash( $file ) );
+
+				if ( empty( $slug ) || 0 !== validate_file( $file ) ) {
+					continue;
+				}
+
 				$plugin_zip = esc_url( 'https://downloads.wordpress.org/plugin/' . $slug . '.latest-stable.zip' );
 				$upgrader   = new Plugin_Upgrader( new Automatic_Upgrader_Skin() );
 				$installed  = $upgrader->install( $plugin_zip );
@@ -747,9 +757,7 @@ class GetPaid_Admin {
 	 * @param array $data
      */
     public function admin_connect_gateway( $data ) {
-
 		if ( ! empty( $data['plugin'] ) ) {
-
 			$gateway     = sanitize_key( $data['plugin'] );
 			$connect_url = apply_filters( "getpaid_get_{$gateway}_connect_url", false, $data );
 
@@ -758,7 +766,7 @@ class GetPaid_Admin {
 				exit;
 			}
 
-			if ( 'stripe' == $data['plugin'] ) {
+			if ( 'stripe' == $data['plugin'] && current_user_can( 'install_plugins' ) && current_user_can( 'activate_plugins' ) ) {
 				require_once ABSPATH . 'wp-admin/includes/plugin.php';
 				include_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
 				wp_cache_flush();

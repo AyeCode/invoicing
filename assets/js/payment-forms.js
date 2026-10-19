@@ -1243,8 +1243,12 @@ jQuery(function ($) {
 					if (res.success) {
 
 						// Asume that the action is a redirect.
-						if (!res.data.action || 'redirect' == res.data.action) {
+						if (!res.data.action) {
 							window.location.href = decodeURIComponent(res.data)
+						}
+
+						if ('redirect' == res.data.action) {
+							window.location.href = decodeURIComponent(res.data.redirect)
 						}
 
 						if ('auto_submit_form' == res.data.action) {
@@ -1290,6 +1294,13 @@ jQuery(function ($) {
 						wpinvUnblock(form);
 					}
 				}
+
+				// Lets overlay checkouts know which form is being submitted.
+				$('body').trigger('getpaid_payment_form_submission', [{
+					'gateway': form.find('input[name="wpi-gateway"]:checked').val(),
+					'form': form,
+					'data': data.data
+				}]);
 
 				// reCaptcha
 				if ( WPInv.recaptchaSettings && WPInv.recaptchaSettings.enabled && WPInv.recaptchaSettings.version == 'v3' && grecaptcha ) {
