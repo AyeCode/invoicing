@@ -41,6 +41,7 @@ class GetPaid_Item_Variations {
 		// Checkout.
 		add_filter( 'getpaid_payment_form_submission_processed_item', array( $this, 'apply_variation_to_item' ), 10, 2 );
 		add_filter( 'getpaid_submission_data', array( $this, 'inject_variation_from_request' ), 10, 2 );
+		add_filter( 'wpinv_get_item_suffix', array( $this, 'filter_item_suffix' ), 10, 2 );
 
 		// Frontend.
 		add_action( 'getpaid_before_payment_form_cart', array( $this, 'render_variation_selectors' ) );
@@ -261,6 +262,45 @@ class GetPaid_Item_Variations {
 		}
 
 		return $data;
+	}
+
+	/**
+	 * Drops the "(r)" suffix when the selected variation is not recurring.
+	 *
+	 * The payment form draws item names before the variation is applied to the item, so the suffix would otherwise
+	 * follow the item's default (often recurring) variation. Reads the variation the form was opened with
+	 * (?variation=) or the one posted with a form refresh (getpaid-variation[<item id>]). Line items that already
+	 * carry their variation are handled in wpinv_get_item_suffix().
+	 *
+	 * @since 2.8.63
+	 *
+	 * @param string     $suffix The item suffix.
+	 * @param WPInv_Item $item   The item.
+	 * @return string
+	 */
+	public function filter_item_suffix( $suffix, $item ) {
+		if ( '' === $suffix || ! is_object( $item ) || ! self::item_has_variations( $item->get_id() ) ) {
+			return $suffix;
+		}
+
+		$item_id   = (int) $item->get_id();
+		$variation = '';
+
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- read only, picks a label.
+		if ( isset( $_REQUEST['getpaid-variation'][ $item_id ] ) ) {
+			$variation = sanitize_text_field( wp_unslash( $_REQUEST['getpaid-variation'][ $item_id ] ) );
+		} elseif ( isset( $_REQUEST['variation'] ) ) {
+			$variation = sanitize_text_field( wp_unslash( $_REQUEST['variation'] ) );
+		}
+		// phpcs:enable
+
+		if ( '' === $variation ) {
+			return $suffix;
+		}
+
+		$data = self::get_variation_by_id( $item_id, $variation );
+
+		return ( $data && empty( $data['is_recurring'] ) ) ? '' : $suffix;
 	}
 
 	/**

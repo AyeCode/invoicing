@@ -287,8 +287,19 @@ function wpinv_get_random_items( $num = 3, $post_ids = true ) {
  */
 function wpinv_get_item_suffix( $item, $html = true ) {
 
-    $item   = new WPInv_Item( $item );
-    $suffix = $item->is_recurring() ? ' ' . __( '(r)', 'invoicing' ) : '';
+    // Keep a checkout or invoice line item as it is: reloading it would drop its variation.
+    $item      = $item instanceof WPInv_Item ? $item : new WPInv_Item( $item );
+    $recurring = $item->is_recurring();
+
+    if ( $item instanceof GetPaid_Form_Item ) {
+        $meta = (array) $item->get_item_meta( 'edit' );
+
+        if ( isset( $meta['variation_data'] ) && is_array( $meta['variation_data'] ) ) {
+            $recurring = ! empty( $meta['variation_data']['is_recurring'] );
+        }
+    }
+
+    $suffix = $recurring ? ' ' . __( '(r)', 'invoicing' ) : '';
     $suffix = $html ? $suffix : wp_strip_all_tags( $suffix );
 
     return apply_filters( 'wpinv_get_item_suffix', $suffix, $item, $html );
