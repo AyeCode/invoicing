@@ -574,8 +574,18 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 		}
 
 		wpinv_error_log( 'Processing subscription end of life for the invoice ' . $invoice->get_id(), false );
-		$subscription->complete();
-		wpinv_error_log( 'Subscription completed.', false );
+
+		// PayPal sends end of term whenever a subscription's paid period runs out: after its last planned payment, but
+		// also after the customer cancelled or payments failed. Only the first is a completed (fully paid) subscription.
+		if ( $subscription->has_status( array( 'cancelled', 'completed' ) ) ) {
+			wpinv_error_log( 'Subscription was already ' . $subscription->get_status() . ', leaving it as is.', false );
+		} elseif ( $subscription->is_last_renewal() ) {
+			$subscription->complete();
+			wpinv_error_log( 'Subscription completed.', false );
+		} else {
+			$subscription->expire();
+			wpinv_error_log( 'Subscription expired.', false );
+		}
 	}
 
 	/**

@@ -147,6 +147,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 == Changelog ==
 
 = 2.8.63 - 2026-10-TBD =
+* PayPal: an end of term notice for a subscription that was not fully paid (cancelled or failing payments) now expires it instead of marking it completed - FIXED
 * Payment forms: the item name's (r) suffix now updates when another variation is selected, not only on page load - FIXED
 * REST API and invoice shortcode/block now check permissions; added sanitization and escaping - SECURITY
 * Payment forms validate the item parameter, quantities, amounts and form ID - FIXED
