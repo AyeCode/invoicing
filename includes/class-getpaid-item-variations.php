@@ -41,6 +41,7 @@ class GetPaid_Item_Variations {
 		// Checkout.
 		add_filter( 'getpaid_payment_form_submission_processed_item', array( $this, 'apply_variation_to_item' ), 10, 2 );
 		add_filter( 'getpaid_submission_data', array( $this, 'inject_variation_from_request' ), 10, 2 );
+		add_filter( 'wpinv_get_item_suffix', array( $this, 'filter_item_suffix' ), 10, 2 );
 
 		// Frontend.
 		add_action( 'getpaid_before_payment_form_cart', array( $this, 'render_variation_selectors' ) );
@@ -261,6 +262,95 @@ class GetPaid_Item_Variations {
 		}
 
 		return $data;
+	}
+
+	/**
+	 * Resolves the variation an item is charged as: stored, then request, then default.
+	 *
+	 * @since 2.8.63
+	 *
+	 * @param WPInv_Item|GetPaid_Form_Item $item The item.
+	 * @return array|false Variation data, or false when the item has no variations.
+	 */
+	public static function get_display_variation( $item ) {
+		if ( ! is_object( $item ) || ! method_exists( $item, 'get_id' ) ) {
+			return false;
+		}
+
+		// A line item that already carries its variation wins.
+		$stored = self::get_invoice_item_variation( $item );
+		if ( ! empty( $stored ) ) {
+			return $stored;
+		}
+
+		$item_id = (int) $item->get_id();
+
+		if ( ! self::item_has_variations( $item_id ) ) {
+			return false;
+		}
+
+		$variation_id = '';
+
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- read only, picks a label.
+		if ( isset( $_REQUEST['getpaid-variation'][ $item_id ] ) ) {
+			$variation_id = sanitize_text_field( wp_unslash( $_REQUEST['getpaid-variation'][ $item_id ] ) );
+		} elseif ( isset( $_REQUEST['variation'] ) && self::bare_variation_targets_item( $item_id ) ) {
+			$variation_id = sanitize_text_field( wp_unslash( $_REQUEST['variation'] ) );
+		}
+		// phpcs:enable
+
+		if ( '' !== $variation_id ) {
+			$variation = self::get_variation_by_id( $item_id, $variation_id );
+
+			if ( ! empty( $variation ) ) {
+				return $variation;
+			}
+		}
+
+		return self::get_default_variation( $item_id );
+	}
+
+	/**
+	 * Whether a bare ?variation= slug unambiguously targets the given item, as inject_variation_from_request() requires.
+	 *
+	 * @since 2.8.63
+	 *
+	 * @param int $item_id The item id.
+	 * @return bool
+	 */
+	private static function bare_variation_targets_item( $item_id ) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read only, picks a label.
+		$items = isset( $_REQUEST['getpaid-items'] ) && is_array( $_REQUEST['getpaid-items'] ) ? array_map( 'intval', array_keys( $_REQUEST['getpaid-items'] ) ) : array();
+
+		// A plain item render carries no form items, so there is nothing to disambiguate.
+		if ( empty( $items ) ) {
+			return true;
+		}
+
+		return 1 === count( $items ) && (int) $items[0] === (int) $item_id;
+	}
+
+	/**
+	 * Keeps the "(r)" suffix in step with the variation the item is charged as.
+	 *
+	 * @since 2.8.63
+	 *
+	 * @param string     $suffix The item suffix.
+	 * @param WPInv_Item $item   The item.
+	 * @return string
+	 */
+	public function filter_item_suffix( $suffix, $item ) {
+		if ( ! is_object( $item ) ) {
+			return $suffix;
+		}
+
+		$variation = self::get_display_variation( $item );
+
+		if ( false === $variation ) {
+			return $suffix;
+		}
+
+		return empty( $variation['is_recurring'] ) ? '' : ' ' . __( '(r)', 'invoicing' );
 	}
 
 	/**
