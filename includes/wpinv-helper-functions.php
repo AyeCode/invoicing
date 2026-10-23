@@ -720,7 +720,7 @@ function wpi_help_tip( $tip, $allow_html = false, $is_vue = false, $echo = false
  */
 function wpi_sanitize_tooltip( $var ) {
     return wp_kses(
-        html_entity_decode( $var ),
+        html_entity_decode( (string) $var, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401 ),
         array(
 			'br'     => array(),
 			'em'     => array(),
@@ -1148,7 +1148,7 @@ function getpaid_user_delete_invoice( $data ) {
     $invoice = new WPInv_Invoice( (int) $data['invoice_id'] );
 
     // Ensure that it exists and that it belongs to the current user.
-    if ( ! $invoice->exists() || $invoice->get_customer_id() != get_current_user_id() ) {
+    if ( ! $invoice->exists() || ! is_user_logged_in() || (int) $invoice->get_user_id() !== (int) get_current_user_id() ) {
         $notice = 'perm_delete_invoice';
 
     // Can it be deleted?

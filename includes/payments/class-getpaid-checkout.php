@@ -74,12 +74,14 @@ class GetPaid_Checkout {
 		}
 
 		// Non-recurring gateways should not be allowed to process recurring invoices.
-		if ( $submission->should_collect_payment_details() && $submission->has_recurring && ! wpinv_gateway_support_subscription( $data['wpi-gateway'] ) ) {
+		$gateway = isset( $data['wpi-gateway'] ) && is_string( $data['wpi-gateway'] ) ? $data['wpi-gateway'] : '';
+
+		if ( $submission->should_collect_payment_details() && $submission->has_recurring && ! wpinv_gateway_support_subscription( $gateway ) ) {
 			wp_send_json_error( __( 'The selected payment gateway does not support subscription payments.', 'invoicing' ) );
 		}
 
 		// Ensure the gateway is active.
-		if ( $submission->should_collect_payment_details() && ! wpinv_is_gateway_active( $data['wpi-gateway'] ) ) {
+		if ( $submission->should_collect_payment_details() && ! wpinv_is_gateway_active( $gateway ) ) {
 			wp_send_json_error( __( 'The selected payment gateway is not active', 'invoicing' ) );
 		}
 
@@ -245,7 +247,9 @@ class GetPaid_Checkout {
 				$address_type = isset( $field['address_type'] ) && 'shipping' === $field['address_type'] ? 'shipping' : 'billing';
 
 				foreach ( $field['fields'] as $address_field ) {
-					if ( ! empty( $address_field['visible'] ) && ! empty( $address_field['required'] ) && '' === trim( $_POST[ $address_type ][ $address_field['name'] ] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+					$address_value = isset( $_POST[ $address_type ][ $address_field['name'] ] ) && is_scalar( $_POST[ $address_type ][ $address_field['name'] ] ) ? (string) $_POST[ $address_type ][ $address_field['name'] ] : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+					if ( ! empty( $address_field['visible'] ) && ! empty( $address_field['required'] ) && '' === trim( $address_value ) ) {
 						wp_send_json_error( __( 'Please fill all required fields.', 'invoicing' ) );
 					}
 				}

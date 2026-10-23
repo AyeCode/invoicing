@@ -52,7 +52,7 @@ class GetPaid_Payment_Form_Submission_Items {
 
 			// Confirm items key.
 			$form_items = wpinv_clean( $data['getpaid-form-items'] );
-			if ( ! isset( $data['getpaid-form-items-key'] ) || md5( NONCE_KEY . AUTH_KEY . $form_items ) !== $data['getpaid-form-items-key'] ) {
+			if ( ! isset( $data['getpaid-form-items-key'] ) || ! is_string( $data['getpaid-form-items-key'] ) || ! hash_equals( md5( NONCE_KEY . AUTH_KEY . $form_items ), $data['getpaid-form-items-key'] ) ) {
 				throw new Exception( __( 'We could not validate the form items. Please reload the page and try again.', 'invoicing' ) );
 			}
 

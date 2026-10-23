@@ -190,7 +190,7 @@ class WPInv_Customers_Table extends WP_List_Table {
 			$name = "<div style='overflow: hidden;height: 18px;'>$name</div>";
 		}
 
-		$email = "<div class='row-title'><a href='mailto:$email'>$email</a></div>";
+		$email = '<div class="row-title"><a href="' . esc_url( 'mailto:' . $email, array( 'mailto' ) ) . '">' . esc_html( $email ) . '</a></div>';
 
 		return "<div style='display: flex;'><div>$avatar</div><div style='margin-left: 10px;'>$name<strong>$email</strong>$row_actions</div></div>";
 

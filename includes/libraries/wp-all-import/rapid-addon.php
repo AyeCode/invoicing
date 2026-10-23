@@ -22,6 +22,9 @@ if (!class_exists('RapidAddon')) {
 		public $post_saved_function;
 		public $notice_text;
 		public $logger = null;
+		public $active_post_types = array();
+		public $active_themes = array();
+		public $active_plugins = array();
 		public $when_to_run = false;
 		public $image_options = array(
 			'download_images' => 'yes', 

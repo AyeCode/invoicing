@@ -122,9 +122,9 @@ class WPInv_Ajax {
     public static function add_note() {
         check_ajax_referer( 'add-invoice-note', '_nonce' );
 
-        $post_id   = absint( $_POST['post_id'] );
-        $note      = wp_kses_post( trim( stripslashes( $_POST['note'] ) ) );
-        $note_type = sanitize_text_field( $_POST['note_type'] );
+        $post_id   = isset( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
+        $note      = isset( $_POST['note'] ) && is_string( $_POST['note'] ) ? wp_kses_post( trim( wp_unslash( $_POST['note'] ) ) ) : '';
+        $note_type = isset( $_POST['note_type'] ) && is_string( $_POST['note_type'] ) ? sanitize_text_field( wp_unslash( $_POST['note_type'] ) ) : '';
 
         if ( ! wpinv_current_user_can( 'invoice_add_note', array( 'invoice_id' => $post_id, 'note_type' => $note_type ) ) ) {
             die( -1 );
@@ -146,7 +146,7 @@ class WPInv_Ajax {
     public static function delete_note() {
         check_ajax_referer( 'delete-invoice-note', '_nonce' );
 
-        $note_id = (int)$_POST['note_id'];
+        $note_id = isset( $_POST['note_id'] ) ? absint( $_POST['note_id'] ) : 0;
 
         if ( ! wpinv_current_user_can( 'invoice_delete_note', array( 'note_id' => $note_id ) ) ) {
             die( -1 );
@@ -173,7 +173,7 @@ class WPInv_Ajax {
         check_ajax_referer( 'wpinv-nonce' );
 
         // Do we have a user id?
-        $user_id = (int) $_GET['user_id'];
+        $user_id = isset( $_GET['user_id'] ) ? absint( $_GET['user_id'] ) : 0;
         $invoice_id = ! empty( $_REQUEST['post_id'] ) ? (int) $_REQUEST['post_id'] : 0;
 
         if ( empty( $user_id ) || ! is_numeric( $user_id ) ) {
@@ -249,7 +249,7 @@ class WPInv_Ajax {
             die( -1 );
         }
 
-        $tool = sanitize_text_field( $_POST['tool'] );
+        $tool = isset( $_POST['tool'] ) && is_string( $_POST['tool'] ) ? sanitize_text_field( wp_unslash( $_POST['tool'] ) ) : '';
 
         do_action( 'wpinv_run_tool' );
 
