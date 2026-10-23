@@ -4,7 +4,7 @@
  *
  * This template can be overridden by copying it to yourtheme/invoicing/emails/invoice-item.php.
  *
- * @version 2.8.17
+ * @version 2.8.63
  * @var WPInv_Invoice $invoice
  * @var GetPaid_Form_Item $item
  * @var array $columns
@@ -34,7 +34,7 @@ do_action( 'getpaid_before_email_line_item', $invoice, $item );
 			}
 
 			// Display the name.
-			echo '<div class="wpinv_email_cart_item_title">' . esc_html( $item->get_name() ) . '</div>';
+			echo '<div class="wpinv_email_cart_item_title">' . esc_html( getpaid_get_invoice_line_item_name( $item, $invoice, 'email' ) ) . '</div>';
 
 			// And an optional description.
 			$description = $item->get_description();
