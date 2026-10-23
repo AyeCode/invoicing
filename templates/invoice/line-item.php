@@ -38,7 +38,7 @@ do_action( 'getpaid_before_invoice_line_item', $invoice, $item );
 						}
 
 						// Display the name.
-						echo '<div class="mb-1">' . esc_html( apply_filters( 'getpaid_invoice_line_item_name', $item->get_name(), $item, $invoice, 'invoice' ) ) . '</div>';
+						echo '<div class="mb-1">' . esc_html( getpaid_get_invoice_line_item_name( $item, $invoice, 'invoice' ) ) . '</div>';
 
 						// And an optional description.
 						$description = $item->get_description();

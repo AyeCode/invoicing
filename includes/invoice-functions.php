@@ -1133,6 +1133,35 @@ function getpaid_duplicate_invoice( $old_invoice ) {
 }
 
 /**
+ * The name shown for an invoice line item on invoice pages and in invoice emails.
+ *
+ * Display only: the item and its name everywhere else stay as they are. To rename an item everywhere (checkout,
+ * admin, gateways), use the wpinv_get_item_name filter instead.
+ *
+ * @since 2.8.63
+ * @param GetPaid_Form_Item $item    The line item.
+ * @param WPInv_Invoice     $invoice The invoice.
+ * @param string            $context 'invoice' (invoice page, receipt, print) or 'email'.
+ * @return string Plain text, escaped on output.
+ */
+function getpaid_get_invoice_line_item_name( $item, $invoice, $context = 'invoice' ) {
+
+	/**
+	 * Filters the line item name on invoice pages and in invoice emails, without the recurring "(r)" suffix, which is
+	 * added after. Return plain text: the result is escaped, so HTML shows as text.
+	 *
+	 * @since 2.8.63
+	 * @param string            $name    The item name.
+	 * @param GetPaid_Form_Item $item    The line item.
+	 * @param WPInv_Invoice     $invoice The invoice.
+	 * @param string            $context 'invoice' or 'email'.
+	 */
+	$name = apply_filters( 'getpaid_invoice_line_item_name', $item->get_raw_name(), $item, $invoice, $context );
+
+	return $name . wpinv_get_item_suffix( $item, false );
+}
+
+/**
  * Retrieves invoice meta fields.
  *
  * @param WPInv_Invoice $invoice
