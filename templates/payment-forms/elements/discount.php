@@ -25,6 +25,11 @@ if ( ! empty( $form->invoice ) ) {
     $discount_code = $form->invoice->get_discount_code();
 }
 
+// A code in the link, e.g. ?discount=CODE, is applied when the form loads.
+if ( '' === $discount_code && ! empty( $_GET['discount'] ) && is_string( $_GET['discount'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+    $discount_code = sanitize_text_field( wp_unslash( $_GET['discount'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+}
+
 $class = empty( $class ) ? 'btn-secondary' : sanitize_html_class( $class );
 ?>
 
