@@ -107,8 +107,7 @@ function wpinv_check_for_missing_tables() {
     );
 
     foreach ( $tables as $table ) {
-        if ( $table != $wpdb->get_var( "SHOW TABLES LIKE '$table'" ) ) {
-
+        if ( $table != $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table ) ) ) ) {
             $url     = wp_nonce_url(
                 add_query_arg( 'getpaid-admin-action', 'create_missing_tables' ),
                 'getpaid-nonce',
@@ -116,7 +115,7 @@ function wpinv_check_for_missing_tables() {
             );
             $message  = __( 'Some GetPaid database tables are missing. To use GetPaid without any issues, click on the button below to create the missing tables.', 'invoicing' );
             $message2 = __( 'Create Tables', 'invoicing' );
-            echo wp_kses_post( "<div class='notice notice-warning is-dismissible'><p>$message<br><br><a href='$url' class='button button-primary'>$message2</a></p></div>" );
+            echo "<div class='notice notice-warning is-dismissible'><p>" . esc_html( $message ) . "<br><br><a href='" . esc_url( $url ) . "' class='button button-primary'>" . esc_html( $message2 ) . '</a></p></div>';
             break;
 
         }
@@ -147,8 +146,11 @@ function wpinv_admin_search_by_invoice() {
 function wpinv_posts_search_example_type( $search, $query ) {
     global $wpdb;
 
-    if ( $query->is_main_query() && ! empty( $query->query['s'] ) ) {
-        $conditions_str = "{$wpdb->posts}.post_author IN ( SELECT ID FROM {$wpdb->users} WHERE user_email LIKE '%" . esc_sql( $query->query['s'] ) . "%' )";
+    if ( $query->is_main_query() && ! empty( $query->query['s'] ) && is_string( $query->query['s'] ) ) {
+        $conditions_str = $wpdb->prepare(
+            "{$wpdb->posts}.post_author IN ( SELECT ID FROM {$wpdb->users} WHERE user_email LIKE %s )",
+            '%' . $wpdb->esc_like( $query->query['s'] ) . '%'
+        );
         if ( ! empty( $search ) ) {
             $search = preg_replace( '/^ AND /', '', $search );
             $search = " AND ( {$search} OR ( {$conditions_str} ) )";
@@ -164,12 +166,12 @@ function wpinv_posts_search_example_type( $search, $query ) {
  * Resets invoice counts.
  */
 function wpinv_reset_invoice_count() {
-    if ( ! empty( $_GET['reset_invoice_count'] ) && isset( $_GET['_nonce'] ) && wp_verify_nonce( sanitize_text_field( $_GET['_nonce'] ), 'reset_invoice_count' ) ) {
+    if ( ! empty( $_GET['reset_invoice_count'] ) && isset( $_GET['_nonce'] ) && is_string( $_GET['_nonce'] ) && wp_verify_nonce( sanitize_text_field( wp_unslash( $_GET['_nonce'] ) ), 'reset_invoice_count' ) && wpinv_current_user_can_manage_invoicing() ) {
         wpinv_update_option( 'invoice_sequence_start', 1 );
         delete_option( 'wpinv_last_invoice_number' );
         getpaid_admin()->show_success( __( 'Invoice number sequence reset successfully.', 'invoicing' ) );
         $url = remove_query_arg( array( 'reset_invoice_count', '_nonce' ) );
-        wp_redirect( $url );
+        wp_safe_redirect( $url );
         exit();
     }
 }

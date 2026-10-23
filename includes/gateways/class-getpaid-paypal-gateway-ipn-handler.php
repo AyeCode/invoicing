@@ -74,8 +74,8 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 			wp_die( 'Invoice not paid via PayPal', 200 );
 		}
 
-		$posted['payment_status'] = isset( $posted['payment_status'] ) ? sanitize_key( strtolower( $posted['payment_status'] ) ) : '';
-		$posted['txn_type']       = sanitize_key( strtolower( $posted['txn_type'] ) );
+		$posted['payment_status'] = isset( $posted['payment_status'] ) && is_scalar( $posted['payment_status'] ) ? sanitize_key( strtolower( (string) $posted['payment_status'] ) ) : '';
+		$posted['txn_type']       = isset( $posted['txn_type'] ) && is_scalar( $posted['txn_type'] ) ? sanitize_key( strtolower( (string) $posted['txn_type'] ) ) : '';
 
 		wpinv_error_log( 'Payment status:' . $posted['payment_status'], false );
 		wpinv_error_log( 'IPN Type:' . $posted['txn_type'], false );

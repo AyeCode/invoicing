@@ -268,7 +268,7 @@ class GetPaid_Payment_Form_Submission {
 			}
 
 			$invoice = wpinv_get_invoice( $this->data['maybe_use_invoice'] );
-			if ( empty( $invoice ) || ! $invoice->has_status( 'draft, auto-draft, wpi-pending' ) ) {
+			if ( empty( $invoice ) || ! $invoice->has_status( 'draft, auto-draft, wpi-pending' ) || ! $this->is_authorized_to_pay( $invoice ) ) {
 				return;
 			}
 		}
@@ -339,7 +339,7 @@ class GetPaid_Payment_Form_Submission {
 		}
 
 		// Key supplied with the submission.
-		$key = isset( $this->data['invoice_key'] ) ? sanitize_text_field( $this->data['invoice_key'] ) : '';
+		$key = isset( $this->data['invoice_key'] ) && is_string( $this->data['invoice_key'] ) ? sanitize_text_field( $this->data['invoice_key'] ) : '';
 
 		return '' !== $key && ! wpinv_require_login_to_checkout() && hash_equals( (string) $invoice->get_key(), $key );
 	}

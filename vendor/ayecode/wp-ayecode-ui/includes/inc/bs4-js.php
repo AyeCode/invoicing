@@ -999,17 +999,35 @@
 
     // fire when URL changes also.
     let FSElastUrl = location.href;
-    new MutationObserver(() => {
+
+    /**
+     * Re-bind the scroll handler when the editor navigates to another template or page.
+     *
+     * This used to run from a MutationObserver watching the whole document, so it was
+     * called for every DOM change the editor made, typing included, just to compare a
+     * URL. Watching the URL itself does the same job for a fraction of the cost.
+     */
+    function aui_fse_check_url_change(){
         const url = location.href;
-        if (url !== FSElastUrl) {
-            FSElastUrl = url;
-            aui_fse_set_data_scroll();
-            // fire a second time incase of load delays.
-            setTimeout(function(){
-                aui_fse_set_data_scroll();
-            }, 2000);
+
+        if ( url === FSElastUrl ) {
+            return;
         }
-    }).observe(document, {subtree: true, childList: true});
+
+        FSElastUrl = url;
+        aui_fse_set_data_scroll();
+
+        // fire a second time incase of load delays.
+        setTimeout(function(){
+            aui_fse_set_data_scroll();
+        }, 2000);
+    }
+
+    window.addEventListener('popstate', aui_fse_check_url_change);
+    window.addEventListener('hashchange', aui_fse_check_url_change);
+
+    // The editor navigates with history.pushState(), which fires no event, so poll too.
+    setInterval(aui_fse_check_url_change, 500);
 <?php } ?>
 /**
  * Sanitizes and validates a URL for safe use in an HTML attribute or a DOM property.

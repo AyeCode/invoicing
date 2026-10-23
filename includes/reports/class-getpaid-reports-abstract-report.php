@@ -32,7 +32,7 @@ abstract class GetPaid_Reports_Abstract_Report {
 	public function get_range() {
 		$valid_ranges = $this->get_periods();
 
-		if ( isset( $_GET['date_range'] ) && array_key_exists( $_GET['date_range'], $valid_ranges ) ) {
+		if ( isset( $_GET['date_range'] ) && is_string( $_GET['date_range'] ) && array_key_exists( $_GET['date_range'], $valid_ranges ) ) {
 			return sanitize_key( $_GET['date_range'] );
 		}
 

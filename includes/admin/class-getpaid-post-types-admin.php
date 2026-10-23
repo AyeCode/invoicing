@@ -386,6 +386,7 @@ class GetPaid_Post_Types_Admin {
 				if ( ! empty( $customer_name ) ) {
 					$customer_details = esc_attr__( 'View Customer Details', 'invoicing' );
 					$view_link        = esc_url( add_query_arg( 'user_id', $invoice->get_user_id(), admin_url( 'user-edit.php' ) ) );
+					$customer_name    = esc_html( $customer_name );
 					echo wp_kses_post( "<a href='$view_link' title='$customer_details'><span>$customer_name</span></a>" );
 				} else {
 					echo '<div>&mdash;</div>';

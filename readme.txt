@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoicing, Paypal, Stripe, payment
 Requires at least: 6.0
 Tested up to: 7.1
-Stable tag: 2.8.62
+Stable tag: 2.8.63
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -146,7 +146,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
-= 2.8.63 - 2026-10-TBD =
+= 2.8.63 - 2026-10-23 =
 * PayPal: an end of term notice for a subscription that was not fully paid (cancelled or failing payments) now expires it instead of marking it completed - FIXED
 * Payment forms: the item name's (r) suffix now updates when another variation is selected, not only on page load - FIXED
 * REST API and invoice shortcode/block now check permissions; added sanitization and escaping - SECURITY
@@ -156,6 +156,8 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 * Invoices no longer lose their invoice number title when saved again - FIXED
 * Renewal refunds no longer cancel the subscription; anonymization log filters by month - FIXED
 * Filter getpaid_invoice_line_item_name (and helper getpaid_get_invoice_line_item_name()) to change how an item's name shows on invoice pages and in emails, without changing the item; wpinv_get_item_name still renames it everywhere - ADDED
+* Fixed stored XSS via the customer email on the GetPaid > Customers admin list - SECURITY
+* Update AUI 0.2.58 and SD 1.2.38 - CHANGED
 
 = 2.8.62 - 2026-10-16 =
 * PayPal simultaneous subscr_signup and subscr_payment IPNs send the invoice paid email multiple times - FIXED

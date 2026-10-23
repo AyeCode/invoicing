@@ -196,6 +196,11 @@ function getpaid_save_invoice_user_address( $invoice ) {
 
     $customer->save();
 
+    // If the customer could not be saved.
+    if ( ! $customer->get_id() ) {
+        return;
+    }
+
     if ( ! $invoice->get_customer_id() ) {
         $invoice->set_customer_id( $customer->get_id() );
         $invoice->save();

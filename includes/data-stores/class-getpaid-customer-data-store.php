@@ -50,6 +50,10 @@ class GetPaid_Customer_Data_Store {
 			return true;
 		}
 
+		if ( ! empty( $wpdb->last_error ) ) {
+			wpinv_error_log( $wpdb->last_error, 'Could not save the customer:', __FILE__, __LINE__ );
+		}
+
 		return false;
 	}
 
