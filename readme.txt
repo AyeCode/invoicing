@@ -155,6 +155,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 * Fixed add-on gateway webhooks, redirects and gateway lists, and overlay checkout form detection - FIXED
 * Invoices no longer lose their invoice number title when saved again - FIXED
 * Renewal refunds no longer cancel the subscription; anonymization log filters by month - FIXED
+* Filter getpaid_invoice_line_item_name to change how an item's name shows on invoice pages and in emails, without changing the item - ADDED
 
 = 2.8.62 - 2026-10-16 =
 * PayPal simultaneous subscr_signup and subscr_payment IPNs send the invoice paid email multiple times - FIXED
