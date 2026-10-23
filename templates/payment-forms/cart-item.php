@@ -69,7 +69,8 @@ $max_qty  = wpinv_item_max_buyable_quantity( $item->get_id() );
 							echo '<div class="getpaid-form-item-name-container">';
 						}
 
-						echo '<div class="mb-1 font-weight-bold">' . esc_html( $item->get_name() ) . wp_kses_post( $tootip ) . '</div>';
+						// The name (with its "(r)" suffix) sits in its own span so a price refresh can update it for the selected variation.
+						echo '<div class="mb-1 font-weight-bold"><span class="getpaid-form-item-name">' . esc_html( $item->get_name() ) . '</span>' . wp_kses_post( $tootip ) . '</div>';
 
 						if ( ! empty( $description ) ) {
 							printf( '<span class="d-none d-sm-block getpaid-item-desc lh-sm">%s</span>', wp_kses_post( $description ) );

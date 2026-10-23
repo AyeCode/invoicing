@@ -4,7 +4,7 @@
  *
  * This template can be overridden by copying it to yourtheme/invoicing/line-item.php.
  *
- * @version 2.8.17
+ * @version 2.8.63
  * @var WPInv_Invoice $invoice
  * @var GetPaid_Form_Item $item
  * @var array $columns
@@ -38,7 +38,7 @@ do_action( 'getpaid_before_invoice_line_item', $invoice, $item );
 						}
 
 						// Display the name.
-						echo '<div class="mb-1">' . esc_html( $item->get_name() ) . '</div>';
+						echo '<div class="mb-1">' . esc_html( getpaid_get_invoice_line_item_name( $item, $invoice, 'invoice' ) ) . '</div>';
 
 						// And an optional description.
 						$description = $item->get_description();
