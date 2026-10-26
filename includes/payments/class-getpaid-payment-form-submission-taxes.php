@@ -68,7 +68,8 @@ class GetPaid_Payment_Form_Submission_Taxes {
 			$recurring = isset( $r_taxes[ $name ] ) ? $r_taxes[ $name ] : 0;
 			$tax       = getpaid_prepare_item_tax( $item, $name, $amount, $recurring );
 
-			$item->item_tax += wpinv_sanitize_amount( $tax['initial_tax'] );
+			$item->item_tax           += wpinv_sanitize_amount( $tax['initial_tax'] );
+			$item->recurring_item_tax += wpinv_sanitize_amount( $tax['recurring_tax'] );
 
 			if ( ! isset( $this->taxes[ $name ] ) ) {
 				$this->taxes[ $name ] = $tax;

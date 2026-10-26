@@ -906,6 +906,22 @@ class WPInv_Subscription extends GetPaid_Data {
 
 		$invoice->set_status( 'wpi-renewal' );
 
+		// The invoice must total what was charged. The amount is the gateway's own when it passes one, else what the
+		// gateway was set up to charge. An invoice the caller brings was charged its own total (the store charged it).
+		if ( isset( $args['amount'] ) && is_numeric( $args['amount'] ) ) {
+			$charged = $args['amount'];
+		} elseif ( empty( $orig_invoice ) ) {
+			$charged = $this->get_recurring_amount();
+		} else {
+			$charged = null;
+		}
+
+		$currency = empty( $args['currency'] ) ? $invoice->get_currency() : strtoupper( $args['currency'] );
+
+		if ( null !== $charged && ( strtoupper( $invoice->get_currency() ) !== $currency || ! getpaid_amounts_match( $charged, $invoice->get_total(), $currency ) ) ) {
+			getpaid_hold_charge_mismatch( $invoice, $charged, $currency, $invoice->get_gateway_title() );
+		}
+
 		/**
 		 * Filter invoice object to create renewal payment.
 		 *
@@ -922,6 +938,8 @@ class WPInv_Subscription extends GetPaid_Data {
 		if ( ! $invoice->exists() ) {
 			return false;
 		}
+
+		getpaid_notify_charge_mismatch( $invoice );
 
 		return $this->after_add_payment( $invoice );
 	}
@@ -959,10 +977,14 @@ class WPInv_Subscription extends GetPaid_Data {
 		$invoice->set_subscription_id( $this->get_id() );
 		$invoice->set_remote_subscription_id( $this->get_profile_id() );
 
-		// Set invoice items.
+		// Set invoice items. A group with an empty item list still names its item.
 		$subscription_group = getpaid_get_invoice_subscription_group( $parent_invoice->get_id(), $this->get_id() );
 		$allowed_items      = empty( $subscription_group ) ? array( $this->get_product_id() ) : array_keys( $subscription_group['items'] );
 		$invoice_items      = array();
+
+		if ( empty( $allowed_items ) && ! empty( $subscription_group['item_id'] ) ) {
+			$allowed_items = array( $subscription_group['item_id'] );
+		}
 
 		foreach ( $invoice->get_items() as $item ) {
 			if ( in_array( $item->get_id(), $allowed_items ) ) {
@@ -972,23 +994,18 @@ class WPInv_Subscription extends GetPaid_Data {
 
 		$invoice->set_items( $invoice_items );
 
-		if ( ! empty( $subscription_group['fees'] ) ) {
-			$invoice->set_fees( $subscription_group['fees'] );
+		// What a renewal charges was agreed at checkout and stored on the first invoice, and the gateway charges exactly
+		// that. Copy it: tax rates and discount codes are never looked up again, so a code deleted or edited since, or
+		// a changed tax rule, cannot change a running subscription. (getpaid_duplicate_invoice() recalculated the taxes.)
+		$invoice->set_taxes( $parent_invoice->get_taxes() );
+		$invoice->set_discounts( $parent_invoice->get_discounts() );
+
+		if ( ! empty( $subscription_group ) ) {
+			$invoice->set_fees( empty( $subscription_group['fees'] ) ? array() : $subscription_group['fees'] );
+			$this->set_renewal_group_share( $invoice, $parent_invoice, $subscription_group );
 		}
 
-		// Maybe recalculate discount (Pre-GetPaid Fix).
-		$discount = new WPInv_Discount( $invoice->get_discount_code() );
-
-		if ( $discount->exists() && $discount->is_recurring() ) {
-			$invoice->add_discount( getpaid_calculate_invoice_discount( $invoice, $discount ) );
-		}  else {
-			// Unset discount code.
-			$invoice->set_discount_code( '' );
-
-			$invoice->remove_discount( 'discount_code' );
-		}
-
-		$invoice->recalculate_total();
+		$invoice->recalculate_renewal_total();
 		$invoice->set_status( 'wpi-pending' );
 
 		if ( ! $save ) {
@@ -999,6 +1016,64 @@ class WPInv_Subscription extends GetPaid_Data {
 
 		return $invoice->exists() ? $invoice : false;
     }
+
+	/**
+	 * Narrows the first invoice's renewal taxes and discounts to this subscription's group, when one order holds
+	 * several subscriptions.
+	 *
+	 * Groups saved since 2.8.64 store their own recurring_tax and recurring_discount. Older groups only store their
+	 * recurring_total: their tax is the group's share of the invoice's renewal tax by item subtotal, and their discount
+	 * whatever brings the group to the amount the gateway was set up to charge.
+	 *
+	 * @param WPInv_Invoice $invoice        The renewal invoice, items already set.
+	 * @param WPInv_Invoice $parent_invoice The subscription's first invoice.
+	 * @param array         $group          The subscription's group.
+	 */
+	protected function set_renewal_group_share( $invoice, $parent_invoice, $group ) {
+		$subtotal = 0;
+		foreach ( $invoice->get_items() as $item ) {
+			$subtotal += $item->get_recurring_sub_total();
+		}
+
+		$all_items = 0;
+		foreach ( $parent_invoice->get_items() as $item ) {
+			$all_items += $item->get_recurring_sub_total();
+		}
+
+		$fees = 0;
+		foreach ( $invoice->get_fees() as $fee ) {
+			$fees += isset( $fee['recurring_fee'] ) ? wpinv_sanitize_amount( $fee['recurring_fee'] ) : 0;
+		}
+
+		$taxes     = $invoice->get_taxes();
+		$all_tax   = array_sum( wp_list_pluck( $taxes, 'recurring_tax' ) );
+		$tax       = isset( $group['recurring_tax'] ) ? (float) $group['recurring_tax'] : ( $all_items > 0 ? $all_tax * $subtotal / $all_items : 0 );
+		$discounts = $invoice->get_discounts();
+		$all_disc  = array_sum( wp_list_pluck( $discounts, 'recurring_discount' ) );
+		$discount  = isset( $group['recurring_discount'] ) ? (float) $group['recurring_discount'] : max( 0, $subtotal + wpinv_round_amount( $tax ) + $fees - wpinv_round_amount( $this->get_recurring_amount() ) );
+
+		// Keep the stored names (VAT, the discount code), scaled to the group's share.
+		foreach ( $taxes as $name => $row ) {
+			$share            = $all_tax > 0 ? $tax * wpinv_sanitize_amount( $row['recurring_tax'] ) / $all_tax : 0;
+			$taxes[ $name ]   = array_merge( $row, array( 'initial_tax' => $share, 'recurring_tax' => $share ) );
+		}
+
+		foreach ( $discounts as $name => $row ) {
+			$share              = $all_disc > 0 ? $discount * wpinv_sanitize_amount( $row['recurring_discount'] ) / $all_disc : 0;
+			$discounts[ $name ] = array_merge( $row, array( 'initial_discount' => $share, 'recurring_discount' => $share ) );
+		}
+
+		if ( $discount > 0 && $all_disc <= 0 ) {
+			$discounts['subscription_group'] = array(
+				'name'               => __( 'Discount', 'invoicing' ),
+				'initial_discount'   => $discount,
+				'recurring_discount' => $discount,
+			);
+		}
+
+		$invoice->set_taxes( $taxes );
+		$invoice->set_discounts( $discounts );
+	}
 
 	/**
 	 * Renews or completes a subscription

@@ -1558,9 +1558,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 */
     public function get_initial_total() {
 
-		if ( empty( $this->totals ) ) {
-			$this->recalculate_total();
-		}
+		$this->maybe_load_totals();
 
 		$tax      = $this->totals['tax']['initial'];
 		$fee      = $this->totals['fee']['initial'];
@@ -1585,9 +1583,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 */
     public function get_recurring_total() {
 
-		if ( empty( $this->totals ) ) {
-			$this->recalculate_total();
-		}
+		$this->maybe_load_totals();
 
 		$tax      = $this->totals['tax']['recurring'];
 		$fee      = $this->totals['fee']['recurring'];
@@ -1613,10 +1609,8 @@ class WPInv_Invoice extends GetPaid_Data {
 	 */
     public function get_recurring_details( $field = '', $currency = false ) {
 
-		// Maybe recalculate totals.
-		if ( empty( $this->totals ) ) {
-			$this->recalculate_total();
-		}
+		// Maybe load totals.
+		$this->maybe_load_totals();
 
 		// Prepare recurring totals.
         $data = apply_filters(
@@ -3800,9 +3794,15 @@ class WPInv_Invoice extends GetPaid_Data {
 				$rates    = getpaid_filter_item_tax_rates( $item, $rates );
 				$taxes    = getpaid_calculate_item_taxes( getpaid_get_taxable_amount( $item, false ), $rates );
 				$r_taxes  = getpaid_calculate_item_taxes( getpaid_get_taxable_amount( $item, true ), $rates );
+
+				// The item's own renewal tax, for subscription groups (getpaid_calculate_subscription_totals()).
+				$item->recurring_item_tax = 0;
+
 				foreach ( $taxes as $name => $amount ) {
 					$recurring = isset( $r_taxes[ $name ] ) ? $r_taxes[ $name ] : 0;
 					$tax       = getpaid_prepare_item_tax( $item, $name, $amount, $recurring );
+
+					$item->recurring_item_tax += $tax['recurring_tax'];
 
 					if ( ! isset( $item_taxes[ $name ] ) ) {
 						$item_taxes[ $name ] = $tax;
@@ -3815,10 +3815,18 @@ class WPInv_Invoice extends GetPaid_Data {
 				}
 			}
 
+			if ( wpinv_round_tax_per_tax_rate() ) {
+				foreach ( $item_taxes as $name => $tax ) {
+					$item_taxes[ $name ]['initial_tax']   = wpinv_round_amount( $tax['initial_tax'] );
+					$item_taxes[ $name ]['recurring_tax'] = wpinv_round_amount( $tax['recurring_tax'] );
+				}
+			}
+
 			$this->set_taxes( $item_taxes );
 
-			$initial_tax   = array_sum( wp_list_pluck( $item_taxes, 'initial_tax' ) );
-			$recurring_tax = array_sum( wp_list_pluck( $item_taxes, 'recurring_tax' ) );
+			// Rounded once, here, so every total built from it (and the amount sent to a gateway) is the same number.
+			$initial_tax   = wpinv_round_amount( array_sum( wp_list_pluck( $item_taxes, 'initial_tax' ) ) );
+			$recurring_tax = wpinv_round_amount( array_sum( wp_list_pluck( $item_taxes, 'recurring_tax' ) ) );
 
 			$current = $this->is_renewal() ? $recurring_tax : $initial_tax;
 
@@ -3864,7 +3872,6 @@ class WPInv_Invoice extends GetPaid_Data {
 			'recurring' => $recurring,
 		);
 
-        $this->set_total_fees( $fee );
         return $current;
     }
 
@@ -3880,6 +3887,86 @@ class WPInv_Invoice extends GetPaid_Data {
 		$this->recalculate_total_tax();
 		$this->recalculate_subtotal();
 		$this->set_total( $this->get_total_tax( 'edit' ) + $this->get_total_fees( 'edit' ) + $this->get_subtotal( 'edit' ) - $this->get_total_discount( 'edit' ) );
+		return $this->get_total();
+	}
+
+	/**
+	 * Fills the initial and recurring totals from what is stored on the invoice, when nothing has calculated them yet
+	 * (an invoice loaded from the database).
+	 *
+	 * Reading a total must never change the invoice: recalculating here would work tax out again from today's rules
+	 * and from items loaded without their recurring discount, and the next save would store that over the renewal
+	 * tax agreed at checkout.
+	 *
+	 * @since 2.8.64
+	 */
+	protected function maybe_load_totals() {
+		if ( ! empty( $this->totals ) ) {
+			return;
+		}
+
+		foreach ( array( 'fee' => $this->get_fees(), 'discount' => $this->get_discounts(), 'tax' => $this->get_taxes() ) as $type => $rows ) {
+			$initial   = 0;
+			$recurring = 0;
+			foreach ( $rows as $row ) {
+				$initial   += isset( $row[ "initial_$type" ] ) ? wpinv_sanitize_amount( $row[ "initial_$type" ] ) : 0;
+				$recurring += isset( $row[ "recurring_$type" ] ) ? wpinv_sanitize_amount( $row[ "recurring_$type" ] ) : 0;
+			}
+			$this->totals[ $type ] = array(
+				'initial'   => 'tax' === $type ? wpinv_round_amount( $initial ) : $initial,
+				'recurring' => 'tax' === $type ? wpinv_round_amount( $recurring ) : $recurring,
+			);
+		}
+
+		$initial   = 0;
+		$recurring = 0;
+		foreach ( $this->get_items() as $item ) {
+			$initial   += $item->get_sub_total( 'edit' );
+			$recurring += $item->get_recurring_sub_total( 'edit' );
+		}
+
+		if ( wpinv_prices_include_tax() ) {
+			$initial   = max( 0, $initial - $this->totals['tax']['initial'] );
+			$recurring = max( 0, $recurring - $this->totals['tax']['recurring'] );
+		}
+
+		$this->totals['subtotal'] = array(
+			'initial'   => $initial,
+			'recurring' => $recurring,
+		);
+	}
+
+	/**
+	 * Totals a renewal invoice from the renewal amounts stored on it, copied from the subscription's first invoice.
+	 *
+	 * What a renewal charges was agreed at checkout and the gateway charges exactly that, so nothing is looked up
+	 * again: no tax rates, no discount codes. Uses each stored fee's recurring_fee, discount's recurring_discount and
+	 * tax's recurring_tax, and the items' recurring prices.
+	 *
+	 * @since 2.8.64
+	 * @return float The invoice total
+	 */
+	public function recalculate_renewal_total() {
+		$totals = array();
+
+		foreach ( array( 'fee' => $this->get_fees(), 'discount' => $this->get_discounts(), 'tax' => $this->get_taxes() ) as $type => $rows ) {
+			$sum = 0;
+			foreach ( $rows as $row ) {
+				$sum += isset( $row[ "recurring_$type" ] ) ? wpinv_sanitize_amount( $row[ "recurring_$type" ] ) : 0;
+			}
+			$totals[ $type ] = wpinv_round_amount( $sum );
+		}
+
+		$this->totals['fee']      = array( 'initial' => $totals['fee'], 'recurring' => $totals['fee'] );
+		$this->totals['discount'] = array( 'initial' => $totals['discount'], 'recurring' => $totals['discount'] );
+		$this->totals['tax']      = array( 'initial' => $totals['tax'], 'recurring' => $totals['tax'] );
+
+		$this->set_total_fees( $totals['fee'] );
+		$this->set_total_discount( $totals['discount'] );
+		$this->set_total_tax( $totals['tax'] );
+		$this->recalculate_subtotal();
+		$this->set_total( max( 0, $totals['tax'] + $totals['fee'] + $this->get_subtotal( 'edit' ) - $totals['discount'] ) );
+
 		return $this->get_total();
 	}
 

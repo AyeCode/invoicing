@@ -72,6 +72,15 @@ class GetPaid_Form_Item  extends WPInv_Item {
 	 */
 	public $item_tax = 0;
 
+	/**
+	 * Recurring item tax: the item's tax on each renewal, which differs from item_tax when the first payment does
+	 * (free trial, sign-up fee, one-off discount). Set while taxes are calculated; not stored on the item row, so it
+	 * is null on an item loaded from the database.
+	 *
+	 * @var float|null
+	 */
+	public $recurring_item_tax = null;
+
     /*
 	|--------------------------------------------------------------------------
 	| CRUD methods
