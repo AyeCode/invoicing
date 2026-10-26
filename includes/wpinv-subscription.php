@@ -965,6 +965,28 @@ class WPInv_Subscription extends GetPaid_Data {
      */
     public function create_payment( $save = true ) {
 
+		// A subscription keeps renewing its product after the product is retired: the customer bought it already. (A
+		// draft item can only be bought by an admin, and gateway notices have no user, so it would be left off.)
+		add_filter( 'wpinv_can_purchase_item', '__return_true', 99 );
+		$invoice = $this->build_renewal_invoice();
+		remove_filter( 'wpinv_can_purchase_item', '__return_true', 99 );
+
+		if ( ! $invoice || ! $save ) {
+			return $invoice;
+		}
+
+		$invoice->save();
+
+		return $invoice->exists() ? $invoice : false;
+    }
+
+	/**
+	 * Builds (does not save) the subscription's next renewal invoice.
+	 *
+	 * @return WPInv_Invoice|false
+	 */
+	protected function build_renewal_invoice() {
+
 		$parent_invoice = $this->get_parent_payment();
 
 		if ( ! $parent_invoice->exists() ) {
@@ -1024,14 +1046,8 @@ class WPInv_Subscription extends GetPaid_Data {
 		$invoice->recalculate_renewal_total();
 		$invoice->set_status( 'wpi-pending' );
 
-		if ( ! $save ) {
-			return $invoice;
-		}
-
-		$invoice->save();
-
-		return $invoice->exists() ? $invoice : false;
-    }
+		return $invoice;
+	}
 
 	/**
 	 * Narrows the first invoice's renewal taxes and discounts to this subscription's group, when one order holds
