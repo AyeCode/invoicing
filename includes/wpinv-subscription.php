@@ -1063,6 +1063,15 @@ class WPInv_Subscription extends GetPaid_Data {
 			$discounts[ $name ] = array_merge( $row, array( 'initial_discount' => $share, 'recurring_discount' => $share ) );
 		}
 
+		// A first invoice without stored rows (e.g. imported from another store) still gets the group's tax and discount.
+		if ( $tax > 0 && $all_tax <= 0 ) {
+			$taxes['subscription_group'] = array(
+				'name'          => __( 'Tax', 'invoicing' ),
+				'initial_tax'   => $tax,
+				'recurring_tax' => $tax,
+			);
+		}
+
 		if ( $discount > 0 && $all_disc <= 0 ) {
 			$discounts['subscription_group'] = array(
 				'name'               => __( 'Discount', 'invoicing' ),
