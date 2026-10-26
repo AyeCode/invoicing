@@ -992,6 +992,22 @@ class WPInv_Subscription extends GetPaid_Data {
 			}
 		}
 
+		// A group's own copy of its items is what the subscription renews at: the same as the first invoice's lines for
+		// an order taken here, and the current product and price when the deal changed since (an upgrade).
+		if ( ! empty( $subscription_group['items'] ) ) {
+			$invoice_items = array();
+
+			foreach ( $subscription_group['items'] as $item_id => $data ) {
+				$item = new GetPaid_Form_Item( $item_id );
+				$item->set_name( isset( $data['item_name'] ) ? $data['item_name'] : $item->get_name() );
+				$item->set_description( isset( $data['item_description'] ) ? $data['item_description'] : '' );
+				$item->set_price( isset( $data['item_price'] ) ? $data['item_price'] : $item->get_price() );
+				$item->set_quantity( isset( $data['quantity'] ) ? $data['quantity'] : 1 );
+				$item->set_item_meta( isset( $data['meta'] ) ? $data['meta'] : array() );
+				$invoice_items[] = $item;
+			}
+		}
+
 		$invoice->set_items( $invoice_items );
 
 		// What a renewal charges was agreed at checkout and stored on the first invoice, and the gateway charges exactly
