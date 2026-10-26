@@ -295,6 +295,35 @@ class WPInv_Subscriptions {
     }
 
     /**
+     * Moves an invoice's subscriptions to the invoice's customer, e.g. after an admin changes the customer of a paid invoice.
+     *
+     * @access      public
+     * @param       WPInv_Subscription|WPInv_Subscription[] $subscriptions
+     * @param       WPInv_Invoice $invoice
+     * @since       2.8.64
+     */
+    public function maybe_update_subscriptions_customer( $subscriptions, $invoice ) {
+
+        $customer_id = (int) $invoice->get_user_id();
+
+        if ( empty( $customer_id ) ) {
+            return;
+        }
+
+        if ( ! is_array( $subscriptions ) ) {
+            $subscriptions = array( $subscriptions );
+        }
+
+        foreach ( $subscriptions as $subscription ) {
+            if ( $subscription->exists() && (int) $subscription->get_customer_id() !== $customer_id ) {
+                $subscription->set_customer_id( $customer_id );
+                $subscription->save();
+            }
+        }
+
+    }
+
+    /**
      * (Maybe) Updates a subscription for an invoice.
      *
      * @access      public
@@ -327,6 +356,9 @@ class WPInv_Subscriptions {
         if ( empty( $subscriptions ) ) {
             return $this->maybe_create_invoice_subscription( $invoice );
         }
+
+        // Keep the subscriptions with the invoice's customer, even when the invoice is paid.
+        $this->maybe_update_subscriptions_customer( $subscriptions, $invoice );
 
         // Abort if an invoice is paid and already has a subscription.
         if ( $invoice->is_paid() || $invoice->is_refunded() ) {
