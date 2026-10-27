@@ -119,7 +119,7 @@ class GetPaid_Template {
 	 * @return bool
 	 */
 	public function is_oxygen_preview() {
-		return ! empty( $_REQUEST['ct_builder'] ) || ( ! empty( $_REQUEST['action'] ) && ( substr( $_REQUEST['action'], 0, 11 ) === 'oxy_render_' || substr( $_REQUEST['action'], 0, 10 ) === 'ct_render_' ) );
+		return ! empty( $_REQUEST['ct_builder'] ) || ( ! empty( $_REQUEST['action'] ) && is_string( $_REQUEST['action'] ) && ( substr( $_REQUEST['action'], 0, 11 ) === 'oxy_render_' || substr( $_REQUEST['action'], 0, 10 ) === 'ct_render_' ) );
     }
 
     /**

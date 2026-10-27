@@ -631,7 +631,7 @@ function wpinv_get_states_field() {
 	$states = wpinv_get_country_states( sanitize_text_field( $_POST['country'] ) );
 
 	if ( ! empty( $states ) ) {
-		$sanitized_field_name = sanitize_text_field( $_POST['field_name'] );
+		$sanitized_field_name = isset( $_POST['field_name'] ) && is_string( $_POST['field_name'] ) ? sanitize_text_field( wp_unslash( $_POST['field_name'] ) ) : 'wpinv_state';
 
         $class  = isset( $_POST['class'] ) ? esc_attr( sanitize_text_field( $_POST['class'] ) ) : '';
         $class .= " $sanitized_field_name getpaid_js_field-state custom-select wpinv-select wpi_select2";

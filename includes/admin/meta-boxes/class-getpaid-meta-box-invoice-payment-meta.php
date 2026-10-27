@@ -92,7 +92,7 @@ class GetPaid_Meta_Box_Invoice_Payment_Meta {
 										// translators: %s: Invoice type.
 										__( '%s URL:', 'invoicing' ),
 										ucfirst( $invoice->get_invoice_quote_type() )
-									) . '&nbsp;<a href="' . esc_url_raw( $invoice->get_view_url() ) . '" title="' . __( 'View invoice', 'invoicing' ) . '" target="_blank"><i class="fas fa-external-link-alt fa-fw"></i></a>',
+									) . '&nbsp;<a href="' . esc_url_raw( $invoice->get_view_url() ) . '" title="' . esc_attr__( 'View invoice', 'invoicing' ) . '" target="_blank"><i class="fas fa-external-link-alt fa-fw"></i></a>',
 									'label_type'       => 'vertical',
 									'class'            => 'form-control-sm',
 									'value'            => $invoice->get_view_url(),
