@@ -295,6 +295,66 @@ class WPInv_Subscriptions {
     }
 
     /**
+     * Moves an invoice's subscriptions to the invoice's customer, e.g. after an admin changes the customer of a paid invoice.
+     *
+     * @access      public
+     * @param       WPInv_Subscription|WPInv_Subscription[] $subscriptions
+     * @param       WPInv_Invoice $invoice
+     * @since       2.8.64
+     */
+    public function maybe_update_subscriptions_customer( $subscriptions, $invoice ) {
+
+        $customer_id = (int) $invoice->get_user_id();
+
+        if ( empty( $customer_id ) ) {
+            return;
+        }
+
+        if ( ! is_array( $subscriptions ) ) {
+            $subscriptions = array( $subscriptions );
+        }
+
+        // The customer record of the new user, for the renewal invoices.
+        $customer = getpaid_get_customer_by_user_id( $customer_id );
+
+        foreach ( $subscriptions as $subscription ) {
+            if ( ! $subscription->exists() || (int) $subscription->get_customer_id() === $customer_id ) {
+                continue;
+            }
+
+            $old_customer_id = (int) $subscription->get_customer_id();
+
+            $subscription->set_customer_id( $customer_id );
+            $subscription->save();
+
+            // Renewal invoices of the previous customer go with it, so the payment history stays with the subscription.
+            foreach ( $subscription->get_child_payments( false ) as $post ) {
+                $renewal = new WPInv_Invoice( $post->ID );
+
+                if ( ! $renewal->exists() || (int) $renewal->get_user_id() !== $old_customer_id ) {
+                    continue;
+                }
+
+                $renewal->set_author( $customer_id );
+                if ( ! empty( $customer ) ) {
+                    $renewal->set_customer_id( $customer->get_id() );
+                }
+                $renewal->save();
+
+                /**
+                 * Fires after a renewal invoice moved to its subscription's new customer.
+                 *
+                 * @param WPInv_Invoice $renewal         The renewal invoice.
+                 * @param int           $old_customer_id The previous user id.
+                 * @param int           $customer_id     The new user id.
+                 */
+                do_action( 'getpaid_invoice_user_changed', $renewal, $old_customer_id, $customer_id );
+            }
+        }
+
+    }
+
+    /**
      * (Maybe) Updates a subscription for an invoice.
      *
      * @access      public
@@ -327,6 +387,9 @@ class WPInv_Subscriptions {
         if ( empty( $subscriptions ) ) {
             return $this->maybe_create_invoice_subscription( $invoice );
         }
+
+        // Keep the subscriptions with the invoice's customer, even when the invoice is paid.
+        $this->maybe_update_subscriptions_customer( $subscriptions, $invoice );
 
         // Abort if an invoice is paid and already has a subscription.
         if ( $invoice->is_paid() || $invoice->is_refunded() ) {

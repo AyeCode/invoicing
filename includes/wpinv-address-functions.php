@@ -201,7 +201,10 @@ function getpaid_save_invoice_user_address( $invoice ) {
         return;
     }
 
-    if ( ! $invoice->get_customer_id() ) {
+    // Also when the invoice was moved to another user, but only to a record that belongs to that user (not one made for no user, or a deleted one).
+    $user_id = (int) $invoice->get_user_id();
+    $moved   = $user_id && (int) $customer->get( 'user_id' ) === $user_id && (int) $invoice->get_customer_id() !== (int) $customer->get_id();
+    if ( ! $invoice->get_customer_id() || $moved ) {
         $invoice->set_customer_id( $customer->get_id() );
         $invoice->save();
     }
