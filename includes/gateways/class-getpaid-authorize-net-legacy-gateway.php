@@ -250,10 +250,13 @@ abstract class GetPaid_Authorize_Net_Legacy_Gateway extends GetPaid_Payment_Gate
 			$incoming_hash = $_SERVER['HTTP_X_ANET_SIGNATURE'];
 		} elseif ( isset( $_SERVER['X_ANET_SIGNATURE'] ) ) {
 			$incoming_hash = $_SERVER['X_ANET_SIGNATURE'];
-		} else {
-			$headers       = array_change_key_case( getallheaders(), CASE_LOWER );
-			$incoming_hash = $headers['x-anet-signature'] ?? '';
+		} elseif ( function_exists( 'getallheaders' ) ) {
+			$headers       = getallheaders();
+			$headers       = is_array( $headers ) ? array_change_key_case( $headers, CASE_LOWER ) : array();
+			$incoming_hash = isset( $headers['x-anet-signature'] ) ? $headers['x-anet-signature'] : '';
 		}
+
+		$incoming_hash = is_string( $incoming_hash ) ? trim( $incoming_hash ) : '';
 
 		if ( empty( $incoming_hash ) ) {
 			wpinv_error_log( 'Missing or empty X-Anet-Signature authentication header.', wp_sprintf( '[Authorize.NET %s] Webhook:', $this->get_mode_name() ), false );

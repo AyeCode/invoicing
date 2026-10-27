@@ -101,7 +101,7 @@ class WPInv_Subscriptions_List_Table extends WP_List_Table {
 		$query = array(
 			'number'      => $this->per_page,
 			'paged'       => $this->get_paged(),
-			'status'      => ( isset( $_GET['status'] ) && array_key_exists( $_GET['status'], getpaid_get_subscription_statuses() ) ) ? sanitize_text_field( $_GET['status'] ) : 'all',
+			'status'      => ( isset( $_GET['status'] ) && is_string( $_GET['status'] ) && array_key_exists( $_GET['status'], getpaid_get_subscription_statuses() ) ) ? sanitize_text_field( $_GET['status'] ) : 'all',
 			'orderby'     => ( isset( $_GET['orderby'] ) ) ? sanitize_text_field( $_GET['orderby'] ) : 'id',
 			'order'       => ( isset( $_GET['order'] ) ) ? sanitize_text_field( $_GET['order'] ) : 'DESC',
 			'customer_in' => $this->get_user_in(),

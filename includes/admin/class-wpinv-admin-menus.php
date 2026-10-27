@@ -167,7 +167,7 @@ class WPInv_Admin_Menus {
 
         $settings_tabs = wpinv_get_settings_tabs();
         $settings_tabs = empty( $settings_tabs ) ? array() : $settings_tabs;
-        $active_tab    = isset( $_GET['tab'] ) && array_key_exists( $_GET['tab'], $settings_tabs ) ? sanitize_text_field( $_GET['tab'] ) : 'general';
+        $active_tab    = isset( $_GET['tab'] ) && is_string( $_GET['tab'] ) && array_key_exists( $_GET['tab'], $settings_tabs ) ? sanitize_text_field( $_GET['tab'] ) : 'general';
         $sections      = wpinv_get_settings_tab_sections( $active_tab );
         $key           = 'main';
 
@@ -178,7 +178,7 @@ class WPInv_Admin_Menus {
         add_thickbox();
 
         $registered_sections = wpinv_get_settings_tab_sections( $active_tab );
-        $section             = isset( $_GET['section'] ) && ! empty( $registered_sections ) && array_key_exists( $_GET['section'], $registered_sections ) ? sanitize_text_field( $_GET['section'] ) : $key;
+        $section             = isset( $_GET['section'] ) && is_string( $_GET['section'] ) && ! empty( $registered_sections ) && array_key_exists( $_GET['section'], $registered_sections ) ? sanitize_text_field( $_GET['section'] ) : $key;
         ?>
         <div class="wrap">
             <h1 class="nav-tab-wrapper">

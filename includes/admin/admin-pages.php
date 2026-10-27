@@ -152,7 +152,7 @@ function wpinv_request( $vars ) {
 } elseif ( 'wpi_discount' == $typenow ) {
         $meta_query = ! empty( $vars['meta_query'] ) ? $vars['meta_query'] : array();
         // Filter vat rule type
-        if ( isset( $_GET['discount_type'] ) && $_GET['discount_type'] !== '' ) {
+        if ( isset( $_GET['discount_type'] ) && is_string( $_GET['discount_type'] ) && $_GET['discount_type'] !== '' ) {
             $meta_query[] = array(
 				'key'     => '_wpi_discount_type',
 				'value'   => sanitize_key( urldecode( $_GET['discount_type'] ) ),
