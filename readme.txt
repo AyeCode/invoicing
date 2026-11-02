@@ -146,6 +146,9 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
+= 2.8.65 - TBD =
+* Update AUI 0.2.59 - CHANGED
+
 = 2.8.64 - 2026-10-28 =
 * Discount code in checkout link is now applied automatically - ADDED
 * Changing invoice customer now moves its subscriptions too - FIXED
