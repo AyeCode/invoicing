@@ -1142,9 +1142,10 @@ function getpaid_duplicate_invoice( $old_invoice ) {
  * @param GetPaid_Form_Item $item    The line item.
  * @param WPInv_Invoice     $invoice The invoice.
  * @param string            $context 'invoice' (invoice page, receipt, print) or 'email'.
+ * @param bool              $suffix  Whether to add the recurring "(r)" suffix.
  * @return string Plain text, escaped on output.
  */
-function getpaid_get_invoice_line_item_name( $item, $invoice, $context = 'invoice' ) {
+function getpaid_get_invoice_line_item_name( $item, $invoice, $context = 'invoice', $suffix = true ) {
 
 	/**
 	 * Filters the line item name on invoice pages and in invoice emails, without the recurring "(r)" suffix, which is
@@ -1158,7 +1159,7 @@ function getpaid_get_invoice_line_item_name( $item, $invoice, $context = 'invoic
 	 */
 	$name = apply_filters( 'getpaid_invoice_line_item_name', $item->get_raw_name(), $item, $invoice, $context );
 
-	return $name . wpinv_get_item_suffix( $item, false );
+	return $suffix ? $name . wpinv_get_item_suffix( $item, false ) : $name;
 }
 
 /**
