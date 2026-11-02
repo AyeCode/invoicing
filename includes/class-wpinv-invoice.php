@@ -1898,8 +1898,12 @@ class WPInv_Invoice extends GetPaid_Data {
             return '';
         }
 
+		// The name shown for the line in emails (getpaid_invoice_line_item_name), without the recurring "(r)" suffix.
+		/** This filter is documented in includes/invoice-functions.php */
+		$name = apply_filters( 'getpaid_invoice_line_item_name', $item->get_raw_name(), $item, $this, 'email' );
+
 		// Return the item name.
-        return apply_filters( 'wpinv_invoice_get_subscription_name', $item->get_name(), $this );
+        return apply_filters( 'wpinv_invoice_get_subscription_name', $name, $this );
 	}
 
 	/**
