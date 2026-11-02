@@ -141,7 +141,7 @@ class GetPaid_Invoice_Notification_Emails {
 			'{invoice_quote}'        => sanitize_text_field( strtolower( $invoice->get_label() ) ),
 			'{invoice_label}'        => sanitize_text_field( ucfirst( $invoice->get_label() ) ),
 			'{invoice_description}'  => wp_kses_post( $invoice->get_description() ),
-			'{subscription_name}'    => wp_kses_post( $invoice->get_subscription_name() ),
+			'{subscription_name}'    => sanitize_text_field( $invoice->get_subscription_name( 'email' ) ),
 			'{is_was}'               => $due_date < time() ? __( 'was', 'invoicing' ) : __( 'is', 'invoicing' ),
 		);
 
