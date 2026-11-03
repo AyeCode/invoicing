@@ -651,7 +651,9 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 		// getpaid_start_held_invoice_subscriptions() starts it once the first invoice is marked paid.
 		$parent = $subscription->get_parent_payment();
 		if ( $parent && $parent->exists() && $this->is_held_invoice( $parent ) ) {
-			// Read it again: anything that changed it while the payment was recorded (another notice) is kept.
+			// Re-read it, past the object cache, so the new expiration is calculated from the current row (a hook may have
+			// saved it while the payment was recorded, or another notice since).
+			$subscription->clear_cache();
 			$subscription = new WPInv_Subscription( $subscription->get_id() );
 			$frequency    = $subscription->get_frequency();
 			$period       = $subscription->get_period();
