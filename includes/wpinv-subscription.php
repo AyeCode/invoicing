@@ -1043,6 +1043,18 @@ class WPInv_Subscription extends GetPaid_Data {
 			$this->set_renewal_group_share( $invoice, $parent_invoice, $subscription_group );
 		}
 
+		// A discount that only applied to the first payment (recurring_discount 0) is left off the renewal, code too.
+		$discounts = $invoice->get_discounts();
+		foreach ( $discounts as $name => $row ) {
+			if ( wpinv_sanitize_amount( isset( $row['recurring_discount'] ) ? $row['recurring_discount'] : 0 ) <= 0 ) {
+				unset( $discounts[ $name ] );
+			}
+		}
+		$invoice->set_discounts( $discounts );
+		if ( ! isset( $discounts['discount_code'] ) ) {
+			$invoice->set_discount_code( '' );
+		}
+
 		$invoice->recalculate_renewal_total();
 		$invoice->set_status( 'wpi-pending' );
 
@@ -1053,7 +1065,7 @@ class WPInv_Subscription extends GetPaid_Data {
 	 * Narrows the first invoice's renewal taxes and discounts to this subscription's group, when one order holds
 	 * several subscriptions.
 	 *
-	 * Groups saved since 2.8.64 store their own recurring_tax and recurring_discount. Older groups only store their
+	 * Groups saved since 2.8.65 store their own recurring_tax and recurring_discount. Older groups only store their
 	 * recurring_total: their tax is the group's share of the invoice's renewal tax by item subtotal, and their discount
 	 * whatever brings the group to the amount the gateway was set up to charge.
 	 *
@@ -1087,7 +1099,7 @@ class WPInv_Subscription extends GetPaid_Data {
 		// Keep the stored names (VAT, the discount code), scaled to the group's share.
 		foreach ( $taxes as $name => $row ) {
 			$share            = $all_tax > 0 ? $tax * wpinv_sanitize_amount( $row['recurring_tax'] ) / $all_tax : 0;
-			$taxes[ $name ]   = array_merge( $row, array( 'initial_tax' => $share, 'recurring_tax' => $share ) );
+			$taxes[ $name ] = array_merge( $row, array( 'initial_tax' => $share, 'recurring_tax' => $share ) );
 		}
 
 		foreach ( $discounts as $name => $row ) {

@@ -584,6 +584,9 @@ function getpaid_calculate_subscription_totals( $invoice ) {
 	// Now let's calculate the totals for each group of subscriptions
 	$subscription_totals = array();
 
+	// The groups stored on a saved invoice, for items loaded from the database (see below).
+	$stored_groups = ( $invoice instanceof WPInv_Invoice && $invoice->get_id() ) ? getpaid_get_invoice_subscription_groups( $invoice->get_id() ) : array();
+
 	foreach ( $subscription_groups as $subscription_key => $items ) {
 
 		if ( empty( $subscription_totals[ $subscription_key ] ) ) {
@@ -598,6 +601,8 @@ function getpaid_calculate_subscription_totals( $invoice ) {
 				'trialling'          => false,
 			);
 
+			$from_database = false;
+
 		}
 
 		/**
@@ -609,6 +614,9 @@ function getpaid_calculate_subscription_totals( $invoice ) {
 			// The renewal tax differs from the first payment's with a free trial, sign-up fee or one-off discount.
 			// It is only known while taxes are being calculated; an item loaded from the database falls back.
 			$recurring_tax = null === $item->recurring_item_tax ? $item->item_tax : $item->recurring_item_tax;
+			if ( null === $item->recurring_item_tax ) {
+				$from_database = true;
+			}
 
 			$subscription_totals[ $subscription_key ]['items'][ $item->get_id() ]  = $item->prepare_data_for_saving();
 			$subscription_totals[ $subscription_key ]['item_id']                 = $item->get_id();
@@ -641,11 +649,20 @@ function getpaid_calculate_subscription_totals( $invoice ) {
 		// Each group is charged on its own: round its tax once, then build its totals from the rounded tax, as invoices do.
 		$group = &$subscription_totals[ $subscription_key ];
 		foreach ( array( 'initial' => 'initial_tax', 'recurring' => 'recurring_tax' ) as $type => $tax_key ) {
-			$tax                     = wpinv_round_amount( $group[ $tax_key ] );
+			$tax                      = wpinv_round_amount( $group[ $tax_key ] );
 			$group[ "{$type}_total" ] = wpinv_round_amount( $group[ "{$type}_total" ] - $group[ $tax_key ] + $tax );
 			$group[ $tax_key ]        = $tax;
 		}
 		$group['recurring_discount'] = wpinv_round_amount( $group['recurring_discount'] );
+
+		// Items loaded from the database carry no renewal tax or renewal discount (neither is stored on the item), so
+		// the fallback above would replace a stored group's renewal terms with the first payment's. Keep the stored ones.
+		if ( $from_database && isset( $stored_groups[ $subscription_key ]['recurring_tax'], $stored_groups[ $subscription_key ]['recurring_total'] ) ) {
+			$stored                      = $stored_groups[ $subscription_key ];
+			$group['recurring_tax']      = (float) $stored['recurring_tax'];
+			$group['recurring_discount'] = isset( $stored['recurring_discount'] ) ? (float) $stored['recurring_discount'] : 0;
+			$group['recurring_total']    = (float) $stored['recurring_total'];
+		}
 		unset( $group );
 }
 
@@ -682,12 +699,15 @@ function getpaid_should_group_subscriptions( $invoice ) {
 function getpaid_count_subscription_invoices( $parent_invoice_id, $subscription_id = false ) {
 	global $wpdb;
 
+	// Paid invoices, and payments held because the amount charged did not match (getpaid_hold_charge_mismatch()):
+	// the customer paid, so a fixed-term subscription must count them or it would renew once too often.
+
 	$parent_invoice_id = (int) $parent_invoice_id;
 
 	if ( false === $subscription_id || ! (bool) get_post_meta( $parent_invoice_id, '_wpinv_subscription_id', true ) ) {
 		return (int) $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT COUNT(ID) FROM $wpdb->posts WHERE ( post_parent=%d OR ID=%d ) AND post_status IN ( 'publish', 'wpi-processing', 'wpi-renewal' )",
+				"SELECT COUNT(ID) FROM $wpdb->posts WHERE ( post_parent=%d OR ID=%d ) AND ( post_status IN ( 'publish', 'wpi-processing', 'wpi-renewal' ) OR ( post_status = 'wpi-onhold' AND ID IN ( SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_getpaid_charge_mismatch' ) ) )",
 				$parent_invoice_id,
 				$parent_invoice_id
 			)
@@ -696,7 +716,7 @@ function getpaid_count_subscription_invoices( $parent_invoice_id, $subscription_
 
 	$invoice_ids = $wpdb->get_col(
 		$wpdb->prepare(
-			"SELECT ID FROM $wpdb->posts WHERE ( post_parent=%d OR ID=%d ) AND post_status IN ( 'publish', 'wpi-processing', 'wpi-renewal' )",
+			"SELECT ID FROM $wpdb->posts WHERE ( post_parent=%d OR ID=%d ) AND ( post_status IN ( 'publish', 'wpi-processing', 'wpi-renewal' ) OR ( post_status = 'wpi-onhold' AND ID IN ( SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_getpaid_charge_mismatch' ) ) )",
 			$parent_invoice_id,
 			$parent_invoice_id
 		)
@@ -717,7 +737,7 @@ function getpaid_count_subscription_invoices( $parent_invoice_id, $subscription_
 /**
  * Decimal places of a currency's smallest unit (2 for cents, 0 for yen).
  *
- * @since 2.8.64
+ * @since 2.8.65
  * @param string $currency
  * @return int
  */
@@ -738,7 +758,7 @@ function getpaid_get_currency_decimals( $currency ) {
 /**
  * Whether two amounts are the same in the currency's smallest unit.
  *
- * @since 2.8.64
+ * @since 2.8.65
  * @param float|string $a
  * @param float|string $b
  * @param string       $currency
@@ -758,7 +778,7 @@ function getpaid_amounts_match( $a, $b, $currency ) {
  *
  * Call before the invoice is saved, so the flag is stored before any status email runs.
  *
- * @since 2.8.64
+ * @since 2.8.65
  * @param WPInv_Invoice $invoice
  * @param float         $charged  The amount the gateway charged.
  * @param string        $currency The currency it charged in.
@@ -783,7 +803,7 @@ function getpaid_hold_charge_mismatch( $invoice, $charged, $currency, $gateway, 
 /**
  * Notes and emails a charge mismatch once the held invoice is saved (it needs an ID and a number by then).
  *
- * @since 2.8.64
+ * @since 2.8.65
  * @param WPInv_Invoice $invoice
  */
 function getpaid_notify_charge_mismatch( $invoice ) {
@@ -823,7 +843,7 @@ function getpaid_notify_charge_mismatch( $invoice ) {
 /**
  * The customer is not emailed about an invoice held for a charge mismatch: nothing is due from them.
  *
- * @since 2.8.64
+ * @since 2.8.65
  * @param bool          $skip
  * @param string        $type
  * @param WPInv_Invoice $invoice
@@ -842,7 +862,7 @@ add_filter( 'getpaid_skip_invoice_email', 'getpaid_skip_charge_mismatch_emails',
  * A first invoice held for a charge mismatch left its subscriptions Pending (no licence or access). Once the admin
  * marks it paid, start them. Normal payments are left to their gateway, which sets status and dates itself.
  *
- * @since 2.8.64
+ * @since 2.8.65
  * @param WPInv_Invoice $invoice
  */
 function getpaid_start_held_invoice_subscriptions( $invoice ) {
@@ -861,3 +881,21 @@ function getpaid_start_held_invoice_subscriptions( $invoice ) {
 	}
 }
 add_action( 'getpaid_invoice_status_publish', 'getpaid_start_held_invoice_subscriptions' );
+
+/**
+ * Clears the charge mismatch flag once an invoice leaves hold, so a later, unrelated hold is handled normally (emails,
+ * subscriptions). The mismatch stays recorded in the invoice notes. Runs after getpaid_start_held_invoice_subscriptions(),
+ * which needs the flag ('getpaid_invoice_status_publish' fires before 'getpaid_invoice_status_changed').
+ *
+ * @since 2.8.65
+ * @param WPInv_Invoice $invoice
+ * @param string        $from
+ * @param string        $to
+ */
+function getpaid_clear_charge_mismatch( $invoice, $from, $to ) {
+	if ( 'wpi-onhold' === $from && 'wpi-onhold' !== $to && $invoice->get_meta( '_getpaid_charge_mismatch' ) ) {
+		$invoice->delete_meta_data( '_getpaid_charge_mismatch' );
+		$invoice->save_meta_data();
+	}
+}
+add_action( 'getpaid_invoice_status_changed', 'getpaid_clear_charge_mismatch', 10, 3 );

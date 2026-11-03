@@ -345,7 +345,7 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 			$interval = 1;
 		}
 
-		$initial   = (float) $invoice->get_total();
+		$initial   = (float) $invoice->get_initial_total(); // What process_subscription() sends PayPal (no shipping, unlike get_total()).
 		$recurring = (float) $subscription->get_recurring_amount();
 		$item      = $invoice->get_recurring( true );
 		$trial     = $item && $item->has_free_trial();

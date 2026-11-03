@@ -3902,24 +3902,47 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * and from items loaded without their recurring discount, and the next save would store that over the renewal
 	 * tax agreed at checkout.
 	 *
-	 * @since 2.8.64
+	 * @since 2.8.65
 	 */
 	protected function maybe_load_totals() {
-		if ( ! empty( $this->totals ) ) {
-			return;
-		}
+		// Each part on its own: recalculating one part (e.g. recalculate_total_tax()) only sets that one.
+		$props = array(
+			'fee'      => array( $this->get_fees(), 'get_total_fees' ),
+			'discount' => array( $this->get_discounts(), 'get_total_discount' ),
+			'tax'      => array( $this->get_taxes(), 'get_total_tax' ),
+		);
 
-		foreach ( array( 'fee' => $this->get_fees(), 'discount' => $this->get_discounts(), 'tax' => $this->get_taxes() ) as $type => $rows ) {
+		foreach ( $props as $type => $source ) {
+			if ( isset( $this->totals[ $type ] ) ) {
+				continue;
+			}
+
+			list( $rows, $getter ) = $source;
 			$initial   = 0;
 			$recurring = 0;
 			foreach ( $rows as $row ) {
 				$initial   += isset( $row[ "initial_$type" ] ) ? wpinv_sanitize_amount( $row[ "initial_$type" ] ) : 0;
 				$recurring += isset( $row[ "recurring_$type" ] ) ? wpinv_sanitize_amount( $row[ "recurring_$type" ] ) : 0;
 			}
+
+			// No rows but a stored total (an imported invoice, or one created in code): use the stored total, as the
+			// old recalculation would have, rather than reading the part as zero.
+			if ( empty( $rows ) ) {
+				$stored = wpinv_sanitize_amount( $this->$getter( 'edit' ) );
+				if ( 0 != $stored ) {
+					$initial   = $stored;
+					$recurring = $stored;
+				}
+			}
+
 			$this->totals[ $type ] = array(
 				'initial'   => 'tax' === $type ? wpinv_round_amount( $initial ) : $initial,
 				'recurring' => 'tax' === $type ? wpinv_round_amount( $recurring ) : $recurring,
 			);
+		}
+
+		if ( isset( $this->totals['subtotal'] ) ) {
+			return;
 		}
 
 		$initial   = 0;
@@ -3947,7 +3970,7 @@ class WPInv_Invoice extends GetPaid_Data {
 	 * again: no tax rates, no discount codes. Uses each stored fee's recurring_fee, discount's recurring_discount and
 	 * tax's recurring_tax, and the items' recurring prices.
 	 *
-	 * @since 2.8.64
+	 * @since 2.8.65
 	 * @return float The invoice total
 	 */
 	public function recalculate_renewal_total() {
