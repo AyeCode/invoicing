@@ -125,7 +125,7 @@ do_action( 'getpaid_before_single_subscription', $subscription, $subscription_gr
 			 * wpinv_subscription_cancel_url and wpinv_subscription_can_cancel filters, it changes the button itself
 			 * (label, classes, the confirm prompt) without changing whether or how the subscription can be cancelled,
 			 * e.g. to send customers through a cancellation flow first. Return '' to hide it. Only called when the
-			 * subscription can be cancelled; the spacing after the button is added when it is not empty.
+			 * subscription can be cancelled.
 			 *
 			 * @since 2.8.65
 			 * @param string             $cancel_button The button HTML.

@@ -147,7 +147,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 == Changelog ==
 
 = 2.8.65 - TBD =
-* getpaid_subscription_cancel_button filter for the Cancel Subscription button on the customer's subscription page, to replace it (e.g. with a cancellation flow) or hide it without changing whether the subscription can be cancelled, which the existing wpinv_subscription_can_cancel filter would - ADDED
+* getpaid_subscription_cancel_button filter to replace or hide the Cancel Subscription button - ADDED
 
 = 2.8.64 - 2026-10-28 =
 * Discount code in checkout link is now applied automatically - ADDED
