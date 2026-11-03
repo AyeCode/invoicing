@@ -352,20 +352,25 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 		$expected  = ( 1 === (int) $subscription->get_bill_times() && ! $trial && ! getpaid_amounts_match( $initial, $recurring, $currency ) ) ? $initial : $recurring;
 		$problems  = array();
 
-		if ( ! isset( $posted['mc_amount3'] ) || ! getpaid_amounts_match( $posted['mc_amount3'], $expected, $currency ) ) {
+		// mc_amount3/mc_amount1 are normally sent; amount3/amount1 are the older names. A field PayPal did not send is not
+		// a mismatch: the payment notices still check the money actually taken.
+		$amount3 = isset( $posted['mc_amount3'] ) ? $posted['mc_amount3'] : ( isset( $posted['amount3'] ) ? $posted['amount3'] : null );
+		$amount1 = isset( $posted['mc_amount1'] ) ? $posted['mc_amount1'] : ( isset( $posted['amount1'] ) ? $posted['amount1'] : null );
+
+		if ( null !== $amount3 && ! getpaid_amounts_match( $amount3, $expected, $currency ) ) {
 			// translators: 1: amount PayPal set up, 2: amount expected.
-			$problems[] = wp_sprintf( __( 'PayPal set the subscription up at %1$s per period, the invoice expects %2$s.', 'invoicing' ), wpinv_price( isset( $posted['mc_amount3'] ) ? $posted['mc_amount3'] : 0, $currency ), wpinv_price( $expected, $currency ) );
+			$problems[] = wp_sprintf( __( 'PayPal set the subscription up at %1$s per period, the invoice expects %2$s.', 'invoicing' ), wpinv_price( $amount3, $currency ), wpinv_price( $expected, $currency ) );
 		}
 
 		$posted_period = isset( $posted['period3'] ) ? strtoupper( preg_replace( '/\s+/', ' ', trim( (string) $posted['period3'] ) ) ) : '';
-		if ( "$interval $period" !== $posted_period ) {
+		if ( '' !== $posted_period && "$interval $period" !== $posted_period ) {
 			// translators: 1: period PayPal set up, 2: period expected.
 			$problems[] = wp_sprintf( __( 'PayPal set the subscription up to renew every %1$s, the invoice expects %2$s.', 'invoicing' ), $posted_period, "$interval $period" );
 		}
 
-		if ( isset( $posted['mc_amount1'] ) && ! getpaid_amounts_match( $posted['mc_amount1'], $initial, $currency ) ) {
+		if ( null !== $amount1 && ! getpaid_amounts_match( $amount1, $initial, $currency ) ) {
 			// translators: 1: first payment PayPal set up, 2: invoice total.
-			$problems[] = wp_sprintf( __( 'PayPal set the first payment up at %1$s, the invoice totals %2$s.', 'invoicing' ), wpinv_price( $posted['mc_amount1'], $currency ), wpinv_price( $initial, $currency ) );
+			$problems[] = wp_sprintf( __( 'PayPal set the first payment up at %1$s, the invoice totals %2$s.', 'invoicing' ), wpinv_price( $amount1, $currency ), wpinv_price( $initial, $currency ) );
 		}
 
 		return implode( ' ', $problems );
@@ -640,6 +645,21 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 
 		$invoice->add_note( wp_sprintf( __( 'PayPal Transaction ID: %s', 'invoicing' ), $posted['txn_id'] ), false, false, true );
 		$invoice->add_note( wp_sprintf( __( 'PayPal Subscription ID: %s', 'invoicing' ), $posted['subscr_id'] ), false, false, true );
+
+		// The first invoice is still held for review: record the renewal and move the dates on with PayPal's schedule,
+		// but leave the subscription as it is (Pending). renew() would make it Active without the admin's review;
+		// getpaid_start_held_invoice_subscriptions() starts it once the first invoice is marked paid.
+		$parent = $subscription->get_parent_payment();
+		if ( $parent && $parent->exists() && $this->is_held_invoice( $parent ) ) {
+			$frequency = $subscription->get_frequency();
+			$period    = $subscription->get_period();
+			$subscription->set_expiration( date( 'Y-m-d H:i:s', strtotime( "+ $frequency $period", $subscription->get_expiration_time() ) ) );
+			$subscription->save();
+
+			// translators: %s: first invoice number.
+			$invoice->add_note( wp_sprintf( __( 'Subscription not activated: its first invoice %s is on hold for review. It starts when that invoice is marked paid.', 'invoicing' ), $parent->get_number() ), false, false, true );
+			return wpinv_error_log( 'Renewal recorded; subscription left as it is while its first invoice is on hold.', false );
+		}
 
 		$subscription->renew();
 		wpinv_error_log( 'Subscription renewed.', false );

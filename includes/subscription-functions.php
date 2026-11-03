@@ -884,9 +884,11 @@ function getpaid_start_held_invoice_subscriptions( $invoice ) {
 add_action( 'getpaid_invoice_status_publish', 'getpaid_start_held_invoice_subscriptions' );
 
 /**
- * Clears the charge mismatch flag once an invoice leaves hold, so a later, unrelated hold is handled normally (emails,
- * subscriptions). The mismatch stays recorded in the invoice notes. Runs after getpaid_start_held_invoice_subscriptions(),
- * which needs the flag ('getpaid_invoice_status_publish' fires before 'getpaid_invoice_status_changed').
+ * Clears the charge mismatch flag once the invoice is out of review, so a later, unrelated hold is handled normally
+ * (emails, subscriptions). The mismatch stays recorded in the invoice notes. Kept through Processing: core leaves the
+ * subscriptions Pending for a payment not yet confirmed, and getpaid_start_held_invoice_subscriptions() needs the flag
+ * when the invoice is later marked paid. Runs after it ('getpaid_invoice_status_publish' fires before
+ * 'getpaid_invoice_status_changed').
  *
  * @since 2.8.65
  * @param WPInv_Invoice $invoice
@@ -894,7 +896,8 @@ add_action( 'getpaid_invoice_status_publish', 'getpaid_start_held_invoice_subscr
  * @param string        $to
  */
 function getpaid_clear_charge_mismatch( $invoice, $from, $to ) {
-	if ( 'wpi-onhold' === $from && 'wpi-onhold' !== $to && $invoice->get_meta( '_getpaid_charge_mismatch' ) ) {
+	$review = array( 'wpi-onhold', 'wpi-processing' );
+	if ( in_array( $from, $review, true ) && ! in_array( $to, $review, true ) && $invoice->get_meta( '_getpaid_charge_mismatch' ) ) {
 		$invoice->delete_meta_data( '_getpaid_charge_mismatch' );
 		$invoice->save_meta_data();
 	}
