@@ -320,7 +320,7 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 	 * @return bool
 	 */
 	protected function is_held_invoice( $invoice ) {
-		return $invoice->has_status( 'wpi-onhold' ) && (bool) $invoice->get_meta( '_getpaid_charge_mismatch' );
+		return getpaid_is_charge_mismatch_held( $invoice );
 	}
 
 	/**

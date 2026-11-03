@@ -802,6 +802,18 @@ function getpaid_hold_charge_mismatch( $invoice, $charged, $currency, $gateway, 
 }
 
 /**
+ * Whether an invoice is held for review because the amount charged did not match it: On Hold, or moved on to
+ * Processing (payment not yet confirmed), and still carrying the mismatch flag.
+ *
+ * @since 2.8.65
+ * @param WPInv_Invoice $invoice
+ * @return bool
+ */
+function getpaid_is_charge_mismatch_held( $invoice ) {
+	return ! empty( $invoice ) && $invoice->has_status( array( 'wpi-onhold', 'wpi-processing' ) ) && (bool) $invoice->get_meta( '_getpaid_charge_mismatch' );
+}
+
+/**
  * Notes and emails a charge mismatch once the held invoice is saved (it needs an ID and a number by then).
  *
  * @since 2.8.65
