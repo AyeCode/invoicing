@@ -1877,12 +1877,14 @@ class WPInv_Invoice extends GetPaid_Data {
     }
 
 	/**
-	 * Retrieves the subscription name.
+	 * Retrieves the subscription name: the recurring line item's name as invoices and emails show it
+	 * (getpaid_invoice_line_item_name), without the recurring "(r)" suffix.
 	 *
 	 * @since 1.0.19
+	 * @param string $context 'email' in emails, else 'invoice' (the REST API passes 'view' or 'edit').
 	 * @return string
 	 */
-	public function get_subscription_name() {
+	public function get_subscription_name( $context = 'invoice' ) {
 
 		// Retrieve the recurring name
         $item = $this->get_recurring( true );
@@ -1892,8 +1894,10 @@ class WPInv_Invoice extends GetPaid_Data {
             return '';
         }
 
+		$name = getpaid_get_invoice_line_item_name( $item, $this, 'email' === $context ? 'email' : 'invoice', false );
+
 		// Return the item name.
-        return apply_filters( 'wpinv_invoice_get_subscription_name', $item->get_name(), $this );
+        return apply_filters( 'wpinv_invoice_get_subscription_name', $name, $this );
 	}
 
 	/**

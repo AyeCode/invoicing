@@ -19,26 +19,25 @@ function wpinv_item_quantities_enabled() {
  * Returns the user's ip address.
  */
 function wpinv_get_ip() {
+	if ( isset( $_SERVER['HTTP_X_REAL_IP'] ) && is_string( $_SERVER['HTTP_X_REAL_IP'] ) ) {
+		return sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_REAL_IP'] ) );
+	}
 
-    if ( isset( $_SERVER['HTTP_X_REAL_IP'] ) ) {
-        return sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_REAL_IP'] ) );
-    }
+	if ( isset( $_SERVER['HTTP_X_FORWARDED_FOR'] ) && is_string( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
+		// Proxy servers can send through this header like this: X-Forwarded-For: client1, proxy1, proxy2
+		// Make sure we always only send through the first IP in the list which should always be the client IP.
+		return (string) rest_is_ip_address( trim( current( preg_split( '/,/', sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) ) ) ) );
+	}
 
-    if ( isset( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
-        // Proxy servers can send through this header like this: X-Forwarded-For: client1, proxy1, proxy2
-        // Make sure we always only send through the first IP in the list which should always be the client IP.
-        return (string) rest_is_ip_address( trim( current( preg_split( '/,/', sanitize_text_field( wp_unslash( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) ) ) ) );
-    }
+	if ( isset( $_SERVER['HTTP_CLIENT_IP'] ) && is_string( $_SERVER['HTTP_CLIENT_IP'] ) ) {
+		return sanitize_text_field( wp_unslash( $_SERVER['HTTP_CLIENT_IP'] ) );
+	}
 
-    if ( isset( $_SERVER['HTTP_CLIENT_IP'] ) ) {
-        return sanitize_text_field( wp_unslash( $_SERVER['HTTP_CLIENT_IP'] ) );
-    }
+	if ( isset( $_SERVER['REMOTE_ADDR'] ) && is_string( $_SERVER['REMOTE_ADDR'] ) ) {
+		return sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) );
+	}
 
-    if ( isset( $_SERVER['REMOTE_ADDR'] ) ) {
-        return sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) );
-    }
-
-    return '';
+	return '';
 }
 
 function wpinv_get_user_agent() {

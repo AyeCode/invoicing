@@ -3,9 +3,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: GetPaid 2.8.63\n"
+"Project-Id-Version: GetPaid 2.8.64\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/invoicing\n"
-"POT-Creation-Date: 2026-10-23 20:00+0530\n"
+"POT-Creation-Date: 2026-10-28 19:21+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -974,7 +974,7 @@ msgid "Subscriptions"
 msgstr ""
 
 #: includes/admin/class-wpinv-admin-menus.php:98
-#: includes/reports/class-getpaid-reports.php:105
+#: includes/reports/class-getpaid-reports.php:87
 msgid "Export"
 msgstr ""
 
@@ -1123,7 +1123,7 @@ msgid "Selected subscriptions updated to %s."
 msgstr ""
 
 #: includes/admin/class-wpinv-users.php:38
-#: includes/wpinv-helper-functions.php:769
+#: includes/wpinv-helper-functions.php:768
 msgid "Invoicing"
 msgstr ""
 
@@ -1322,7 +1322,7 @@ msgid "Optionally set the maximum number of times that this discount code can be
 msgstr ""
 
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:30
-#: includes/class-wpinv-ajax.php:1024
+#: includes/class-wpinv-ajax.php:1031
 #, php-format
 msgctxt "user dropdown"
 msgid "%1$s (%2$s)"
@@ -1359,8 +1359,8 @@ msgstr ""
 
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-address.php:69
 #: includes/admin/views/html-tax-rates-edit.php:39
-#: includes/class-wpinv-ajax.php:1054 includes/class-wpinv-ajax.php:1056
-#: includes/class-wpinv-ajax.php:1068
+#: includes/class-wpinv-ajax.php:1061 includes/class-wpinv-ajax.php:1063
+#: includes/class-wpinv-ajax.php:1075
 #: includes/class-wpinv-privacy-exporters.php:131
 #: includes/wpinv-address-functions.php:136
 msgid "State"
@@ -3647,7 +3647,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: includes/class-getpaid-post-types.php:251
-#: includes/wpinv-helper-functions.php:143
+#: includes/wpinv-helper-functions.php:142
 msgctxt "Invoice status"
 msgid "Processing"
 msgstr ""
@@ -3672,7 +3672,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: includes/class-getpaid-post-types.php:271
-#: includes/wpinv-helper-functions.php:145
+#: includes/wpinv-helper-functions.php:144
 msgctxt "Invoice status"
 msgid "Cancelled"
 msgstr ""
@@ -3685,7 +3685,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: includes/class-getpaid-post-types.php:281
-#: includes/wpinv-helper-functions.php:146
+#: includes/wpinv-helper-functions.php:145
 msgctxt "Invoice status"
 msgid "Refunded"
 msgstr ""
@@ -3698,7 +3698,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: includes/class-getpaid-post-types.php:291
-#: includes/wpinv-helper-functions.php:147
+#: includes/wpinv-helper-functions.php:146
 msgctxt "Invoice status"
 msgid "Failed"
 msgstr ""
@@ -3809,58 +3809,58 @@ msgstr ""
 msgid "Invalid email address"
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:272
+#: includes/class-wpinv-ajax.php:279
 msgid "No payment form or item provided"
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:337
+#: includes/class-wpinv-ajax.php:344
 msgid "You are not allowed to perform this action."
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:363 includes/class-wpinv-ajax.php:368
-#: includes/class-wpinv-ajax.php:1099
+#: includes/class-wpinv-ajax.php:370 includes/class-wpinv-ajax.php:375
+#: includes/class-wpinv-ajax.php:1106
 msgid "Error: Reload the page and try again."
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:494
+#: includes/class-wpinv-ajax.php:501
 #, php-format
 msgid "Recurring Price: %s"
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:664
+#: includes/class-wpinv-ajax.php:671
 msgid "Could not create invoice item. Please try again."
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:1070 includes/data/admin-settings.php:77
+#: includes/class-wpinv-ajax.php:1077 includes/data/admin-settings.php:77
 msgid "Select a state"
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:1137
+#: includes/class-wpinv-ajax.php:1144
 msgid "Bad Request"
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:1144
+#: includes/class-wpinv-ajax.php:1151
 #: includes/payments/class-getpaid-payment-form-submission.php:230
 msgid "Payment form not active"
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:1150
+#: includes/class-wpinv-ajax.php:1157
 msgid "Invalid upload field."
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:1167 includes/class-wpinv.php:407
+#: includes/class-wpinv-ajax.php:1174 includes/class-wpinv.php:407
 msgid "Unsupported file type."
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:1207
+#: includes/class-wpinv-ajax.php:1214
 msgid "VAT number and country are required."
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:1219
+#: includes/class-wpinv-ajax.php:1226
 msgid "VAT number is valid."
 msgstr ""
 
-#: includes/class-wpinv-ajax.php:1224
+#: includes/class-wpinv-ajax.php:1231
 msgid "VAT number is invalid."
 msgstr ""
 
@@ -4179,27 +4179,27 @@ msgstr ""
 msgid "User has initiated a subscription cancellation #%d."
 msgstr ""
 
-#: includes/class-wpinv-subscriptions.php:505
+#: includes/class-wpinv-subscriptions.php:568
 msgid "Subscription updated"
 msgstr ""
 
-#: includes/class-wpinv-subscriptions.php:535
+#: includes/class-wpinv-subscriptions.php:598
 msgid "We are unable to renew this subscription as the parent invoice does not exist."
 msgstr ""
 
-#: includes/class-wpinv-subscriptions.php:538
+#: includes/class-wpinv-subscriptions.php:601
 msgid "This subscription has been renewed and extended."
 msgstr ""
 
-#: includes/class-wpinv-subscriptions.php:572
+#: includes/class-wpinv-subscriptions.php:635
 msgid "This subscription has been deleted."
 msgstr ""
 
-#: includes/class-wpinv-subscriptions.php:574
+#: includes/class-wpinv-subscriptions.php:637
 msgid "We are unable to delete this subscription. Please try again."
 msgstr ""
 
-#: includes/class-wpinv-subscriptions.php:623
+#: includes/class-wpinv-subscriptions.php:686
 msgid "Manage Subscription"
 msgstr ""
 
@@ -13788,7 +13788,7 @@ msgstr ""
 msgid "Payment declined"
 msgstr ""
 
-#: includes/gateways/class-getpaid-authorize-net-legacy-gateway.php:297
+#: includes/gateways/class-getpaid-authorize-net-legacy-gateway.php:300
 #: includes/invoice-functions.php:138
 msgid "Invoice not found."
 msgstr ""
@@ -14862,9 +14862,9 @@ msgstr ""
 msgid "Discounted"
 msgstr ""
 
-#: includes/reports/class-getpaid-reports.php:36
-#: includes/reports/class-getpaid-reports.php:37
-#: includes/reports/class-getpaid-reports.php:104
+#: includes/reports/class-getpaid-reports.php:32
+#: includes/reports/class-getpaid-reports.php:33
+#: includes/reports/class-getpaid-reports.php:86
 msgid "Reports"
 msgstr ""
 
@@ -15131,31 +15131,31 @@ msgstr ""
 msgid "Refunds"
 msgstr ""
 
-#: includes/wpinv-helper-functions.php:141
+#: includes/wpinv-helper-functions.php:140
 msgctxt "Invoice status"
 msgid "Pending payment"
 msgstr ""
 
-#: includes/wpinv-helper-functions.php:142
+#: includes/wpinv-helper-functions.php:141
 msgctxt "Invoice status"
 msgid "Paid"
 msgstr ""
 
-#: includes/wpinv-helper-functions.php:144
+#: includes/wpinv-helper-functions.php:143
 msgctxt "Invoice status"
 msgid "On hold"
 msgstr ""
 
-#: includes/wpinv-helper-functions.php:148
+#: includes/wpinv-helper-functions.php:147
 msgctxt "Invoice status"
 msgid "Paid (renewal)"
 msgstr ""
 
-#: includes/wpinv-helper-functions.php:152
+#: includes/wpinv-helper-functions.php:151
 msgid "Draft"
 msgstr ""
 
-#: includes/wpinv-helper-functions.php:156
+#: includes/wpinv-helper-functions.php:155
 msgid "Trash"
 msgstr ""
 
@@ -16213,7 +16213,7 @@ msgstr ""
 msgid "Validate"
 msgstr ""
 
-#: templates/payment-forms/elements/discount.php:39
+#: templates/payment-forms/elements/discount.php:44
 msgid "Discount code applied!"
 msgstr ""
 

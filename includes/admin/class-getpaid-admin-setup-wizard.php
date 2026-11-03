@@ -207,7 +207,7 @@ class GetPaid_Admin_Setup_Wizard {
 			}
 
 			if ( $current === $step ) {
-				return $on_current = true;
+				$on_current = true;
 			}
 }
 

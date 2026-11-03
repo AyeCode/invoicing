@@ -235,11 +235,13 @@ class GetPaid_Customers_Query {
 		// Fields.
 		foreach ( GetPaid_Customer_Data_Store::get_database_fields() as $field => $type ) {
 			if ( 'any' !== $qv[ $field ] ) {
-
 				// In.
 				if ( is_array( $qv[ $field ] ) ) {
-					$in                 = join( ',', array_fill( 0, count( $qv[ $field ] ), $type ) );
-					$this->query_where .= $wpdb->prepare( " AND $table.`status` IN ( $in )", $qv[ $field ] );
+					// Skip empty lists, an empty IN () is invalid SQL.
+					if ( ! empty( $qv[ $field ] ) ) {
+						$in                 = join( ',', array_fill( 0, count( $qv[ $field ] ), $type ) );
+						$this->query_where .= $wpdb->prepare( " AND $table.`$field` IN ( $in )", array_values( $qv[ $field ] ) );
+					}
 				} elseif ( ! empty( $qv[ $field ] ) ) {
 					$this->query_where .= $wpdb->prepare( " AND $table.`$field` = $type", $qv[ $field ] );
 				}
@@ -247,7 +249,6 @@ class GetPaid_Customers_Query {
 
 			// Min/Max.
 			if ( '%f' === $type || '%d' === $type ) {
-
 				// Min.
 				if ( is_numeric( $qv[ $field . '_min' ] ) ) {
 					$this->query_where .= $wpdb->prepare( " AND $table.`$field` >= $type", $qv[ $field . '_min' ] );

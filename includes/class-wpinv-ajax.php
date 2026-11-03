@@ -264,6 +264,13 @@ class WPInv_Ajax {
     public static function get_payment_form() {
 		global $getpaid_force_checkbox;
 
+		// Ignore non-string values.
+		foreach ( array( 'form', 'item', 'invoice' ) as $key ) {
+			if ( isset( $_GET[ $key ] ) && ! is_string( $_GET[ $key ] ) ) {
+				unset( $_GET[ $key ] );
+			}
+		}
+
 		// Is the request set up correctly?
 		if ( empty( $_GET['form'] ) && empty( $_GET['item'] ) && empty( $_GET['invoice'] ) ) {
 			aui()->alert(
@@ -940,7 +947,7 @@ class WPInv_Ajax {
         }
 
         // We need a search term.
-        if ( empty( $_GET['search'] ) ) {
+        if ( empty( $_GET['search'] ) || ! is_string( $_GET['search'] ) ) {
             wp_send_json_success( array() );
         }
 
@@ -1002,7 +1009,7 @@ class WPInv_Ajax {
         }
 
         // We need a search term.
-        if ( empty( $_GET['search'] ) ) {
+        if ( empty( $_GET['search'] ) || ! is_string( $_GET['search'] ) ) {
             wp_send_json_success( array() );
         }
 

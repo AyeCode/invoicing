@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoicing, Paypal, Stripe, payment
 Requires at least: 6.0
 Tested up to: 7.1
-Stable tag: 2.8.63
+Stable tag: 2.8.64
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -145,6 +145,11 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 9. Single invoice view page.
 
 == Changelog ==
+
+= 2.8.64 - 2026-10-28 =
+* Discount code in checkout link is now applied automatically - ADDED
+* Changing invoice customer now moves its subscriptions too - FIXED
+* Extra security checks and small bug fixes - SECURITY
 
 = 2.8.63 - 2026-10-23 =
 * PayPal: an end of term notice for a subscription that was not fully paid (cancelled or failing payments) now expires it instead of marking it completed - FIXED

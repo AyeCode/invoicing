@@ -423,8 +423,22 @@ class WPInv_Plugin {
 	}
 
 	public function wpinv_actions() {
-		if ( isset( $_REQUEST['wpi_action'] ) ) {
-			do_action( 'wpinv_' . wpinv_sanitize_key( $_REQUEST['wpi_action'] ), $_REQUEST );
+		if ( isset( $_REQUEST['wpi_action'] ) && is_string( $_REQUEST['wpi_action'] ) ) {
+			$action  = wpinv_sanitize_key( $_REQUEST['wpi_action'] );
+
+			$blocked = (array) apply_filters( 'getpaid_blocked_wpi_action_prefixes', array( 'reports_tab_' ) );
+			$allowed = '' !== $action;
+
+			foreach ( $blocked as $prefix ) {
+				if ( '' !== $prefix && 0 === strpos( $action, $prefix ) ) {
+					$allowed = false;
+					break;
+				}
+			}
+
+			if ( $allowed ) {
+				do_action( 'wpinv_' . $action, $_REQUEST );
+			}
 		}
 
 		if ( defined( 'WP_ALL_IMPORT_ROOT_DIR' ) ) {

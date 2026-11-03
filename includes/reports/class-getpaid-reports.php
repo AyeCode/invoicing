@@ -1,8 +1,6 @@
 <?php
 /**
  * Contains the reports class
- *
- *
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -22,7 +20,6 @@ class GetPaid_Reports {
 		add_action( 'wpinv_reports_tab_export', array( $this, 'display_exports_tab' ) );
 		add_action( 'getpaid_authenticated_admin_action_download_graph', array( $this, 'download_graph' ) );
 		add_action( 'getpaid_authenticated_admin_action_export_invoices', array( $this, 'export_invoices' ) );
-
 	}
 
 	/**
@@ -30,16 +27,14 @@ class GetPaid_Reports {
 	 *
 	 */
 	public function register_reports_page() {
-
 		add_submenu_page(
-            'wpinv',
-            __( 'Reports', 'invoicing' ),
-            __( 'Reports', 'invoicing' ),
-            wpinv_get_capability(),
-            'wpinv-reports',
-            array( $this, 'display_reports_page' )
+			'wpinv',
+			__( 'Reports', 'invoicing' ),
+			__( 'Reports', 'invoicing' ),
+			wpinv_get_capability(),
+			'wpinv-reports',
+			array( $this, 'display_reports_page' )
 		);
-
 	}
 
 	/**
@@ -47,7 +42,6 @@ class GetPaid_Reports {
 	 *
 	 */
 	public function display_reports_page() {
-
 		// Prepare variables.
 		$tabs        = $this->get_tabs();
 		$current_tab = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'reports';
@@ -55,42 +49,31 @@ class GetPaid_Reports {
 
 		// Display the current tab.
 		?>
-
-        <div class="wrap">
-
+		<div class="wrap">
 			<h1><?php echo esc_html( $tabs[ $current_tab ] ); ?></h1>
-
 			<nav class="nav-tab-wrapper">
-
 				<?php
-					foreach ( $tabs as $key => $label ) {
-
+				foreach ( $tabs as $key => $label ) {
 					$key   = sanitize_key( $key );
 					$label = esc_html( $label );
 					$class = $key == $current_tab ? 'nav-tab nav-tab-active' : 'nav-tab ';
 					$url   = esc_url(
-                        add_query_arg( 'tab', $key, admin_url( 'admin.php?page=wpinv-reports' ) )
-                    );
+						add_query_arg( 'tab', $key, admin_url( 'admin.php?page=wpinv-reports' ) )
+					);
 
-				echo wp_kses_post( "\n\t\t\t<a href='$url' class='" . $class . "'>$label</a>" );
-
-					}
+					echo wp_kses_post( "\n\t\t\t<a href='$url' class='" . $class . "'>$label</a>" );
+				}
 				?>
-
 			</nav>
-
 			<div class="bsui <?php echo esc_attr( $current_tab ); ?>">
 				<?php do_action( "wpinv_reports_tab_{$current_tab}" ); ?>
 			</div>
-
-        </div>
+		</div>
 		<?php
-
-			// Wordfence loads an unsupported version of chart js on our page.
-			wp_deregister_style( 'chart-js' );
-			wp_deregister_script( 'chart-js' );
-			wp_enqueue_script( 'chart-js', WPINV_PLUGIN_URL . 'assets/js/chart.min.js', array( 'jquery' ), '3.7.1', true );
-
+		// Wordfence loads an unsupported version of chart js on our page.
+		wp_deregister_style( 'chart-js' );
+		wp_deregister_script( 'chart-js' );
+		wp_enqueue_script( 'chart-js', WPINV_PLUGIN_URL . 'assets/js/chart.min.js', array( 'jquery' ), '3.7.1', true );
 	}
 
 	/**
@@ -99,7 +82,6 @@ class GetPaid_Reports {
 	 * @return array
 	 */
 	public function get_tabs() {
-
 		$tabs = array(
 			'reports' => __( 'Reports', 'invoicing' ),
 			'export'  => __( 'Export', 'invoicing' ),
@@ -113,10 +95,12 @@ class GetPaid_Reports {
 	 *
 	 */
 	public function display_reports_tab() {
+		if ( ! wpinv_current_user_can_manage_invoicing() ) {
+			return;
+		}
 
 		$reports = new GetPaid_Reports_Report();
 		$reports->display();
-
 	}
 
 	/**
@@ -124,10 +108,12 @@ class GetPaid_Reports {
 	 *
 	 */
 	public function display_exports_tab() {
+		if ( ! wpinv_current_user_can_manage_invoicing() ) {
+			return;
+		}
 
 		$exports = new GetPaid_Reports_Export();
 		$exports->display();
-
 	}
 
 	/**
@@ -136,12 +122,10 @@ class GetPaid_Reports {
 	 * @param array $args
 	 */
 	public function download_graph( $args ) {
-
 		if ( ! empty( $args['graph'] ) ) {
 			$downloader = new GetPaid_Graph_Downloader();
 			$downloader->download( $args['graph'] );
 		}
-
 	}
 
 	/**
@@ -150,9 +134,7 @@ class GetPaid_Reports {
 	 * @param array $args
 	 */
 	public function export_invoices( $args ) {
-
 		if ( ! empty( $args['post_type'] ) ) {
-
 			if ( 'subscriptions' === $args['post_type'] ) {
 				$downloader = new GetPaid_Subscription_Exporter();
 			} else {
@@ -161,7 +143,6 @@ class GetPaid_Reports {
 
 			$downloader->export( $args['post_type'], $args );
 		}
-
 	}
 
 }

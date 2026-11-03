@@ -227,7 +227,7 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 			return true;
 		}
 
-		$invoice->add_note( 'IPN message:' . wp_json_encode( $posted ), false, false, true );
+		$invoice->add_note( 'IPN message:' . esc_html( wp_json_encode( $posted ) ), false, false, true );
 
 		if ( is_wp_error( $response ) ) {
 			$invoice->add_note( 'Received invalid response from PayPal IPN: ' . $response->get_error_message(), false, false, true );
