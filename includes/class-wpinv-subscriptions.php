@@ -98,7 +98,8 @@ class WPInv_Subscriptions {
         }
 
         // While the first invoice is held for a charge mismatch, its renewals do not change the subscription: it stays
-        // Pending until the admin marks the first invoice paid (getpaid_start_held_invoice_subscriptions()).
+        // Pending until the admin marks the first invoice paid (getpaid_start_held_invoice_subscriptions()). Deliberately
+        // also for failed, refunded or cancelled renewals: the subscription grants nothing while Pending anyway.
         if ( ! empty( $invoice ) && ! $invoice->is_parent() && getpaid_is_charge_mismatch_held( wpinv_get_invoice( $invoice->get_parent_id() ) ) ) {
             return;
         }
