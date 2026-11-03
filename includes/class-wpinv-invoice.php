@@ -3789,6 +3789,11 @@ class WPInv_Invoice extends GetPaid_Data {
 
 			$this->set_taxes( array() );
 			$current = 0;
+
+			// No tax applies: each item's renewal tax is 0, so a null one only ever means "loaded from the database".
+			foreach ( $this->get_items() as $item ) {
+				$item->recurring_item_tax = 0;
+			}
 		} else {
 
 			$item_taxes = array();

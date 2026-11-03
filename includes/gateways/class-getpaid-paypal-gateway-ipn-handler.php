@@ -506,7 +506,7 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 		// Validate the IPN.
 		$business_email = $this->get_ipn_business_email( $posted );
 		$currency       = isset( $posted['mc_currency'] ) ? $posted['mc_currency'] : '';
-																   
+
 
 		if ( ! $this->validate_ipn_receiver_email( $invoice, $business_email ) || ! $this->validate_ipn_currency( $invoice, $currency ) ) {
 			return;

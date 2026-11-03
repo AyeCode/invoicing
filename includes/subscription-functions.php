@@ -656,8 +656,9 @@ function getpaid_calculate_subscription_totals( $invoice ) {
 		$group['recurring_discount'] = wpinv_round_amount( $group['recurring_discount'] );
 
 		// Items loaded from the database carry no renewal tax or renewal discount (neither is stored on the item), so
-		// the fallback above would replace a stored group's renewal terms with the first payment's. Keep the stored ones.
-		if ( $from_database && isset( $stored_groups[ $subscription_key ]['recurring_tax'], $stored_groups[ $subscription_key ]['recurring_total'] ) ) {
+		// the fallback above would replace a paid invoice's stored renewal terms with the first payment's. Keep the stored
+		// ones. An unpaid invoice is recalculated: nothing has been charged yet and an admin's edit is the newer intent.
+		if ( $from_database && $invoice instanceof WPInv_Invoice && ( $invoice->is_paid() || $invoice->is_refunded() ) && isset( $stored_groups[ $subscription_key ]['recurring_tax'], $stored_groups[ $subscription_key ]['recurring_total'] ) ) {
 			$stored                      = $stored_groups[ $subscription_key ];
 			$group['recurring_tax']      = (float) $stored['recurring_tax'];
 			$group['recurring_discount'] = isset( $stored['recurring_discount'] ) ? (float) $stored['recurring_discount'] : 0;
