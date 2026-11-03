@@ -146,6 +146,14 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
+= 2.8.65 - TBD =
+* Renewal invoices match the amount charged: renewals copy the renewal terms stored on the first invoice (recurring tax, discount, fees) instead of looking tax rates and discount codes up again; a renewal whose total differs from the amount charged is recorded On Hold (admin emailed, customer not, subscription still extended) - FIXED
+* PayPal: the first payment and the signup terms are checked against the invoice; on a mismatch the invoice is held and the subscription linked but left Pending until the invoice is marked paid - FIXED
+* Reading an invoice total no longer recalculates (and later saves) its taxes; tax is rounded once at checkout, on invoices and per subscription group, and groups keep each item's renewal tax - FIXED
+* One-off fees no longer repeat on renewals - FIXED
+* Subscription renewals use the subscription group's own copy of its items (product, price, quantity), and keep their product after it is retired (a renewal of a draft item used to be a 0 invoice with no items) - FIXED
+* A first invoice without stored tax rows (e.g. imported from another store) still gets its group's renewal tax on renewals - FIXED
+
 = 2.8.64 - 2026-10-28 =
 * Discount code in checkout link is now applied automatically - ADDED
 * Changing invoice customer now moves its subscriptions too - FIXED
