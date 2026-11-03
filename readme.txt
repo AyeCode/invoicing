@@ -148,6 +148,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 = 2.8.65 - TBD =
 * Update AUI 0.2.59 - CHANGED
+* Saving non-GetPaid posts triggers PHP deprecation notices from metabox sanitizing - FIXED
 
 = 2.8.64 - 2026-10-28 =
 * Discount code in checkout link is now applied automatically - ADDED
