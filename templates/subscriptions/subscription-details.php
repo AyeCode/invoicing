@@ -113,12 +113,22 @@ do_action( 'getpaid_before_single_subscription', $subscription, $subscription_gr
 <div class="form-text mt-2">
 	<?php
 		if ( $subscription->can_cancel() ) {
-			printf(
+			$cancel_button = sprintf(
 				'<a href="%s" class="btn btn-danger btn-sm" onclick="return confirm(\'%s\')">%s</a>&nbsp;&nbsp;',
 				esc_url( $subscription->get_cancel_url() ),
 				esc_attr__( 'Are you sure you want to cancel this subscription?', 'invoicing' ),
 				esc_html__( 'Cancel Subscription', 'invoicing' )
 			);
+
+			/**
+			 * Filters the Cancel Subscription button on the customer's subscription page, e.g. to send customers through
+			 * a cancellation flow first. Return '' to hide it. Only called when the subscription can be cancelled.
+			 *
+			 * @since 2.8.65
+			 * @param string              $cancel_button The button HTML.
+			 * @param WPInv_Subscription  $subscription  The subscription.
+			 */
+			echo apply_filters( 'getpaid_subscription_cancel_button', $cancel_button, $subscription ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built from escaped parts; filters return HTML.
 		}
 		do_action( 'getpaid-single-subscription-page-actions', $subscription );
 	?>

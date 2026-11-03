@@ -146,6 +146,9 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
+= 2.8.65 - TBD =
+* getpaid_subscription_cancel_button filter for the Cancel Subscription button on the customer's subscription page, to replace it (e.g. with a cancellation flow) or hide it - ADDED
+
 = 2.8.64 - 2026-10-28 =
 * Discount code in checkout link is now applied automatically - ADDED
 * Changing invoice customer now moves its subscriptions too - FIXED
