@@ -288,17 +288,92 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 	protected function validate_ipn_amount( $invoice, $amount ) {
 		$amount = (float) $amount;
 
-		if ( number_format( (float) $invoice->get_total(), 2, '.', '' ) !== number_format( $amount, 2, '.', '' ) ) {
-			/* translators: %s: Amount. */
-			$invoice->update_status( 'wpi-onhold', wp_sprintf( __( 'Validation error: PayPal amounts do not match (gross %s).', 'invoicing' ), $amount ) );
-			$invoice->add_note( wp_sprintf( __( 'Validation error: PayPal amounts do not match (gross %s).', 'invoicing' ), $amount ), false, false, true );
-
+		if ( ! getpaid_amounts_match( $amount, $invoice->get_total(), $invoice->get_currency() ) ) {
+			$this->hold_invoice( $invoice, $amount );
 			wpinv_error_log( "Amounts do not match: {$amount} instead of {$invoice->get_total()}", 'IPN Error', __FILE__, __LINE__, true );
 			return false;
 		}
 
 		wpinv_error_log( $amount, 'Validated IPN Amount', false );
 		return true;
+	}
+
+	/**
+	 * Puts an invoice on hold because PayPal's amounts differ from it. The payment is recorded, the admin is emailed,
+	 * the customer is not.
+	 *
+	 * @param WPInv_Invoice $invoice
+	 * @param float         $amount What PayPal charged (or set up).
+	 * @param string        $detail Optional: what differs, when it is not the amount charged.
+	 */
+	protected function hold_invoice( $invoice, $amount, $detail = '' ) {
+		getpaid_hold_charge_mismatch( $invoice, $amount, $invoice->get_currency(), $this->gateway->get_method_title(), $detail );
+		$invoice->save();
+		getpaid_notify_charge_mismatch( $invoice );
+	}
+
+	/**
+	 * Whether an invoice is on hold because PayPal's amounts differed. A later PayPal notice must not mark it paid or
+	 * start its subscription: only the admin does, after checking it.
+	 *
+	 * @param WPInv_Invoice $invoice
+	 * @return bool
+	 */
+	protected function is_held_invoice( $invoice ) {
+		return getpaid_is_charge_mismatch_held( $invoice );
+	}
+
+	/**
+	 * Checks the subscription PayPal set up against the invoice and its subscription. A PayPal Standard subscription
+	 * form travels through the customer's browser, so its amounts can be edited before paying.
+	 *
+	 * Mirrors GetPaid_Paypal_Gateway::process_subscription(): a3/p3/t3 are the renewal amount and period (the first
+	 * payment's, for a single payment), a1 the first payment when it differs.
+	 *
+	 * @param WPInv_Invoice      $invoice
+	 * @param WPInv_Subscription $subscription
+	 * @param array              $posted
+	 * @return string What differs, or an empty string.
+	 */
+	protected function get_signup_mismatch( $invoice, $subscription, $posted ) {
+		$currency = $invoice->get_currency();
+		$period   = strtoupper( substr( $subscription->get_period(), 0, 1 ) );
+		$interval = (int) $subscription->get_frequency();
+
+		if ( 'D' === $period && 365 === $interval ) {
+			$period   = 'Y';
+			$interval = 1;
+		}
+
+		$initial   = (float) $invoice->get_initial_total(); // What process_subscription() sends PayPal (no shipping, unlike get_total()).
+		$recurring = (float) $subscription->get_recurring_amount();
+		$item      = $invoice->get_recurring( true );
+		$trial     = $item && $item->has_free_trial();
+		$expected  = ( 1 === (int) $subscription->get_bill_times() && ! $trial && ! getpaid_amounts_match( $initial, $recurring, $currency ) ) ? $initial : $recurring;
+		$problems  = array();
+
+		// mc_amount3/mc_amount1 are normally sent; amount3/amount1 are the older names. A field PayPal did not send is not
+		// a mismatch: the payment notices still check the money actually taken.
+		$amount3 = isset( $posted['mc_amount3'] ) ? $posted['mc_amount3'] : ( isset( $posted['amount3'] ) ? $posted['amount3'] : null );
+		$amount1 = isset( $posted['mc_amount1'] ) ? $posted['mc_amount1'] : ( isset( $posted['amount1'] ) ? $posted['amount1'] : null );
+
+		if ( null !== $amount3 && ! getpaid_amounts_match( $amount3, $expected, $currency ) ) {
+			// translators: 1: amount PayPal set up, 2: amount expected.
+			$problems[] = wp_sprintf( __( 'PayPal set the subscription up at %1$s per period, the invoice expects %2$s.', 'invoicing' ), wpinv_price( $amount3, $currency ), wpinv_price( $expected, $currency ) );
+		}
+
+		$posted_period = isset( $posted['period3'] ) ? strtoupper( preg_replace( '/\s+/', ' ', trim( (string) $posted['period3'] ) ) ) : '';
+		if ( '' !== $posted_period && "$interval $period" !== $posted_period ) {
+			// translators: 1: period PayPal set up, 2: period expected.
+			$problems[] = wp_sprintf( __( 'PayPal set the subscription up to renew every %1$s, the invoice expects %2$s.', 'invoicing' ), $posted_period, "$interval $period" );
+		}
+
+		if ( null !== $amount1 && ! getpaid_amounts_match( $amount1, $initial, $currency ) ) {
+			// translators: 1: first payment PayPal set up, 2: invoice total.
+			$problems[] = wp_sprintf( __( 'PayPal set the first payment up at %1$s, the invoice totals %2$s.', 'invoicing' ), wpinv_price( $amount1, $currency ), wpinv_price( $initial, $currency ) );
+		}
+
+		return implode( ' ', $problems );
 	}
 
 	/**
@@ -436,18 +511,17 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 		// Validate the IPN.
 		$business_email = $this->get_ipn_business_email( $posted );
 		$currency       = isset( $posted['mc_currency'] ) ? $posted['mc_currency'] : '';
-																   
+
 
 		if ( ! $this->validate_ipn_receiver_email( $invoice, $business_email ) || ! $this->validate_ipn_currency( $invoice, $currency ) ) {
 			return;
 		}
 
-		// Activate the subscription.
+		// Link the PayPal subscription and set its dates.
 		$duration = strtotime( $subscription->get_expiration() ) - strtotime( $subscription->get_date_created() );
 		$subscription->set_date_created( current_time( 'mysql' ) );
 		$subscription->set_expiration( date( 'Y-m-d H:i:s', ( current_time( 'timestamp' ) + $duration ) ) );
 		$subscription->set_profile_id( sanitize_text_field( $posted['subscr_id'] ) );
-		$subscription->activate();
 
 		// Set the transaction id.
 		if ( ! empty( $posted['txn_id'] ) ) {
@@ -455,10 +529,28 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 			$invoice->set_transaction_id( $posted['txn_id'] );
 		}
 
+		$invoice->add_note( sprintf( __( 'PayPal Subscription ID: %s', 'invoicing' ), $posted['subscr_id'] ), false, false, true );
+
+		// An invoice on hold, or a subscription set up with other terms than the invoice's, waits for the admin: the
+		// subscription stays Pending (no licence or access) and starts when the admin marks the invoice paid.
+		$mismatch = $this->is_held_invoice( $invoice ) ? '' : $this->get_signup_mismatch( $invoice, $subscription, $posted );
+
+		if ( $this->is_held_invoice( $invoice ) || '' !== $mismatch ) {
+			$subscription->save();
+
+			if ( '' !== $mismatch ) {
+				$this->hold_invoice( $invoice, isset( $posted['mc_amount3'] ) ? $posted['mc_amount3'] : 0, $mismatch );
+			} else {
+				$invoice->save();
+			}
+
+			return wpinv_error_log( 'Subscription linked, waiting for the admin: the invoice is on hold.', false );
+		}
+
+		$subscription->activate();
+
 		// Update the payment status.
 		$invoice->mark_paid();
-
-		$invoice->add_note( sprintf( __( 'PayPal Subscription ID: %s', 'invoicing' ), $posted['subscr_id'] ), false, false, true );
 
 		wpinv_error_log( 'Subscription started.', false );
 	}
@@ -506,6 +598,21 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 				$invoice->add_note( wp_sprintf( __( 'PayPal Transaction ID: %s', 'invoicing' ), sanitize_text_field( $posted['txn_id'] ) ), false, false, true );
 			}
 
+			// Link the PayPal subscription even if its signup notice has not arrived yet.
+			if ( ! $subscription->get_profile_id() && ! empty( $posted['subscr_id'] ) ) {
+				$subscription->set_profile_id( sanitize_text_field( $posted['subscr_id'] ) );
+				$subscription->save();
+			}
+
+			if ( $this->is_held_invoice( $invoice ) ) {
+				return $invoice->save();
+			}
+
+			// The first payment must be the invoice total (which already includes any trial, sign-up fee or one-off discount).
+			if ( ! isset( $posted['mc_gross'] ) || ! getpaid_amounts_match( $posted['mc_gross'], $invoice->get_total(), $invoice->get_currency() ) ) {
+				return $this->hold_invoice( $invoice, isset( $posted['mc_gross'] ) ? $posted['mc_gross'] : 0 );
+			}
+
 			return $invoice->mark_paid();
 
 		}
@@ -526,6 +633,8 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 		$args = array(
 			'transaction_id' => $posted['txn_id'],
 			'gateway'        => $this->id,
+			'amount'         => isset( $posted['mc_gross'] ) ? wpinv_clean( $posted['mc_gross'] ) : '',
+			'currency'       => $currency,
 		);
 
 		$invoice = wpinv_get_invoice( $subscription->add_payment( $args ) );
@@ -536,6 +645,25 @@ class GetPaid_Paypal_Gateway_IPN_Handler {
 
 		$invoice->add_note( wp_sprintf( __( 'PayPal Transaction ID: %s', 'invoicing' ), $posted['txn_id'] ), false, false, true );
 		$invoice->add_note( wp_sprintf( __( 'PayPal Subscription ID: %s', 'invoicing' ), $posted['subscr_id'] ), false, false, true );
+
+		// The first invoice is still held for review: record the renewal and move the dates on with PayPal's schedule,
+		// but leave the subscription as it is (Pending). renew() would make it Active without the admin's review;
+		// getpaid_start_held_invoice_subscriptions() starts it once the first invoice is marked paid.
+		$parent = $subscription->get_parent_payment();
+		if ( $parent && $parent->exists() && $this->is_held_invoice( $parent ) ) {
+			// Re-read it, past the object cache, so the new expiration is calculated from the current row (a hook may have
+			// saved it while the payment was recorded, or another notice since).
+			$subscription->clear_cache();
+			$subscription = new WPInv_Subscription( $subscription->get_id() );
+			$frequency    = $subscription->get_frequency();
+			$period       = $subscription->get_period();
+			$subscription->set_expiration( date( 'Y-m-d H:i:s', strtotime( "+ $frequency $period", $subscription->get_expiration_time() ) ) );
+			$subscription->save();
+
+			// translators: %s: first invoice number.
+			$invoice->add_note( wp_sprintf( __( 'Subscription not activated: its first invoice %s is on hold for review. It starts when that invoice is marked paid.', 'invoicing' ), $parent->get_number() ), false, false, true );
+			return wpinv_error_log( 'Renewal recorded; subscription left as it is while its first invoice is on hold.', false );
+		}
 
 		$subscription->renew();
 		wpinv_error_log( 'Subscription renewed.', false );
