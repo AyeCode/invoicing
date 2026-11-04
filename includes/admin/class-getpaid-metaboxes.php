@@ -23,7 +23,6 @@ class GetPaid_Metaboxes {
 	 * Hook in methods.
 	 */
 	public static function init() {
-
 		// Register metaboxes.
 		add_action( 'add_meta_boxes', 'GetPaid_Metaboxes::add_meta_boxes', 50, 2 );
 
@@ -41,7 +40,6 @@ class GetPaid_Metaboxes {
 	 * Register core metaboxes.
 	 */
 	public static function add_meta_boxes( $post_type, $post ) {
-
 		// For invoices.
 		self::add_invoice_meta_boxes( $post_type, $post );
 
@@ -55,17 +53,14 @@ class GetPaid_Metaboxes {
 		if ( 'wpi_discount' === $post_type ) {
 			add_meta_box( 'wpinv_discount_details', __( 'Discount Details', 'invoicing' ), 'GetPaid_Meta_Box_Discount_Details::output', 'wpi_discount', 'normal', 'high' );
 		}
-
 	}
 
 	/**
 	 * Register core metaboxes.
 	 */
 	protected static function add_payment_form_meta_boxes( $post_type, $post ) {
-
 		// For payment forms.
 		if ( 'wpi_payment_form' === $post_type ) {
-
 			// Design payment form.
 			add_meta_box( 'wpinv-payment-form-design', __( 'Payment Form', 'invoicing' ), 'GetPaid_Meta_Box_Payment_Form::output', 'wpi_payment_form', 'normal' );
 
@@ -73,17 +68,14 @@ class GetPaid_Metaboxes {
 			if ( wpinv_get_default_payment_form() !== $post->ID ) {
 				add_meta_box( 'wpinv-payment-form-info', __( 'Details', 'invoicing' ), 'GetPaid_Meta_Box_Payment_Form_Info::output', 'wpi_payment_form', 'side' );
 			}
-}
-
+		}
 	}
 
 	/**
 	 * Register core metaboxes.
 	 */
 	protected static function add_item_meta_boxes( $post_type ) {
-
 		if ( 'wpi_item' === $post_type ) {
-
 			// Item details.
 			add_meta_box( 'wpinv_item_details', __( 'Item Details', 'invoicing' ), 'GetPaid_Meta_Box_Item_Details::output', 'wpi_item', 'normal', 'high' );
 
@@ -98,21 +90,18 @@ class GetPaid_Metaboxes {
 			// Item description.
 			add_meta_box( 'postexcerpt', __( 'Item Description', 'invoicing' ), 'GetPaid_Meta_Box_Description::output', 'wpi_item', 'normal' );
 		}
-
 	}
 
 	/**
 	 * Register invoice metaboxes.
 	 */
 	protected static function add_invoice_meta_boxes( $post_type, $post ) {
-
 		// For invoices...
 		if ( getpaid_is_invoice_post_type( $post_type ) ) {
 			$invoice = new WPInv_Invoice( $post );
 
 			// Resend invoice.
 			if ( ! $invoice->is_draft() ) {
-
 				add_meta_box(
 					'wpinv-mb-resend-invoice',
 					sprintf(
@@ -125,13 +114,12 @@ class GetPaid_Metaboxes {
 					'side',
 					'low'
 				);
-
 			}
 
 			// Subscriptions.
 			$subscriptions = getpaid_get_invoice_subscriptions( $invoice );
-			if ( ! empty( $subscriptions ) ) {
 
+			if ( ! empty( $subscriptions ) ) {
 				if ( is_array( $subscriptions ) ) {
 					add_meta_box( 'wpinv-mb-subscriptions', __( 'Related Subscriptions', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Subscription::output_related', $post_type, 'advanced' );
 				} else {
@@ -141,7 +129,7 @@ class GetPaid_Metaboxes {
 				if ( getpaid_count_subscription_invoices( $invoice->is_renewal() ? $invoice->get_parent_id() : $invoice->get_id() ) > 1 ) {
 					add_meta_box( 'wpinv-mb-subscription-invoices', __( 'Related Payments', 'invoicing' ), 'GetPaid_Meta_Box_Invoice_Subscription::output_invoices', $post_type, 'advanced' );
 				}
-}
+			}
 
 			// Invoice details.
 			add_meta_box(
@@ -199,8 +187,7 @@ class GetPaid_Metaboxes {
 			if ( get_post_meta( $invoice->get_id(), 'payment_form_data', true ) ) {
 				add_meta_box( 'wpinv-invoice-payment-form-details', __( 'Payment Form Details', 'invoicing' ), 'WPInv_Meta_Box_Payment_Form::output_details', $post_type, 'side', 'high' );
 			}
-}
-
+		}
 	}
 
 	/**
@@ -225,46 +212,41 @@ class GetPaid_Metaboxes {
 	 * @param  object $post Post object.
 	 */
 	public static function save_meta_boxes( $post_id, $post ) {
+		// Only run once per request to avoid potential endless loops.
+		if ( self::$saved_meta_boxes ) {
+			return;
+		}
+
+		// Do not save for ajax requests, autosaves or bulk edits.
+		if ( ( defined( 'DOING_AJAX' ) && DOING_AJAX ) || ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || isset( $_REQUEST['bulk_edit'] ) ) {
+			return;
+		}
+
+		// Only for posts submitted through the edit screen.
+		if ( empty( $_POST['post_ID'] ) || empty( $_POST['getpaid_meta_nonce'] ) ) {
+			return;
+		}
+
+		// $post_id and $post are required.
 		$post_id = absint( $post_id );
-		$data    = wp_kses_post_deep( wp_unslash( $_POST ) );
 
-		// Do not save for ajax requests.
-		if ( ( defined( 'DOING_AJAX' ) && DOING_AJAX ) || isset( $_REQUEST['bulk_edit'] ) ) {
-			return;
-		}
-
-		// $post_id and $post are required
-		if ( empty( $post_id ) || empty( $post ) || self::$saved_meta_boxes ) {
-			return;
-		}
-
-		// Dont' save meta boxes for revisions or autosaves.
-		if ( ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || is_int( wp_is_post_revision( $post ) ) || is_int( wp_is_post_autosave( $post ) ) ) {
-			return;
-		}
-
-		// Check the nonce.
-		if ( empty( $data['getpaid_meta_nonce'] ) || ! wp_verify_nonce( $data['getpaid_meta_nonce'], 'getpaid_meta_nonce' ) ) {
+		if ( empty( $post_id ) || empty( $post ) || empty( $post->post_type ) || ! is_string( $post->post_type ) ) {
 			return;
 		}
 
 		// Check the post being saved == the $post_id to prevent triggering this call for other save_post events.
-		if ( empty( $data['post_ID'] ) || absint( $data['post_ID'] ) !== $post_id ) {
+		if ( ! is_scalar( $_POST['post_ID'] ) || absint( $_POST['post_ID'] ) !== $post_id ) {
+			return;
+		}
+
+		// Check the nonce.
+		if ( ! is_scalar( $_POST['getpaid_meta_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['getpaid_meta_nonce'] ) ), 'getpaid_meta_nonce' ) ) {
 			return;
 		}
 
 		// Check user has permission to edit.
 		if ( ! current_user_can( 'edit_post', $post_id ) ) {
 			return;
-		}
-
-		if ( getpaid_is_invoice_post_type( $post->post_type ) ) {
-
-			// We need this save event to run once to avoid potential endless loops.
-			self::$saved_meta_boxes = true;
-
-			return GetPaid_Meta_Box_Invoice_Address::save( $post_id, wp_kses_post_deep( $_POST ) );
-
 		}
 
 		// Ensure this is our post type.
@@ -274,18 +256,25 @@ class GetPaid_Metaboxes {
 			'wpi_discount'     => 'GetPaid_Meta_Box_Discount_Details',
 		);
 
-		// Is this our post type?
-		if ( ! isset( $post_types_map[ $post->post_type ] ) ) {
+		$is_invoice = ! isset( $post_types_map[ $post->post_type ] ) && getpaid_is_invoice_post_type( $post->post_type );
+
+		if ( ! $is_invoice && ! isset( $post_types_map[ $post->post_type ] ) ) {
 			return;
 		}
 
 		// We need this save event to run once to avoid potential endless loops.
 		self::$saved_meta_boxes = true;
 
+		// Sanitize the request data only once all checks have passed.
+		$data = wp_kses_post_deep( $_POST );
+
+		if ( $is_invoice ) {
+			return GetPaid_Meta_Box_Invoice_Address::save( $post_id, $data );
+		}
+
 		// Save the post.
 		$class = $post_types_map[ $post->post_type ];
-		$class::save( $post_id, wp_kses_post_deep( $_POST ), $post );
 
+		$class::save( $post_id, $data, $post );
 	}
-
 }

@@ -154,6 +154,8 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 * Subscription renewals use the subscription group's own copy of its items (product, price, quantity), and keep their product after it is retired (a renewal of a draft item used to be a 0 invoice with no items) - FIXED
 * A first invoice without stored tax rows (e.g. imported from another store) still gets its group's renewal tax on renewals - FIXED
 * getpaid_subscription_cancel_button filter to replace or hide the Cancel Subscription button - ADDED
+* Update AUI 0.2.59 - CHANGED
+* Saving non-GetPaid posts triggers PHP deprecation notices from metabox sanitizing - FIXED
 
 = 2.8.64 - 2026-10-28 =
 * Discount code in checkout link is now applied automatically - ADDED
