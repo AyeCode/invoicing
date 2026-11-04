@@ -653,14 +653,16 @@ class GetPaid_Admin {
 	}
 
 	/**
-     * Migrates old invoices to the new database tables.
+	 * Migrates old invoices to the new database tables.
 	 *
-     */
-    public function admin_migrate_old_invoices() {
-
+	 */
+	public function admin_migrate_old_invoices() {
 		// Migrate the invoices.
 		$installer = new GetPaid_Installer();
 		$installer->migrate_old_invoices();
+
+		// Link the migrated invoices to customers.
+		GetPaid_Installer::migrate_old_customers();
 
 		// Show an admin message.
 		$this->show_success( __( 'Your invoices have been migrated.', 'invoicing' ) );

@@ -234,19 +234,21 @@ class GetPaid_Installer {
 
 		require_once WPINV_PLUGIN_DIR . 'includes/class-wpinv-legacy-invoice.php';
 
-		$invoice_rows = array();
-		foreach ( $invoices as $invoice ) {
+		$invoice_rows    = array();
+		$invoice_columns = '';
 
+		foreach ( $invoices as $invoice ) {
 			$invoice = new WPInv_Legacy_Invoice( $invoice );
 
+			// Skip posts that can't be loaded instead of aborting the whole migration.
 			if ( empty( $invoice->ID ) ) {
-				return;
+				continue;
 			}
 
 			$fields = array(
 				'post_id'            => $invoice->ID,
 				'number'             => $invoice->get_number(),
-				'key'                => $invoice->get_key(),
+				'invoice_key'        => $invoice->get_key(),
 				'type'               => str_replace( 'wpi_', '', $invoice->post_type ),
 				'mode'               => $invoice->mode,
 				'user_ip'            => $invoice->get_ip(),
@@ -275,6 +277,9 @@ class GetPaid_Installer {
 				'vat_rate'           => $invoice->vat_rate,
 				'custom_meta'        => $invoice->payment_meta,
 			);
+
+			// Name the columns so the insert still works when new columns are added to the table.
+			$invoice_columns = '`' . implode( '`, `', array_keys( $fields ) ) . '`';
 
 			foreach ( $fields as $key => $val ) {
 				if ( is_null( $val ) ) {
@@ -322,9 +327,11 @@ class GetPaid_Installer {
 				$item_rows[] = "($fields)";
 			}
 
-			$item_rows    = implode( ', ', $item_rows );
-			$item_columns = implode( ', ', $item_columns );
-			$wpdb->query( "INSERT INTO $invoice_items_table ($item_columns) VALUES $item_rows" );
+			if ( ! empty( $item_rows ) ) {
+				$item_rows    = implode( ', ', $item_rows );
+				$item_columns = implode( ', ', $item_columns );
+				$wpdb->query( "INSERT INTO $invoice_items_table ($item_columns) VALUES $item_rows" );
+			}
 		}
 
 		if ( empty( $invoice_rows ) ) {
@@ -332,7 +339,7 @@ class GetPaid_Installer {
 		}
 
 		$invoice_rows = implode( ', ', $invoice_rows );
-		$wpdb->query( "INSERT INTO $invoices_table VALUES $invoice_rows" );
+		$wpdb->query( "INSERT INTO $invoices_table ($invoice_columns) VALUES $invoice_rows" );
 
 	}
 
