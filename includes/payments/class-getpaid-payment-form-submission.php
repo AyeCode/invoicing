@@ -445,7 +445,7 @@ class GetPaid_Payment_Form_Submission {
 	public function get_subtotal() {
 
 		if ( wpinv_prices_include_tax() ) {
-			return $this->totals['subtotal']['initial'] - $this->totals['taxes']['initial'];
+			return $this->totals['subtotal']['initial'] - $this->get_tax();
 		}
 
 		return $this->totals['subtotal']['initial'];
@@ -459,7 +459,7 @@ class GetPaid_Payment_Form_Submission {
 	public function get_recurring_subtotal() {
 
 		if ( wpinv_prices_include_tax() ) {
-			return $this->totals['subtotal']['recurring'] - $this->totals['taxes']['recurring'];
+			return $this->totals['subtotal']['recurring'] - $this->get_recurring_tax();
 		}
 
 		return $this->totals['subtotal']['recurring'];
@@ -604,7 +604,8 @@ class GetPaid_Payment_Form_Submission {
 	 * @since 1.0.19
 	 */
 	public function get_tax() {
-		return $this->totals['taxes']['initial'];
+		// Rounded once, so the checkout total, the saved invoice and the amount sent to a gateway are the same number.
+		return wpinv_round_amount( $this->totals['taxes']['initial'] );
 	}
 
 	/**
@@ -613,7 +614,7 @@ class GetPaid_Payment_Form_Submission {
 	 * @since 1.0.19
 	 */
 	public function get_recurring_tax() {
-		return $this->totals['taxes']['recurring'];
+		return wpinv_round_amount( $this->totals['taxes']['recurring'] );
 	}
 
 	/**

@@ -5,7 +5,7 @@
  *
  * This template can be overridden by copying it to yourtheme/invoicing/subscriptions/subscription-details.php.
  *
- * @version 2.8.62
+ * @version 2.8.65
  *
  * @var WPInv_Subscription $subscription
  * @var WPInv_Subscriptions_Widget $widget
@@ -113,12 +113,28 @@ do_action( 'getpaid_before_single_subscription', $subscription, $subscription_gr
 <div class="form-text mt-2">
 	<?php
 		if ( $subscription->can_cancel() ) {
-			printf(
-				'<a href="%s" class="btn btn-danger btn-sm" onclick="return confirm(\'%s\')">%s</a>&nbsp;&nbsp;',
+			$cancel_button = sprintf(
+				'<a href="%s" class="btn btn-danger btn-sm" onclick="return confirm(\'%s\')">%s</a>',
 				esc_url( $subscription->get_cancel_url() ),
 				esc_attr__( 'Are you sure you want to cancel this subscription?', 'invoicing' ),
 				esc_html__( 'Cancel Subscription', 'invoicing' )
 			);
+
+			/**
+			 * Filters the Cancel Subscription button on the customer's subscription page. Unlike the
+			 * wpinv_subscription_cancel_url and wpinv_subscription_can_cancel filters, it changes the button itself
+			 * (label, classes, the confirm prompt) without changing whether or how the subscription can be cancelled,
+			 * e.g. to send customers through a cancellation flow first. Return '' to hide it. Only called when the
+			 * subscription can be cancelled.
+			 *
+			 * @since 2.8.65
+			 * @param string             $cancel_button The button HTML.
+			 * @param WPInv_Subscription $subscription  The subscription.
+			 */
+			$cancel_button = apply_filters( 'getpaid_subscription_cancel_button', $cancel_button, $subscription );
+			if ( '' !== (string) $cancel_button ) {
+				echo $cancel_button . '&nbsp;&nbsp;'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built from escaped parts; filters return HTML.
+			}
 		}
 		do_action( 'getpaid-single-subscription-page-actions', $subscription );
 	?>
