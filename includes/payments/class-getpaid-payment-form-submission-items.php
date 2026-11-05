@@ -119,12 +119,12 @@ class GetPaid_Payment_Form_Submission_Items {
 			if ( $item->allows_quantities() ) {
 				$quantity = isset( $selected_items[ $item->get_id() ]['quantity'] ) ? $selected_items[ $item->get_id() ]['quantity'] : 0;
 
-				// Reject negative or non-numeric quantities to prevent price manipulation.
-				if ( ! is_numeric( $quantity ) || (float) $quantity < 0 || ! is_finite( (float) $quantity ) ) {
+				// Reject negative, non-numeric or fractional quantities to prevent price manipulation
+				// (a fraction of an item could round the invoice down to free).
+				if ( ! is_numeric( $quantity ) || (float) $quantity < 0 || ! is_finite( (float) $quantity ) || floor( (float) $quantity ) != (float) $quantity ) {
 					throw new Exception( __( 'Please provide a valid quantity.', 'invoicing' ) );
 				}
 
-				// Whole numbers only: a fraction of an item could round down to a free invoice.
 				$item->set_quantity( absint( $quantity ) );
 			}
 
