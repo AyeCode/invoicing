@@ -132,7 +132,7 @@ class GetPaid_Payment_Form_Submission_Items {
 				$max_qty = wpinv_item_max_buyable_quantity( $item->get_id() );
 				if ( null !== $max_qty && $quantity > (float) $max_qty ) {
 					/* translators: 1: item name, 2: maximum quantity */
-					throw new Exception( sprintf( __( 'The maximum quantity for %1$s is %2$s.', 'invoicing' ), $item->get_name(), (float) $max_qty ) );
+					throw new Exception( sprintf( __( 'The maximum quantity for %1$s is %2$s.', 'invoicing' ), esc_html( $item->get_name() ), (float) $max_qty ) );
 				}
 
 				$item->set_quantity( $quantity );
