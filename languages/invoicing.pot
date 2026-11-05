@@ -3,9 +3,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: GetPaid 2.8.64\n"
+"Project-Id-Version: GetPaid 2.8.65\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/invoicing\n"
-"POT-Creation-Date: 2026-10-28 19:21+0530\n"
+"POT-Creation-Date: 2026-11-05 19:36+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -162,7 +162,7 @@ msgstr ""
 #: includes/data/admin-settings.php:421
 #: includes/data/default-payment-form.php:127
 #: includes/data/payment-form-elements.php:312
-#: includes/invoice-functions.php:1211 includes/wpinv-address-functions.php:141
+#: includes/invoice-functions.php:1212 includes/wpinv-address-functions.php:141
 msgid "VAT Number"
 msgstr ""
 
@@ -256,7 +256,7 @@ msgid "Cancel"
 msgstr ""
 
 #: includes/admin/class-getpaid-admin.php:189
-#: includes/admin/class-getpaid-metaboxes.php:99
+#: includes/admin/class-getpaid-metaboxes.php:91
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:143
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:775
 #: includes/admin/meta-boxes/class-getpaid-meta-box-invoice-items.php:817
@@ -402,46 +402,46 @@ msgstr ""
 msgid "Your GetPaid tables have been updated."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:666
+#: includes/admin/class-getpaid-admin.php:668
 msgid "Your invoices have been migrated."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:683
+#: includes/admin/class-getpaid-admin.php:685
 #: includes/reports/class-getpaid-graph-downloader.php:53
 msgid "Unsupported server"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:721
+#: includes/admin/class-getpaid-admin.php:723
 msgid "Sorry, you are not allowed to install plugins on this site."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:830
+#: includes/admin/class-getpaid-admin.php:832
 msgid "Discounts have been recalculated."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:852
+#: includes/admin/class-getpaid-admin.php:854
 #, php-format
 msgid "Strings are added in the file <b>%s</b> for translation."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:855
+#: includes/admin/class-getpaid-admin.php:857
 #, php-format
 msgid "There was a problem creating the file <b>%s</b>. Please check file permissions."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:991
+#: includes/admin/class-getpaid-admin.php:993
 msgid "Some GetPaid pages are missing. To use GetPaid without any issues, click the button below to generate the missing pages."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:992
+#: includes/admin/class-getpaid-admin.php:994
 msgid "Generate Pages"
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:1004
+#: includes/admin/class-getpaid-admin.php:1006
 msgid "GetPaid Test Gateway is active. Disable it before accepting real payments."
 msgstr ""
 
-#: includes/admin/class-getpaid-admin.php:1005
+#: includes/admin/class-getpaid-admin.php:1007
 msgid "Disable Test Gateway"
 msgstr ""
 
@@ -487,7 +487,7 @@ msgid "Date"
 msgstr ""
 
 #: includes/admin/class-getpaid-anonymization-logs.php:78
-#: includes/admin/class-getpaid-metaboxes.php:74
+#: includes/admin/class-getpaid-metaboxes.php:69
 msgid "Details"
 msgstr ""
 
@@ -567,87 +567,88 @@ msgctxt "Page title"
 msgid "Instant Direct Payment"
 msgstr ""
 
-#: includes/admin/class-getpaid-metaboxes.php:56
+#: includes/admin/class-getpaid-metaboxes.php:54
 msgid "Discount Details"
 msgstr ""
 
-#: includes/admin/class-getpaid-metaboxes.php:70
+#: includes/admin/class-getpaid-metaboxes.php:65
 msgid "Payment Form"
 msgstr ""
 
-#: includes/admin/class-getpaid-metaboxes.php:88
+#: includes/admin/class-getpaid-metaboxes.php:80
 msgid "Item Details"
 msgstr ""
 
-#: includes/admin/class-getpaid-metaboxes.php:92
+#: includes/admin/class-getpaid-metaboxes.php:84
 #: includes/admin/subscriptions.php:693 includes/class-getpaid-tax.php:118
 #: includes/invoice-functions.php:976
 #: includes/reports/class-getpaid-reports-report-earnings.php:26
 #: includes/reports/class-getpaid-reports-report.php:342
 #: includes/wpinv-dynamic-tax-labels.php:29
+#: includes/wpinv-subscription.php:1113
 #: templates/payment-forms/cart-totals.php:17
 msgid "Tax"
 msgstr ""
 
-#: includes/admin/class-getpaid-metaboxes.php:96
+#: includes/admin/class-getpaid-metaboxes.php:88
 msgid "Item info"
 msgstr ""
 
-#: includes/admin/class-getpaid-metaboxes.php:120
+#: includes/admin/class-getpaid-metaboxes.php:109
 #, php-format
 msgid "Resend %s"
 msgstr ""
 
-#: includes/admin/class-getpaid-metaboxes.php:136
+#: includes/admin/class-getpaid-metaboxes.php:124
 #: includes/admin/subscriptions.php:147
 #: includes/wpinv-template-functions.php:855
 #: templates/subscriptions/subscription-details.php:109
 msgid "Related Subscriptions"
 msgstr ""
 
-#: includes/admin/class-getpaid-metaboxes.php:138
+#: includes/admin/class-getpaid-metaboxes.php:126
 #: includes/admin/subscriptions.php:139
 #: templates/subscriptions/subscription-details.php:29
 msgid "Subscription Details"
 msgstr ""
 
-#: includes/admin/class-getpaid-metaboxes.php:142
+#: includes/admin/class-getpaid-metaboxes.php:130
 msgid "Related Payments"
 msgstr ""
 
-#: includes/admin/class-getpaid-metaboxes.php:151
+#: includes/admin/class-getpaid-metaboxes.php:139
 #: templates/emails/invoice-details.php:26
 #, php-format
 msgid "%s Details"
 msgstr ""
 
-#: includes/admin/class-getpaid-metaboxes.php:160
+#: includes/admin/class-getpaid-metaboxes.php:148
 msgid "Payment Meta"
 msgstr ""
 
-#: includes/admin/class-getpaid-metaboxes.php:163
+#: includes/admin/class-getpaid-metaboxes.php:151
 #: templates/emails/wpinv-email-billing-details.php:9
 msgid "Billing Details"
 msgstr ""
 
-#: includes/admin/class-getpaid-metaboxes.php:170
+#: includes/admin/class-getpaid-metaboxes.php:158
 #: templates/emails/invoice-items.php:22 templates/invoice/line-items.php:14
 #, php-format
 msgid "%s Items"
 msgstr ""
 
-#: includes/admin/class-getpaid-metaboxes.php:184
+#: includes/admin/class-getpaid-metaboxes.php:172
 #, php-format
 msgid "%s Notes"
 msgstr ""
 
-#: includes/admin/class-getpaid-metaboxes.php:195
+#: includes/admin/class-getpaid-metaboxes.php:183
 #: includes/data/payment-form-elements.php:196
 #: templates/payment-forms/elements/address.php:81
 msgid "Shipping Address"
 msgstr ""
 
-#: includes/admin/class-getpaid-metaboxes.php:200
+#: includes/admin/class-getpaid-metaboxes.php:188
 msgid "Payment Form Details"
 msgstr ""
 
@@ -803,7 +804,7 @@ msgid "Via %s"
 msgstr ""
 
 #: includes/admin/class-getpaid-post-types-admin.php:326
-#: includes/class-wpinv-invoice.php:4127
+#: includes/class-wpinv-invoice.php:4246
 #, php-format
 msgid "Paid via %s"
 msgstr ""
@@ -2399,7 +2400,7 @@ msgstr ""
 
 #: includes/admin/subscriptions.php:213
 #: includes/admin/views/html-gateways-edit.php:21
-#: includes/invoice-functions.php:1199
+#: includes/invoice-functions.php:1200
 msgid "Payment Method"
 msgstr ""
 
@@ -2411,7 +2412,7 @@ msgstr ""
 msgid "End Date"
 msgstr ""
 
-#: includes/admin/subscriptions.php:362 includes/invoice-functions.php:1273
+#: includes/admin/subscriptions.php:362 includes/invoice-functions.php:1274
 msgid "Renews On"
 msgstr ""
 
@@ -2475,6 +2476,7 @@ msgstr ""
 #: includes/admin/subscriptions.php:694
 #: includes/class-getpaid-post-types.php:183 includes/invoice-functions.php:978
 #: includes/reports/class-getpaid-reports-report-earnings.php:24
+#: includes/wpinv-subscription.php:1121
 #: templates/payment-forms/cart-totals.php:19
 msgid "Discount"
 msgstr ""
@@ -3985,41 +3987,41 @@ msgstr ""
 msgid "User data has been deleted."
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:3377
+#: includes/class-wpinv-invoice.php:3375
 msgid "This item is not available for purchase"
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:3621 includes/class-wpinv-invoice.php:3670
-#: includes/class-wpinv-invoice.php:3677
+#: includes/class-wpinv-invoice.php:3619 includes/class-wpinv-invoice.php:3668
+#: includes/class-wpinv-invoice.php:3675
 msgctxt "Tax name"
 msgid "Tax"
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:3674
+#: includes/class-wpinv-invoice.php:3672
 #, php-format
 msgctxt "Tax name with %. Ex: Tax (%)"
 msgid "%s (%%)"
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:3677
+#: includes/class-wpinv-invoice.php:3675
 msgid "Tax (%)"
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:3986
+#: includes/class-wpinv-invoice.php:4105
 #, php-format
 msgid "Status changed from %1$s to %2$s."
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:4015
+#: includes/class-wpinv-invoice.php:4134
 #, php-format
 msgid "Status set to %s."
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:4022
+#: includes/class-wpinv-invoice.php:4141
 msgid "Error during status transition."
 msgstr ""
 
-#: includes/class-wpinv-invoice.php:4118
+#: includes/class-wpinv-invoice.php:4237
 #, php-format
 msgid "Renewed via %s"
 msgstr ""
@@ -4043,7 +4045,7 @@ msgid "Created Date"
 msgstr ""
 
 #: includes/class-wpinv-privacy-exporters.php:83
-#: includes/invoice-functions.php:1207
+#: includes/invoice-functions.php:1208
 msgid "Due Date"
 msgstr ""
 
@@ -4174,32 +4176,32 @@ msgstr ""
 msgid "Please see the <a href=\"https://www.paypal.com/us/webapps/mpp/ua/privacy-full\">PayPal Privacy Policy</a> for more details."
 msgstr ""
 
-#: includes/class-wpinv-subscriptions.php:175
+#: includes/class-wpinv-subscriptions.php:182
 #, php-format
 msgid "User has initiated a subscription cancellation #%d."
 msgstr ""
 
-#: includes/class-wpinv-subscriptions.php:568
+#: includes/class-wpinv-subscriptions.php:575
 msgid "Subscription updated"
 msgstr ""
 
-#: includes/class-wpinv-subscriptions.php:598
+#: includes/class-wpinv-subscriptions.php:605
 msgid "We are unable to renew this subscription as the parent invoice does not exist."
 msgstr ""
 
-#: includes/class-wpinv-subscriptions.php:601
+#: includes/class-wpinv-subscriptions.php:608
 msgid "This subscription has been renewed and extended."
 msgstr ""
 
-#: includes/class-wpinv-subscriptions.php:635
+#: includes/class-wpinv-subscriptions.php:642
 msgid "This subscription has been deleted."
 msgstr ""
 
-#: includes/class-wpinv-subscriptions.php:637
+#: includes/class-wpinv-subscriptions.php:644
 msgid "We are unable to delete this subscription. Please try again."
 msgstr ""
 
-#: includes/class-wpinv-subscriptions.php:686
+#: includes/class-wpinv-subscriptions.php:693
 msgid "Manage Subscription"
 msgstr ""
 
@@ -14007,54 +14009,68 @@ msgstr ""
 msgid "Validation error: PayPal currencies do not match (code %s)."
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:293
-#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:294
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:362
 #, php-format
-msgid "Validation error: PayPal amounts do not match (gross %s)."
+msgid "PayPal set the subscription up at %1$s per period, the invoice expects %2$s."
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:318
-#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:319
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:368
+#, php-format
+msgid "PayPal set the subscription up to renew every %1$s, the invoice expects %2$s."
+msgstr ""
+
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:373
+#, php-format
+msgid "PayPal set the first payment up at %1$s, the invoice totals %2$s."
+msgstr ""
+
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:393
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:394
 #, php-format
 msgid "Validation error: PayPal IPN response from a different email address (%s). Your PayPal email is %s."
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:352
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:427
 msgid "Processing invoice IPN"
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:381
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:456
 #, php-format
 msgid "PayPal Transaction Fee %s."
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:385
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:460
 #, php-format
 msgid "Buyer status %s."
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:397
-#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:398
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:472
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:473
 #, php-format
 msgid "Payment pending (%s)."
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:405
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:480
 #, php-format
 msgid "Payment %s via IPN."
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:454
-#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:506
-#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:537
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:528
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:598
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:646
 #, php-format
 msgid "PayPal Transaction ID: %s"
 msgstr ""
 
-#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:461
-#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:538
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:532
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:647
 #, php-format
 msgid "PayPal Subscription ID: %s"
+msgstr ""
+
+#: includes/gateways/class-getpaid-paypal-gateway-ipn-handler.php:664
+#, php-format
+msgid "Subscription not activated: its first invoice %s is on hold for review. It starts when that invoice is marked paid."
 msgstr ""
 
 #: includes/gateways/class-getpaid-paypal-gateway.php:84
@@ -14373,45 +14389,45 @@ msgstr ""
 msgid "%1$s created with the status \"%2$s\"."
 msgstr ""
 
-#: includes/invoice-functions.php:1175
+#: includes/invoice-functions.php:1176
 #: includes/wpinv-dynamic-tax-labels.php:151
 #: includes/wpinv-dynamic-tax-labels.php:180
 #, php-format
 msgid "%s Number"
 msgstr ""
 
-#: includes/invoice-functions.php:1182
+#: includes/invoice-functions.php:1183
 #, php-format
 msgid "%s Status"
 msgstr ""
 
-#: includes/invoice-functions.php:1189
+#: includes/invoice-functions.php:1190
 #, php-format
 msgid "%s Date"
 msgstr ""
 
-#: includes/invoice-functions.php:1195
+#: includes/invoice-functions.php:1196
 msgid "Paid On"
 msgstr ""
 
-#: includes/invoice-functions.php:1203
+#: includes/invoice-functions.php:1204
 msgid "Transaction ID"
 msgstr ""
 
-#: includes/invoice-functions.php:1259
+#: includes/invoice-functions.php:1260
 #, php-format
 msgid "Parent %s"
 msgstr ""
 
-#: includes/invoice-functions.php:1278
+#: includes/invoice-functions.php:1279
 msgid "(View Subscription)"
 msgstr ""
 
-#: includes/invoice-functions.php:1286
+#: includes/invoice-functions.php:1287
 msgid "Recurring Amount"
 msgstr ""
 
-#: includes/invoice-functions.php:1295
+#: includes/invoice-functions.php:1296
 msgid "Total Amount"
 msgstr ""
 
@@ -14483,7 +14499,7 @@ msgid "The maximum total for using this discount is %s"
 msgstr ""
 
 #: includes/payments/class-getpaid-payment-form-submission-fees.php:74
-#: includes/payments/class-getpaid-payment-form-submission-items.php:136
+#: includes/payments/class-getpaid-payment-form-submission-items.php:147
 #: templates/payment-forms/cart-item.php:141
 #, php-format
 msgid "The minimum allowed amount is %s"
@@ -14497,8 +14513,13 @@ msgstr ""
 msgid "We could not validate the form items. Please reload the page and try again."
 msgstr ""
 
-#: includes/payments/class-getpaid-payment-form-submission-items.php:124
+#: includes/payments/class-getpaid-payment-form-submission-items.php:126
 msgid "Please provide a valid quantity."
+msgstr ""
+
+#: includes/payments/class-getpaid-payment-form-submission-items.php:135
+#, php-format
+msgid "The maximum quantity for %1$s is %2$s."
 msgstr ""
 
 #: includes/payments/class-getpaid-payment-form-submission-refresh-prices.php:121
@@ -14518,11 +14539,11 @@ msgstr ""
 msgid "Subtotal: %s"
 msgstr ""
 
-#: includes/payments/class-getpaid-payment-form-submission-taxes.php:222
+#: includes/payments/class-getpaid-payment-form-submission-taxes.php:223
 msgid "Please enter your VAT number to verify your purchase is by an EU business."
 msgstr ""
 
-#: includes/payments/class-getpaid-payment-form-submission-taxes.php:231
+#: includes/payments/class-getpaid-payment-form-submission-taxes.php:232
 msgid "Your VAT number is invalid"
 msgstr ""
 
@@ -14971,6 +14992,29 @@ msgctxt "Subscription amount. (e.g.: $120 / year for 5 years)"
 msgid "%2$s / %3$s for %1$s"
 msgstr ""
 
+#: includes/subscription-functions.php:831
+#, php-format
+msgid "%1$s charged %2$s but this invoice totals %3$s."
+msgstr ""
+
+#: includes/subscription-functions.php:839
+#, php-format
+msgid "Amount check: %1$s The payment is recorded and the invoice is on hold for review. Correct the invoice if needed, then set it to %2$s."
+msgstr ""
+
+#: includes/subscription-functions.php:841
+msgid "Renewal"
+msgstr ""
+
+#: includes/subscription-functions.php:841
+msgid "Paid"
+msgstr ""
+
+#: includes/subscription-functions.php:851
+#, php-format
+msgid "Invoice %s on hold: the amount charged does not match"
+msgstr ""
+
 #: includes/user-functions.php:255
 msgid "This tab has no content or content callback."
 msgstr ""
@@ -15402,22 +15446,22 @@ msgstr ""
 msgid "Unable to verify that you're not a robot. Please try again."
 msgstr ""
 
-#: includes/wpinv-subscription.php:930
+#: includes/wpinv-subscription.php:948
 #, php-format
 msgid "Renewal invoice %s created."
 msgstr ""
 
-#: includes/wpinv-subscription.php:1261
+#: includes/wpinv-subscription.php:1389
 #, php-format
 msgid "Subscription status changed from %1$s to %2$s."
 msgstr ""
 
-#: includes/wpinv-subscription.php:1264
+#: includes/wpinv-subscription.php:1392
 #, php-format
 msgid "Subscription status set to %s."
 msgstr ""
 
-#: includes/wpinv-subscription.php:1281
+#: includes/wpinv-subscription.php:1409
 msgid "Error during subscription status transition."
 msgstr ""
 
@@ -15510,17 +15554,17 @@ msgstr ""
 msgid "Invoice has already been paid"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1589
+#: includes/wpinv-template-functions.php:1594
 msgid "No active gateways support subscription payments."
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1592
+#: includes/wpinv-template-functions.php:1597
 #, php-format
 msgid "Subscription payments only supported by: %s"
 msgstr ""
 
-#: includes/wpinv-template-functions.php:1911
-#: includes/wpinv-template-functions.php:1914
+#: includes/wpinv-template-functions.php:1916
+#: includes/wpinv-template-functions.php:1919
 msgid "Your transaction failed, please try again or contact site support."
 msgstr ""
 
@@ -16346,7 +16390,7 @@ msgstr ""
 msgid "Cancel Subscription"
 msgstr ""
 
-#: templates/subscriptions/subscription-details.php:125
+#: templates/subscriptions/subscription-details.php:141
 msgid "Back to Subscriptions"
 msgstr ""
 
