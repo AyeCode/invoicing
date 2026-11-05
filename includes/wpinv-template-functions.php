@@ -1350,9 +1350,12 @@ function getpaid_convert_items_to_array( $items ) {
 			continue;
 		}
 
+		// Quantities are whole numbers. The string can come from a URL, so a fraction
+		// must not set the price: 0.00001 of an item used to round to a free invoice.
+		// 0 (an optional item) and whole bundles such as item|2 still work.
 		$quantity = 1;
 		if ( isset( $data[1] ) && is_numeric( $data[1] ) && (float) $data[1] >= 0 && is_finite( (float) $data[1] ) ) {
-			$quantity = (float) $data[1];
+			$quantity = absint( $data[1] );
 		}
 
 		// WPML support.

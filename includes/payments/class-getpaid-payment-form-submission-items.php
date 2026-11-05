@@ -124,7 +124,8 @@ class GetPaid_Payment_Form_Submission_Items {
 					throw new Exception( __( 'Please provide a valid quantity.', 'invoicing' ) );
 				}
 
-				$item->set_quantity( (float) $quantity );
+				// Whole numbers only: a fraction of an item could round down to a free invoice.
+				$item->set_quantity( absint( $quantity ) );
 			}
 
 			// Maybe change the price.

@@ -147,6 +147,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 == Changelog ==
 
 = 2.8.65 - TBD =
+* Payment form and buy button quantities only accept whole numbers - FIXED
 * Renewal invoices match the amount charged: renewals copy the renewal terms stored on the first invoice (recurring tax, discount, fees) instead of looking tax rates and discount codes up again; a renewal whose total differs from the amount charged is recorded On Hold (admin emailed, customer not, subscription still extended) - FIXED
 * PayPal: the first payment and the signup terms are checked against the invoice; on a mismatch the invoice is held and the subscription linked but left Pending until the invoice is marked paid - FIXED
 * Reading an invoice total no longer recalculates (and later saves) its taxes; tax is rounded once at checkout, on invoices and per subscription group, and groups keep each item's renewal tax - FIXED
