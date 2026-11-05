@@ -119,13 +119,23 @@ class GetPaid_Payment_Form_Submission_Items {
 			if ( $item->allows_quantities() ) {
 				$quantity = isset( $selected_items[ $item->get_id() ]['quantity'] ) ? $selected_items[ $item->get_id() ]['quantity'] : 0;
 
-				// Reject negative, non-numeric or fractional quantities to prevent price manipulation
-				// (a fraction of an item could round the invoice down to free).
-				if ( ! is_numeric( $quantity ) || (float) $quantity < 0 || ! is_finite( (float) $quantity ) || floor( (float) $quantity ) != (float) $quantity ) {
+				// Reject negative, non-numeric, fractional or out of range quantities to prevent price
+				// manipulation (a fraction of an item could round the invoice down to free, and a number
+				// too big for an integer wraps).
+				if ( ! is_numeric( $quantity ) || (float) $quantity < 0 || (float) $quantity >= PHP_INT_MAX || floor( (float) $quantity ) != (float) $quantity ) {
 					throw new Exception( __( 'Please provide a valid quantity.', 'invoicing' ) );
 				}
 
-				$item->set_quantity( absint( $quantity ) );
+				$quantity = absint( $quantity );
+
+				// The maximum shown on the quantity input applies here too (null means no limit).
+				$max_qty = wpinv_item_max_buyable_quantity( $item->get_id() );
+				if ( null !== $max_qty && $quantity > (float) $max_qty ) {
+					/* translators: 1: item name, 2: maximum quantity */
+					throw new Exception( sprintf( __( 'The maximum quantity for %1$s is %2$s.', 'invoicing' ), $item->get_name(), (float) $max_qty ) );
+				}
+
+				$item->set_quantity( $quantity );
 			}
 
 			// Maybe change the price.
