@@ -1150,8 +1150,8 @@ function getpaid_user_delete_invoice( $data ) {
     if ( ! $invoice->exists() || ! is_user_logged_in() || (int) $invoice->get_user_id() !== (int) get_current_user_id() ) {
         $notice = 'perm_delete_invoice';
 
-    // Can it be deleted?
-    } elseif ( ! $invoice->needs_payment() ) {
+    // Can it be deleted? Cancelled invoices no longer need payment but may still be deleted.
+    } elseif ( ! $invoice->needs_payment() && ! $invoice->is_cancelled() ) {
         $notice = 'cannot_delete_invoice';
 
     // Delete it.

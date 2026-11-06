@@ -3217,7 +3217,7 @@ class WPInv_Invoice extends GetPaid_Data {
      * Checks if the invoice needs payment.
      */
 	public function needs_payment() {
-		$needs_payment = ! $this->is_paid() && ! $this->is_refunded() && ! $this->is_free();
+		$needs_payment = ! $this->is_paid() && ! $this->is_refunded() && ! $this->is_cancelled() && ! $this->is_free();
         return apply_filters( 'wpinv_needs_payment', $needs_payment, $this );
     }
 
@@ -3227,6 +3227,16 @@ class WPInv_Invoice extends GetPaid_Data {
 	public function is_refunded() {
         $is_refunded = $this->has_status( 'wpi-refunded' );
         return apply_filters( 'wpinv_invoice_is_refunded', $is_refunded, $this );
+	}
+
+	/**
+     * Checks if the invoice is cancelled.
+     *
+     * @since 2.8.66
+     */
+	public function is_cancelled() {
+        $is_cancelled = $this->has_status( 'wpi-cancelled' );
+        return apply_filters( 'wpinv_invoice_is_cancelled', $is_cancelled, $this );
 	}
 
 	/**
