@@ -146,6 +146,9 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
+= 2.8.66 - TBD =
+* A cancelled invoice can no longer be paid: the Pay Now buttons are removed and the checkout rejects it instead of taking the payment - FIXED
+
 = 2.8.65 - 2026-11-05 =
 * Quantities chosen on payment forms and buy buttons must be whole numbers and respect the item's maximum quantity (the admin invoice editor is unchanged) - FIXED
 * Renewal invoices match the amount charged: renewals copy the renewal terms stored on the first invoice (recurring tax, discount, fees) instead of looking tax rates and discount codes up again; a renewal whose total differs from the amount charged is recorded On Hold (admin emailed, customer not, subscription still extended) - FIXED
