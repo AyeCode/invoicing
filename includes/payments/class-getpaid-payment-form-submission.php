@@ -135,6 +135,14 @@ class GetPaid_Payment_Form_Submission {
 	 */
 	public $last_error_code = null;
 
+	/**
+	 * Whether the items of an invoice may be replaced, by invoice ID.
+	 *
+	 * @see GetPaid_Payment_Form_Submission::can_replace_invoice_items()
+	 * @var bool[]
+	 */
+	protected $can_replace_invoice_items = array();
+
     /**
 	 * Class constructor.
 	 *
@@ -271,6 +279,12 @@ class GetPaid_Payment_Form_Submission {
 			if ( empty( $invoice ) || ! $invoice->has_status( 'draft, auto-draft, wpi-pending' ) || ! $this->is_authorized_to_pay( $invoice ) ) {
 				return;
 			}
+
+			// A form with its own items (a buy button) only resumes an invoice it may replace.
+			// Anything else starts a new one.
+			if ( isset( $this->data['getpaid-form-items'] ) && ! $this->can_replace_invoice_items( $invoice ) ) {
+				return;
+			}
 		}
 
 		// If the submission is for an existing invoice, ensure that it exists
@@ -346,6 +360,36 @@ class GetPaid_Payment_Form_Submission {
 		$key = isset( $this->data['invoice_key'] ) && is_string( $this->data['invoice_key'] ) ? sanitize_text_field( $this->data['invoice_key'] ) : '';
 
 		return '' !== $key && ! wpinv_require_login_to_checkout() && hash_equals( (string) $invoice->get_key(), $key );
+	}
+
+	/**
+	 * Whether the form's items may replace those on an existing invoice.
+	 *
+	 * True only for an invoice still awaiting its first payment (draft, pending, or failed)
+	 * that still matches the seal the checkout wrote — i.e. a checkout being resumed. Any other
+	 * invoice (merchant-made or -edited, a renewal, a copy, an addon's) keeps its own items.
+	 *
+	 * @param WPInv_Invoice $invoice
+	 * @return bool
+	 */
+	public function can_replace_invoice_items( $invoice ) {
+
+		$invoice_id = (int) $invoice->get_id();
+
+		// Decided once per submission from the saved invoice: later steps mutate the object in
+		// memory (the tax step resets the country and total), and every caller needs one answer.
+		if ( ! isset( $this->can_replace_invoice_items[ $invoice_id ] ) ) {
+			$saved       = new WPInv_Invoice( $invoice_id );
+			$seal        = get_post_meta( $invoice_id, '_getpaid_checkout_seal', true );
+			$can_replace = ! empty( $seal )
+				&& is_string( $seal )
+				&& $saved->has_status( 'draft, auto-draft, wpi-pending, wpi-failed' )
+				&& hash_equals( $seal, getpaid_get_invoice_checkout_seal( $saved ) );
+
+			$this->can_replace_invoice_items[ $invoice_id ] = (bool) apply_filters( 'getpaid_submission_can_replace_invoice_items', $can_replace, $saved, $this );
+		}
+
+		return $this->can_replace_invoice_items[ $invoice_id ];
 	}
 
 	/**
