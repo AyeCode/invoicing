@@ -426,9 +426,6 @@ class GetPaid_Admin {
 		}
 
 		$new_invoice = getpaid_duplicate_invoice( $invoice );
-
-		// The copy is the merchant's invoice, not a checkout the customer started.
-		$new_invoice->set_created_via( 'admin' );
 		$new_invoice->save();
 
 		if ( $new_invoice->exists() ) {
@@ -578,6 +575,10 @@ class GetPaid_Admin {
 	 * @param array $args
      */
     public function send_customer_invoice( $args ) {
+
+		// An invoice the merchant has sent is no longer a checkout the customer can resume and change.
+		delete_post_meta( (int) $args['invoice_id'], '_getpaid_checkout_seal' );
+
 		getpaid()->get( 'invoice_emails' )->user_invoice( new WPInv_Invoice( $args['invoice_id'] ), true );
 		wp_safe_redirect( remove_query_arg( array( 'getpaid-admin-action', 'getpaid-nonce', 'invoice_id' ) ) );
 		exit;

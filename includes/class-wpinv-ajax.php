@@ -612,7 +612,6 @@ class WPInv_Ajax {
         $invoice->recalculate_total();
 
         // Save the invoice.
-        getpaid_mark_invoice_edited_by_admin( $invoice );
         $invoice->save();
 
         // Return an array of invoice items.
@@ -693,12 +692,10 @@ class WPInv_Ajax {
         $invoice->recalculate_total();
 
         // Save the invoice.
-        getpaid_mark_invoice_edited_by_admin( $invoice );
         $invoice->save();
 
         // Save the invoice.
         $invoice->recalculate_total();
-        getpaid_mark_invoice_edited_by_admin( $invoice );
         $invoice->save();
         ob_start();
         GetPaid_Meta_Box_Invoice_Items::output_row( GetPaid_Meta_Box_Invoice_Items::get_columns( $invoice ), $item, $invoice );
@@ -747,7 +744,6 @@ class WPInv_Ajax {
         $invoice->recalculate_total();
 
         // Save the invoice.
-        getpaid_mark_invoice_edited_by_admin( $invoice );
         $invoice->save();
 
         // Return an array of invoice items.
@@ -823,7 +819,6 @@ class WPInv_Ajax {
 
         // Save the invoice.
         $invoice->recalculate_total();
-        getpaid_mark_invoice_edited_by_admin( $invoice );
         $invoice->save();
         ob_start();
         GetPaid_Meta_Box_Invoice_Items::output( get_post( $invoice->get_id() ), $invoice );
@@ -872,7 +867,6 @@ class WPInv_Ajax {
 
         // Save the invoice.
         $invoice->recalculate_total();
-        getpaid_mark_invoice_edited_by_admin( $invoice );
         $invoice->save();
         ob_start();
         GetPaid_Meta_Box_Invoice_Items::output_row( GetPaid_Meta_Box_Invoice_Items::get_columns( $invoice ), $item, $invoice );
@@ -928,7 +922,6 @@ class WPInv_Ajax {
 
         // Save the invoice.
         $invoice->recalculate_total();
-        getpaid_mark_invoice_edited_by_admin( $invoice );
         $invoice->save();
 
         // Return an array of invoice items.

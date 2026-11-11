@@ -352,7 +352,6 @@ class GetPaid_Meta_Box_Invoice_Address {
 		$GLOBALS['wpinv_skip_invoice_notification'] = true;
 
 		// Save the invoice.
-		getpaid_mark_invoice_edited_by_admin( $invoice );
 		$invoice->save();
 
 		// Save the user address.

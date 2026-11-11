@@ -353,19 +353,22 @@ class GetPaid_Payment_Form_Submission {
 	/**
 	 * Checks if the items of an existing invoice may be replaced by the items submitted with the form.
 	 *
-	 * Only an unpaid invoice that the checkout itself created for this customer qualifies (a checkout
-	 * that was started and is being resumed). An invoice written or edited by the merchant, a renewal
-	 * or a copy keeps its own items, quantities and prices whatever the form submits.
+	 * Only an unpaid invoice that is still exactly what the checkout wrote qualifies (a checkout that
+	 * was started and is being resumed): the checkout seals the invoices it writes, and the seal no
+	 * longer matches once the lines or totals change. Every other invoice (written or changed by the
+	 * merchant, a renewal, a copy, one made by an addon) keeps its own items, quantities and prices
+	 * whatever the form submits.
 	 *
 	 * @param WPInv_Invoice $invoice
 	 * @return bool
 	 */
 	public function can_replace_invoice_items( $invoice ) {
 
-		$can_replace = 'payment_form' === $invoice->get_created_via()
-			&& 0 === $invoice->get_parent_id()
-			&& ! $invoice->is_renewal()
-			&& $invoice->has_status( 'draft, auto-draft, wpi-pending' );
+		$seal        = get_post_meta( $invoice->get_id(), '_getpaid_checkout_seal', true );
+		$can_replace = ! empty( $seal )
+			&& is_string( $seal )
+			&& $invoice->has_status( 'draft, auto-draft, wpi-pending' )
+			&& hash_equals( $seal, getpaid_get_invoice_checkout_seal( $invoice ) );
 
 		return (bool) apply_filters( 'getpaid_submission_can_replace_invoice_items', $can_replace, $invoice, $this );
 	}

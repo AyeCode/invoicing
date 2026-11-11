@@ -147,7 +147,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 == Changelog ==
 
 = 2.8.66 - TBD =
-* Paying an existing invoice through a payment form keeps the invoice's own items, quantities and prices; only a checkout being resumed can change them, and not once the invoice has been edited in the admin - FIXED
+* Paying an existing invoice through a payment form keeps the invoice's own items and quantities; only an unpaid invoice that is still exactly what the checkout wrote (a checkout being resumed) takes the form's items, and not once the merchant has changed or sent it - FIXED
 
 = 2.8.65 - 2026-11-05 =
 * Quantities chosen on payment forms and buy buttons must be whole numbers and respect the item's maximum quantity (the admin invoice editor is unchanged) - FIXED
