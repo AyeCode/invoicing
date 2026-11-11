@@ -147,6 +147,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 == Changelog ==
 
 = 2.8.66 - TBD =
+* A cancelled invoice can no longer be paid: the Pay Now buttons are removed and the checkout rejects it instead of taking the payment - FIXED
 * Paying an existing invoice through a payment form keeps the invoice's own items and quantities; only an unpaid invoice that is still exactly what the checkout wrote (a checkout being resumed) takes the form's items, and not once the merchant has changed or sent it - FIXED
 
 = 2.8.65 - 2026-11-05 =

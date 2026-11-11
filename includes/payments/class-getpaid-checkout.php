@@ -148,6 +148,11 @@ class GetPaid_Checkout {
 			wp_send_json_error( __( 'This invoice has already been paid for.', 'invoicing' ) );
 		}
 
+		// A cancelled invoice must not be payable.
+		if ( $invoice->is_cancelled() ) {
+			wp_send_json_error( __( 'This invoice has been cancelled and can no longer be paid for.', 'invoicing' ) );
+		}
+
 		return $invoice;
 	}
 
