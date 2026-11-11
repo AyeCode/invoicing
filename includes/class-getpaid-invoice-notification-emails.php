@@ -407,6 +407,11 @@ class GetPaid_Invoice_Notification_Emails {
 			return;
 		}
 
+		// Sent by hand (Send Invoice, bulk action, edit-screen checkbox): no longer a resumable checkout.
+		if ( $force ) {
+			getpaid_delete_invoice_checkout_seal( $invoice );
+		}
+
 		$email     = new GetPaid_Notification_Email( __FUNCTION__, $invoice );
 		$recipient = $invoice->get_email();
 
@@ -448,6 +453,10 @@ class GetPaid_Invoice_Notification_Emails {
 	 * @param WPInv_Invoice $invoice
 	 */
 	public function force_send_overdue_notice( $invoice ) {
+
+		// A reminder sent by hand takes the invoice as it stands — no longer a resumable checkout.
+		getpaid_delete_invoice_checkout_seal( $invoice );
+
 		$email = new GetPaid_Notification_Email( 'overdue', $invoice );
 		return $this->send_email( $invoice, $email, 'overdue', $invoice->get_email() );
 	}

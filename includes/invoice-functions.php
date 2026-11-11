@@ -1071,6 +1071,84 @@ add_action( 'getpaid_new_invoice', 'getpaid_update_invoice_caches', 5 );
 add_action( 'getpaid_update_invoice', 'getpaid_update_invoice_caches', 5 );
 
 /**
+ * Fingerprint of what an invoice charges: its lines (item, quantity, price, schedule),
+ * currency and totals. The checkout stores it as _getpaid_checkout_seal; while it still
+ * matches, the invoice is unchanged since checkout and a resume may replace its items.
+ * The invoice ID and site salt are included, so a seal never matches another invoice or site.
+ *
+ * @param WPInv_Invoice $invoice
+ * @return string
+ */
+function getpaid_get_invoice_checkout_seal( $invoice ) {
+	$lines = array();
+
+	foreach ( $invoice->get_items() as $item ) {
+		$line = array(
+			(int) $item->get_id(),
+			sprintf( '%.4F', (float) $item->get_quantity() ),
+			sprintf( '%.4F', (float) $item->get_price() ),
+		);
+
+		if ( $item->is_recurring() ) {
+			$line[] = implode(
+				':',
+				array(
+					$item->get_recurring_period(),
+					(int) $item->get_recurring_interval(),
+					(int) $item->get_recurring_limit(),
+					$item->has_free_trial() ? $item->get_trial_period() . (int) $item->get_trial_interval() : '',
+				)
+			);
+		}
+
+		$lines[] = implode( '|', $line );
+	}
+
+	sort( $lines );
+
+	return wp_hash(
+		wp_json_encode(
+			array(
+				(int) $invoice->get_id(),
+				$lines,
+				(string) $invoice->get_currency(),
+				sprintf( '%.4F', (float) $invoice->get_total() ),
+				sprintf( '%.4F', (float) $invoice->get_recurring_total() ),
+			)
+		)
+	);
+}
+
+/**
+ * Removes an invoice's checkout seal: it is no longer a checkout the customer can resume and change.
+ *
+ * @param WPInv_Invoice|int $invoice
+ */
+function getpaid_delete_invoice_checkout_seal( $invoice ) {
+	$invoice_id = is_object( $invoice ) ? $invoice->get_id() : (int) $invoice;
+
+	if ( ! empty( $invoice_id ) ) {
+		delete_post_meta( $invoice_id, '_getpaid_checkout_seal' );
+	}
+}
+
+/**
+ * Drops the seal once an invoice leaves draft/pending/failed, so one later reopened
+ * (by an admin or gateway) is not treated as a checkout. Failed stays sealed — a declined
+ * card leaves it failed and the customer retries.
+ *
+ * @param WPInv_Invoice $invoice
+ * @param string $from
+ * @param string $to
+ */
+function getpaid_maybe_delete_invoice_checkout_seal( $invoice, $from, $to ) {
+	if ( ! in_array( $to, array( 'draft', 'auto-draft', 'wpi-pending', 'wpi-failed' ), true ) ) {
+		getpaid_delete_invoice_checkout_seal( $invoice );
+	}
+}
+add_action( 'getpaid_invoice_status_changed', 'getpaid_maybe_delete_invoice_checkout_seal', 10, 3 );
+
+/**
  * Duplicates an invoice.
  *
  * Please note that this function does not save the duplicated invoice.

@@ -149,6 +149,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 = 2.8.66 - TBD =
 * A cancelled invoice can no longer be paid: the Pay Now buttons are removed and the checkout rejects it instead of taking the payment - FIXED
 * Invoice and subscription emails now use the customer's language, not the admin's - FIXED
+* An existing invoice keeps its own items when paid through a payment form: a buy button only replaces them on an unpaid checkout being resumed, not once the merchant has changed or sent it - FIXED
 
 = 2.8.65 - 2026-11-05 =
 * Quantities chosen on payment forms and buy buttons must be whole numbers and respect the item's maximum quantity (the admin invoice editor is unchanged) - FIXED

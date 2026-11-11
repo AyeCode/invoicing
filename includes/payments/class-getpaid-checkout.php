@@ -37,6 +37,10 @@ class GetPaid_Checkout {
 		// Prepare the invoice.
 		$items    = $this->get_submission_items();
 		$invoice  = $this->get_submission_invoice();
+
+		// A new invoice, or one still matching what an earlier checkout wrote, is the customer's to change.
+		$is_resumable = ! $this->payment_form_submission->has_invoice() || $this->payment_form_submission->can_replace_invoice_items( $invoice );
+
 		$invoice  = $this->process_submission_invoice( $invoice, $items );
 		$prepared = $this->prepare_submission_data_for_saving();
 
@@ -50,6 +54,15 @@ class GetPaid_Checkout {
 		$invoice->save();
 
 		do_action( 'getpaid_checkout_invoice_updated', $invoice );
+
+		// Seal it from a fresh read, so the stored value reflects what was saved.
+		if ( $invoice->exists() ) {
+			if ( $is_resumable ) {
+				update_post_meta( $invoice->get_id(), '_getpaid_checkout_seal', getpaid_get_invoice_checkout_seal( new WPInv_Invoice( $invoice->get_id() ) ) );
+			} else {
+				getpaid_delete_invoice_checkout_seal( $invoice );
+			}
+		}
 
 		// Send to the gateway.
 		$this->post_process_submission( $invoice, $prepared, $shipping );
