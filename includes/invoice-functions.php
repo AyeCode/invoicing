@@ -1071,15 +1071,10 @@ add_action( 'getpaid_new_invoice', 'getpaid_update_invoice_caches', 5 );
 add_action( 'getpaid_update_invoice', 'getpaid_update_invoice_caches', 5 );
 
 /**
- * Returns a fingerprint of what an invoice charges: its lines (item, quantity, price, billing schedule),
- * its currency and its totals.
- *
- * The checkout stores it on the invoices it writes (the _getpaid_checkout_seal meta). While the stored
- * value still matches, the invoice is exactly what the customer chose at checkout, so a resumed
- * checkout may replace its items. See GetPaid_Payment_Form_Submission::can_replace_invoice_items().
- *
- * The invoice ID and the site's salt are part of it, so a seal copied to another invoice or site
- * never matches.
+ * Fingerprint of what an invoice charges: its lines (item, quantity, price, schedule),
+ * currency and totals. The checkout stores it as _getpaid_checkout_seal; while it still
+ * matches, the invoice is unchanged since checkout and a resume may replace its items.
+ * The invoice ID and site salt are included, so a seal never matches another invoice or site.
  *
  * @param WPInv_Invoice $invoice
  * @return string
@@ -1138,9 +1133,9 @@ function getpaid_delete_invoice_checkout_seal( $invoice ) {
 }
 
 /**
- * Removes the checkout seal once an invoice is no longer waiting for its first payment, so that
- * an invoice moved back to pending later (by an admin or a gateway) is not treated as a checkout.
- * A failed invoice is still waiting: a declined card leaves it failed and the customer retries.
+ * Drops the seal once an invoice leaves draft/pending/failed, so one later reopened
+ * (by an admin or gateway) is not treated as a checkout. Failed stays sealed — a declined
+ * card leaves it failed and the customer retries.
  *
  * @param WPInv_Invoice $invoice
  * @param string $from

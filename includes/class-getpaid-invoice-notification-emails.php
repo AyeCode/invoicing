@@ -375,8 +375,7 @@ class GetPaid_Invoice_Notification_Emails {
 			return;
 		}
 
-		// Sent by hand (Send Invoice, the bulk action or the edit screen checkbox): the merchant has put
-		// this invoice in front of the customer, so it is no longer a checkout they can resume and change.
+		// Sent by hand (Send Invoice, bulk action, edit-screen checkbox): no longer a resumable checkout.
 		if ( $force ) {
 			getpaid_delete_invoice_checkout_seal( $invoice );
 		}
@@ -423,7 +422,7 @@ class GetPaid_Invoice_Notification_Emails {
 	 */
 	public function force_send_overdue_notice( $invoice ) {
 
-		// A reminder sent by hand is the merchant asking for this invoice as it stands.
+		// A reminder sent by hand takes the invoice as it stands — no longer a resumable checkout.
 		getpaid_delete_invoice_checkout_seal( $invoice );
 
 		$email = new GetPaid_Notification_Email( 'overdue', $invoice );

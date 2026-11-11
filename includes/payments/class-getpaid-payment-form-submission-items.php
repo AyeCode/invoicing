@@ -47,8 +47,8 @@ class GetPaid_Payment_Form_Submission_Items {
 			}
 		}
 
-		// (Maybe) set form items. An existing invoice keeps its own items unless it is a checkout
-		// being resumed: the form items are signed, but not for a particular invoice.
+		// (Maybe) set form items. An existing invoice keeps its own items unless a resumed
+		// checkout may replace them — the form items are signed, but not to any one invoice.
 		if ( isset( $data['getpaid-form-items'] ) && ( empty( $invoice ) || $submission->can_replace_invoice_items( $invoice ) ) ) {
 
 			// Confirm items key.

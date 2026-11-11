@@ -280,8 +280,8 @@ class GetPaid_Payment_Form_Submission {
 				return;
 			}
 
-			// A form that brings its own items (a buy button) only resumes an invoice whose items
-			// it may replace. Anything else starts a new invoice.
+			// A form with its own items (a buy button) only resumes an invoice it may replace.
+			// Anything else starts a new one.
 			if ( isset( $this->data['getpaid-form-items'] ) && ! $this->can_replace_invoice_items( $invoice ) ) {
 				return;
 			}
@@ -363,14 +363,11 @@ class GetPaid_Payment_Form_Submission {
 	}
 
 	/**
-	 * Checks if the items of an existing invoice may be replaced by the items submitted with the form.
+	 * Whether the form's items may replace those on an existing invoice.
 	 *
-	 * Only an invoice still waiting for its first payment (draft, pending, or failed after a declined
-	 * card) that is still exactly what the checkout wrote qualifies (a checkout that was started and
-	 * is being resumed): the checkout seals the invoices it writes, and the seal no
-	 * longer matches once the lines or totals change. Every other invoice (written or changed by the
-	 * merchant, a renewal, a copy, one made by an addon) keeps its own items, quantities and prices
-	 * whatever the form submits.
+	 * True only for an invoice still awaiting its first payment (draft, pending, or failed)
+	 * that still matches the seal the checkout wrote — i.e. a checkout being resumed. Any other
+	 * invoice (merchant-made or -edited, a renewal, a copy, an addon's) keeps its own items.
 	 *
 	 * @param WPInv_Invoice $invoice
 	 * @return bool
@@ -379,9 +376,8 @@ class GetPaid_Payment_Form_Submission {
 
 		$invoice_id = (int) $invoice->get_id();
 
-		// Decided once per submission, from the saved invoice: later steps change the object in memory
-		// (the tax step sets the submitted country and recalculates its total), and every caller must
-		// get the same answer.
+		// Decided once per submission from the saved invoice: later steps mutate the object in
+		// memory (the tax step resets the country and total), and every caller needs one answer.
 		if ( ! isset( $this->can_replace_invoice_items[ $invoice_id ] ) ) {
 			$saved       = new WPInv_Invoice( $invoice_id );
 			$seal        = get_post_meta( $invoice_id, '_getpaid_checkout_seal', true );
