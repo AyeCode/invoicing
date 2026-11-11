@@ -292,6 +292,10 @@ class GetPaid_Payment_Form_Submission {
 			throw new Exception( __( 'This invoice is already paid for.', 'invoicing' ) );
 		}
 
+		if ( $invoice->is_cancelled() ) {
+			throw new Exception( __( 'This invoice has been cancelled and can no longer be paid for.', 'invoicing' ) );
+		}
+
 		$this->payment_form->invoice = $invoice;
 		if ( ! $this->payment_form->is_default() ) {
 

@@ -37,6 +37,15 @@ if ( $invoice->is_paid() ) {
         )
     );
 
+} elseif ( $invoice->is_cancelled() ) {
+
+    $alert = aui()->alert(
+        array(
+            'type'    => 'info',
+            'content' => __( 'This invoice was cancelled.', 'invoicing' ),
+        )
+    );
+
 } elseif ( $invoice->is_held() ) {
 
     $alert = aui()->alert(
