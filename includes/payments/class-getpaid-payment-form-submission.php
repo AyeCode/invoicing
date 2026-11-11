@@ -271,6 +271,12 @@ class GetPaid_Payment_Form_Submission {
 			if ( empty( $invoice ) || ! $invoice->has_status( 'draft, auto-draft, wpi-pending' ) || ! $this->is_authorized_to_pay( $invoice ) ) {
 				return;
 			}
+
+			// A form that brings its own items (a buy button) only resumes an invoice whose items
+			// it may replace. Anything else starts a new invoice.
+			if ( isset( $this->data['getpaid-form-items'] ) && ! $this->can_replace_invoice_items( $invoice ) ) {
+				return;
+			}
 		}
 
 		// If the submission is for an existing invoice, ensure that it exists
@@ -342,6 +348,26 @@ class GetPaid_Payment_Form_Submission {
 		$key = isset( $this->data['invoice_key'] ) && is_string( $this->data['invoice_key'] ) ? sanitize_text_field( $this->data['invoice_key'] ) : '';
 
 		return '' !== $key && ! wpinv_require_login_to_checkout() && hash_equals( (string) $invoice->get_key(), $key );
+	}
+
+	/**
+	 * Checks if the items of an existing invoice may be replaced by the items submitted with the form.
+	 *
+	 * Only an unpaid invoice that the checkout itself created for this customer qualifies (a checkout
+	 * that was started and is being resumed). An invoice written by the merchant, a renewal or a copy
+	 * keeps its own items, quantities and prices whatever the form submits.
+	 *
+	 * @param WPInv_Invoice $invoice
+	 * @return bool
+	 */
+	public function can_replace_invoice_items( $invoice ) {
+
+		$can_replace = 'payment_form' === $invoice->get_created_via()
+			&& 0 === $invoice->get_parent_id()
+			&& ! $invoice->is_renewal()
+			&& $invoice->has_status( 'draft, auto-draft, wpi-pending' );
+
+		return (bool) apply_filters( 'getpaid_submission_can_replace_invoice_items', $can_replace, $invoice, $this );
 	}
 
 	/**

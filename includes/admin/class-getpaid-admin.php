@@ -426,6 +426,9 @@ class GetPaid_Admin {
 		}
 
 		$new_invoice = getpaid_duplicate_invoice( $invoice );
+
+		// The copy is the merchant's invoice, not a checkout the customer started.
+		$new_invoice->set_created_via( 'admin' );
 		$new_invoice->save();
 
 		if ( $new_invoice->exists() ) {
