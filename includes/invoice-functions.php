@@ -1085,43 +1085,43 @@ add_action( 'getpaid_update_invoice', 'getpaid_update_invoice_caches', 5 );
  * @return string
  */
 function getpaid_get_invoice_checkout_seal( $invoice ) {
-    $lines = array();
+	$lines = array();
 
-    foreach ( $invoice->get_items() as $item ) {
-        $line = array(
-            (int) $item->get_id(),
-            sprintf( '%.4F', (float) $item->get_quantity() ),
-            sprintf( '%.4F', (float) $item->get_price() ),
-        );
+	foreach ( $invoice->get_items() as $item ) {
+		$line = array(
+			(int) $item->get_id(),
+			sprintf( '%.4F', (float) $item->get_quantity() ),
+			sprintf( '%.4F', (float) $item->get_price() ),
+		);
 
-        if ( $item->is_recurring() ) {
-            $line[] = implode(
-                ':',
-                array(
-                    $item->get_recurring_period(),
-                    (int) $item->get_recurring_interval(),
-                    (int) $item->get_recurring_limit(),
-                    $item->has_free_trial() ? $item->get_trial_period() . (int) $item->get_trial_interval() : '',
-                )
-            );
-        }
+		if ( $item->is_recurring() ) {
+			$line[] = implode(
+				':',
+				array(
+					$item->get_recurring_period(),
+					(int) $item->get_recurring_interval(),
+					(int) $item->get_recurring_limit(),
+					$item->has_free_trial() ? $item->get_trial_period() . (int) $item->get_trial_interval() : '',
+				)
+			);
+		}
 
-        $lines[] = implode( '|', $line );
-    }
+		$lines[] = implode( '|', $line );
+	}
 
-    sort( $lines );
+	sort( $lines );
 
-    return wp_hash(
-        wp_json_encode(
-            array(
-                (int) $invoice->get_id(),
-                $lines,
-                (string) $invoice->get_currency(),
-                sprintf( '%.4F', (float) $invoice->get_total() ),
-                sprintf( '%.4F', (float) $invoice->get_recurring_total() ),
-            )
-        )
-    );
+	return wp_hash(
+		wp_json_encode(
+			array(
+				(int) $invoice->get_id(),
+				$lines,
+				(string) $invoice->get_currency(),
+				sprintf( '%.4F', (float) $invoice->get_total() ),
+				sprintf( '%.4F', (float) $invoice->get_recurring_total() ),
+			)
+		)
+	);
 }
 
 /**
@@ -1130,25 +1130,26 @@ function getpaid_get_invoice_checkout_seal( $invoice ) {
  * @param WPInv_Invoice|int $invoice
  */
 function getpaid_delete_invoice_checkout_seal( $invoice ) {
-    $invoice_id = is_object( $invoice ) ? $invoice->get_id() : (int) $invoice;
+	$invoice_id = is_object( $invoice ) ? $invoice->get_id() : (int) $invoice;
 
-    if ( ! empty( $invoice_id ) ) {
-        delete_post_meta( $invoice_id, '_getpaid_checkout_seal' );
-    }
+	if ( ! empty( $invoice_id ) ) {
+		delete_post_meta( $invoice_id, '_getpaid_checkout_seal' );
+	}
 }
 
 /**
  * Removes the checkout seal once an invoice is no longer waiting for its first payment, so that
  * an invoice moved back to pending later (by an admin or a gateway) is not treated as a checkout.
+ * A failed invoice is still waiting: a declined card leaves it failed and the customer retries.
  *
  * @param WPInv_Invoice $invoice
  * @param string $from
  * @param string $to
  */
 function getpaid_maybe_delete_invoice_checkout_seal( $invoice, $from, $to ) {
-    if ( ! in_array( $to, array( 'draft', 'auto-draft', 'wpi-pending' ), true ) ) {
-        getpaid_delete_invoice_checkout_seal( $invoice );
-    }
+	if ( ! in_array( $to, array( 'draft', 'auto-draft', 'wpi-pending', 'wpi-failed' ), true ) ) {
+		getpaid_delete_invoice_checkout_seal( $invoice );
+	}
 }
 add_action( 'getpaid_invoice_status_changed', 'getpaid_maybe_delete_invoice_checkout_seal', 10, 3 );
 

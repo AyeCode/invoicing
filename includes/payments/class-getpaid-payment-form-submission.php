@@ -135,6 +135,14 @@ class GetPaid_Payment_Form_Submission {
 	 */
 	public $last_error_code = null;
 
+	/**
+	 * Whether the items of an invoice may be replaced, by invoice ID.
+	 *
+	 * @see GetPaid_Payment_Form_Submission::can_replace_invoice_items()
+	 * @var bool[]
+	 */
+	protected $can_replace_invoice_items = array();
+
     /**
 	 * Class constructor.
 	 *
@@ -355,18 +363,11 @@ class GetPaid_Payment_Form_Submission {
 	}
 
 	/**
-	 * Whether the items of an invoice may be replaced, by invoice ID.
-	 *
-	 * @see GetPaid_Payment_Form_Submission::can_replace_invoice_items()
-	 * @var bool[]
-	 */
-	protected $can_replace_invoice_items = array();
-
-	/**
 	 * Checks if the items of an existing invoice may be replaced by the items submitted with the form.
 	 *
-	 * Only an unpaid invoice that is still exactly what the checkout wrote qualifies (a checkout that
-	 * was started and is being resumed): the checkout seals the invoices it writes, and the seal no
+	 * Only an invoice still waiting for its first payment (draft, pending, or failed after a declined
+	 * card) that is still exactly what the checkout wrote qualifies (a checkout that was started and
+	 * is being resumed): the checkout seals the invoices it writes, and the seal no
 	 * longer matches once the lines or totals change. Every other invoice (written or changed by the
 	 * merchant, a renewal, a copy, one made by an addon) keeps its own items, quantities and prices
 	 * whatever the form submits.
@@ -386,7 +387,7 @@ class GetPaid_Payment_Form_Submission {
 			$seal        = get_post_meta( $invoice_id, '_getpaid_checkout_seal', true );
 			$can_replace = ! empty( $seal )
 				&& is_string( $seal )
-				&& $saved->has_status( 'draft, auto-draft, wpi-pending' )
+				&& $saved->has_status( 'draft, auto-draft, wpi-pending, wpi-failed' )
 				&& hash_equals( $seal, getpaid_get_invoice_checkout_seal( $saved ) );
 
 			$this->can_replace_invoice_items[ $invoice_id ] = (bool) apply_filters( 'getpaid_submission_can_replace_invoice_items', $can_replace, $saved, $this );
