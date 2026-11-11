@@ -355,6 +355,14 @@ class GetPaid_Payment_Form_Submission {
 	}
 
 	/**
+	 * Whether the items of an invoice may be replaced, by invoice ID.
+	 *
+	 * @see GetPaid_Payment_Form_Submission::can_replace_invoice_items()
+	 * @var bool[]
+	 */
+	protected $can_replace_invoice_items = array();
+
+	/**
 	 * Checks if the items of an existing invoice may be replaced by the items submitted with the form.
 	 *
 	 * Only an unpaid invoice that is still exactly what the checkout wrote qualifies (a checkout that
@@ -368,13 +376,23 @@ class GetPaid_Payment_Form_Submission {
 	 */
 	public function can_replace_invoice_items( $invoice ) {
 
-		$seal        = get_post_meta( $invoice->get_id(), '_getpaid_checkout_seal', true );
-		$can_replace = ! empty( $seal )
-			&& is_string( $seal )
-			&& $invoice->has_status( 'draft, auto-draft, wpi-pending' )
-			&& hash_equals( $seal, getpaid_get_invoice_checkout_seal( $invoice ) );
+		$invoice_id = (int) $invoice->get_id();
 
-		return (bool) apply_filters( 'getpaid_submission_can_replace_invoice_items', $can_replace, $invoice, $this );
+		// Decided once per submission, from the saved invoice: later steps change the object in memory
+		// (the tax step sets the submitted country and recalculates its total), and every caller must
+		// get the same answer.
+		if ( ! isset( $this->can_replace_invoice_items[ $invoice_id ] ) ) {
+			$saved       = new WPInv_Invoice( $invoice_id );
+			$seal        = get_post_meta( $invoice_id, '_getpaid_checkout_seal', true );
+			$can_replace = ! empty( $seal )
+				&& is_string( $seal )
+				&& $saved->has_status( 'draft, auto-draft, wpi-pending' )
+				&& hash_equals( $seal, getpaid_get_invoice_checkout_seal( $saved ) );
+
+			$this->can_replace_invoice_items[ $invoice_id ] = (bool) apply_filters( 'getpaid_submission_can_replace_invoice_items', $can_replace, $saved, $this );
+		}
+
+		return $this->can_replace_invoice_items[ $invoice_id ];
 	}
 
 	/**

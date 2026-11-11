@@ -60,7 +60,7 @@ class GetPaid_Checkout {
 			if ( $is_resumable ) {
 				update_post_meta( $invoice->get_id(), '_getpaid_checkout_seal', getpaid_get_invoice_checkout_seal( new WPInv_Invoice( $invoice->get_id() ) ) );
 			} else {
-				delete_post_meta( $invoice->get_id(), '_getpaid_checkout_seal' );
+				getpaid_delete_invoice_checkout_seal( $invoice );
 			}
 		}
 

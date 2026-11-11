@@ -575,10 +575,6 @@ class GetPaid_Admin {
 	 * @param array $args
      */
     public function send_customer_invoice( $args ) {
-
-		// An invoice the merchant has sent is no longer a checkout the customer can resume and change.
-		delete_post_meta( (int) $args['invoice_id'], '_getpaid_checkout_seal' );
-
 		getpaid()->get( 'invoice_emails' )->user_invoice( new WPInv_Invoice( $args['invoice_id'] ), true );
 		wp_safe_redirect( remove_query_arg( array( 'getpaid-admin-action', 'getpaid-nonce', 'invoice_id' ) ) );
 		exit;

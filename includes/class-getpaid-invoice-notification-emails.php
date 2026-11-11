@@ -375,6 +375,12 @@ class GetPaid_Invoice_Notification_Emails {
 			return;
 		}
 
+		// Sent by hand (Send Invoice, the bulk action or the edit screen checkbox): the merchant has put
+		// this invoice in front of the customer, so it is no longer a checkout they can resume and change.
+		if ( $force ) {
+			getpaid_delete_invoice_checkout_seal( $invoice );
+		}
+
 		$email     = new GetPaid_Notification_Email( __FUNCTION__, $invoice );
 		$recipient = $invoice->get_email();
 
@@ -416,6 +422,10 @@ class GetPaid_Invoice_Notification_Emails {
 	 * @param WPInv_Invoice $invoice
 	 */
 	public function force_send_overdue_notice( $invoice ) {
+
+		// A reminder sent by hand is the merchant asking for this invoice as it stands.
+		getpaid_delete_invoice_checkout_seal( $invoice );
+
 		$email = new GetPaid_Notification_Email( 'overdue', $invoice );
 		return $this->send_email( $invoice, $email, 'overdue', $invoice->get_email() );
 	}
