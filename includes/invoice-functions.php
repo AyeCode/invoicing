@@ -1071,6 +1071,22 @@ add_action( 'getpaid_new_invoice', 'getpaid_update_invoice_caches', 5 );
 add_action( 'getpaid_update_invoice', 'getpaid_update_invoice_caches', 5 );
 
 /**
+ * Records that an invoice the checkout created has been edited in the admin.
+ *
+ * A checkout invoice is the customer's own selection, so a resumed checkout may replace its items.
+ * Once the merchant has edited it, it is the merchant's invoice and keeps its items
+ * (see GetPaid_Payment_Form_Submission::can_replace_invoice_items()). Invoices created any other
+ * way keep their value. The invoice is not saved here.
+ *
+ * @param WPInv_Invoice $invoice
+ */
+function getpaid_mark_invoice_edited_by_admin( $invoice ) {
+    if ( 'payment_form' === $invoice->get_created_via() ) {
+        $invoice->set_created_via( 'admin' );
+    }
+}
+
+/**
  * Duplicates an invoice.
  *
  * Please note that this function does not save the duplicated invoice.

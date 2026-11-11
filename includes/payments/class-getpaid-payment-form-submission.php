@@ -354,8 +354,8 @@ class GetPaid_Payment_Form_Submission {
 	 * Checks if the items of an existing invoice may be replaced by the items submitted with the form.
 	 *
 	 * Only an unpaid invoice that the checkout itself created for this customer qualifies (a checkout
-	 * that was started and is being resumed). An invoice written by the merchant, a renewal or a copy
-	 * keeps its own items, quantities and prices whatever the form submits.
+	 * that was started and is being resumed). An invoice written or edited by the merchant, a renewal
+	 * or a copy keeps its own items, quantities and prices whatever the form submits.
 	 *
 	 * @param WPInv_Invoice $invoice
 	 * @return bool
