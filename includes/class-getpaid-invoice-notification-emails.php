@@ -179,24 +179,32 @@ class GetPaid_Invoice_Notification_Emails {
 			return;
 		}
 
-		$mailer     = new GetPaid_Notification_Email_Sender();
-		$merge_tags = $email->get_merge_tags();
+		$switched_locale = $this->maybe_switch_to_customer_locale( $invoice, $email );
 
-		$result = $mailer->send(
-			apply_filters( 'getpaid_invoice_email_recipients', wpinv_parse_list( $recipients ), $email ),
-			$email->add_merge_tags( $email->get_subject(), $merge_tags ),
-			$email->get_content( $merge_tags, $extra_args ),
-			$email->get_attachments()
-		);
+		try {
+			$mailer     = new GetPaid_Notification_Email_Sender();
+			$merge_tags = $email->get_merge_tags();
 
-		// Maybe send a copy to the admin.
-		if ( $email->include_admin_bcc() ) {
-			$mailer->send(
-				wpinv_get_admin_email(),
-				$email->add_merge_tags( $email->get_subject() . __( ' - ADMIN BCC COPY', 'invoicing' ), $merge_tags ),
-				$email->get_content( $merge_tags ),
+			$result = $mailer->send(
+				apply_filters( 'getpaid_invoice_email_recipients', wpinv_parse_list( $recipients ), $email ),
+				$email->add_merge_tags( $email->get_subject(), $merge_tags ),
+				$email->get_content( $merge_tags, $extra_args ),
 				$email->get_attachments()
 			);
+
+			// Maybe send a copy to the admin.
+			if ( $email->include_admin_bcc() ) {
+				$mailer->send(
+					wpinv_get_admin_email(),
+					$email->add_merge_tags( $email->get_subject() . __( ' - ADMIN BCC COPY', 'invoicing' ), $merge_tags ),
+					$email->get_content( $merge_tags ),
+					$email->get_attachments()
+				);
+			}
+		} finally {
+			if ( $switched_locale ) {
+				wpinv_restore_locale();
+			}
 		}
 
 		if ( $result ) {
@@ -222,6 +230,30 @@ class GetPaid_Invoice_Notification_Emails {
 		do_action( 'getpaid_after_send_invoice_notification', $type, $invoice, $email );
 
 		return $result;
+	}
+
+	/**
+	 * Switches to the customer's locale for customer-facing emails.
+	 *
+	 * @param WPInv_Invoice $invoice
+	 * @param GetPaid_Notification_Email $email
+	 * @return bool
+	 */
+	protected function maybe_switch_to_customer_locale( $invoice, $email ) {
+
+		if ( $email->is_admin_email() ) {
+			return false;
+		}
+
+		$user_id = (int) $invoice->get_user_id();
+		$locale  = $user_id > 0 ? get_user_locale( $user_id ) : get_locale();
+		$locale  = apply_filters( 'getpaid_invoice_email_locale', $locale, $invoice, $email );
+
+		if ( empty( $locale ) ) {
+			return false;
+		}
+
+		return wpinv_switch_to_locale( $locale );
 	}
 
 	/**
