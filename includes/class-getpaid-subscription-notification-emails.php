@@ -138,6 +138,32 @@ class GetPaid_Subscription_Notification_Emails {
 	}
 
 	/**
+	 * Switches to the customer's locale for customer-facing emails.
+	 *
+	 * @param WPInv_Invoice $invoice
+	 * @param GetPaid_Notification_Email $email
+	 * @return bool
+	 */
+	protected function maybe_switch_to_customer_locale( $invoice, $email ) {
+
+		if ( $email->is_admin_email() ) {
+			return false;
+		}
+
+		$user_id = ( $invoice && is_callable( array( $invoice, 'get_user_id' ) ) ) ? (int) $invoice->get_user_id() : 0;
+		$locale  = $user_id > 0 ? get_user_locale( $user_id ) : get_locale();
+		$locale  = apply_filters( 'getpaid_subscription_email_locale', $locale, $invoice, $email );
+
+		if ( empty( $locale ) || $locale === determine_locale() ) {
+			return false;
+		}
+
+		wpinv_switch_to_locale( $locale );
+
+		return true;
+	}
+
+	/**
 	 * Helper function to send an email.
 	 *
 	 * @param WPInv_Subscription $subscription
@@ -171,6 +197,8 @@ class GetPaid_Subscription_Notification_Emails {
 
 		do_action( 'getpaid_before_send_subscription_notification', $type, $subscription, $email );
 
+		$switched_locale = $this->maybe_switch_to_customer_locale( $invoice, $email );
+
 		$recipients  = $this->get_recipients( $invoice );
 		$mailer      = new GetPaid_Notification_Email_Sender();
 		$merge_tags  = $email->get_merge_tags();
@@ -193,6 +221,10 @@ class GetPaid_Subscription_Notification_Emails {
 				$content,
 				$attachments
 			);
+		}
+
+		if ( $switched_locale ) {
+			wpinv_restore_locale();
 		}
 
 		if ( $result ) {
