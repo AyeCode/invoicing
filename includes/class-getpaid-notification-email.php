@@ -43,6 +43,15 @@ class GetPaid_Notification_Email {
 	}
 
 	/**
+	 * Discards the cached emails settings array.
+	 *
+	 * The cached defaults are already translated, so they are only valid for the locale they were built in.
+	 */
+	public static function flush_options_cache() {
+		self::$_emails_options = array();
+	}
+
+	/**
 	 * Retrieves an option
 	 *
 	 * @return mixed
