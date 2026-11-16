@@ -138,6 +138,30 @@ class GetPaid_Subscription_Notification_Emails {
 	}
 
 	/**
+	 * Switches to the customer's locale for customer-facing emails.
+	 *
+	 * @param WPInv_Invoice $invoice
+	 * @param GetPaid_Notification_Email $email
+	 * @return bool
+	 */
+	protected function maybe_switch_to_customer_locale( $invoice, $email ) {
+
+		if ( $email->is_admin_email() ) {
+			return false;
+		}
+
+		$user_id = (int) $invoice->get_user_id();
+		$locale  = $user_id > 0 ? get_user_locale( $user_id ) : get_locale();
+		$locale  = apply_filters( 'getpaid_subscription_email_locale', $locale, $invoice, $email );
+
+		if ( empty( $locale ) ) {
+			return false;
+		}
+
+		return wpinv_switch_to_locale( $locale );
+	}
+
+	/**
 	 * Helper function to send an email.
 	 *
 	 * @param WPInv_Subscription $subscription
@@ -171,28 +195,36 @@ class GetPaid_Subscription_Notification_Emails {
 
 		do_action( 'getpaid_before_send_subscription_notification', $type, $subscription, $email );
 
-		$recipients  = $this->get_recipients( $invoice );
-		$mailer      = new GetPaid_Notification_Email_Sender();
-		$merge_tags  = $email->get_merge_tags();
-		$content     = $email->get_content( $merge_tags, $extra_args );
-		$subject     = $email->add_merge_tags( $email->get_subject(), $merge_tags );
-		$attachments = $email->get_attachments();
+		$switched_locale = $this->maybe_switch_to_customer_locale( $invoice, $email );
 
-		$result = $mailer->send(
-			apply_filters( 'getpaid_subscription_email_recipients', wpinv_parse_list( $recipients ), $email ),
-			$subject,
-			$content,
-			$attachments
-		);
+		try {
+			$recipients  = $this->get_recipients( $invoice );
+			$mailer      = new GetPaid_Notification_Email_Sender();
+			$merge_tags  = $email->get_merge_tags();
+			$content     = $email->get_content( $merge_tags, $extra_args );
+			$subject     = $email->add_merge_tags( $email->get_subject(), $merge_tags );
+			$attachments = $email->get_attachments();
 
-		// Maybe send a copy to the admin.
-		if ( $email->include_admin_bcc() ) {
-			$mailer->send(
-				wpinv_get_admin_email(),
-				$subject . __( ' - ADMIN BCC COPY', 'invoicing' ),
+			$result = $mailer->send(
+				apply_filters( 'getpaid_subscription_email_recipients', wpinv_parse_list( $recipients ), $email ),
+				$subject,
 				$content,
 				$attachments
 			);
+
+			// Maybe send a copy to the admin.
+			if ( $email->include_admin_bcc() ) {
+				$mailer->send(
+					wpinv_get_admin_email(),
+					$subject . __( ' - ADMIN BCC COPY', 'invoicing' ),
+					$content,
+					$attachments
+				);
+			}
+		} finally {
+			if ( $switched_locale ) {
+				wpinv_restore_locale();
+			}
 		}
 
 		if ( $result ) {

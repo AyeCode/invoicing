@@ -207,6 +207,10 @@ function wpinv_get_emails() {
     return apply_filters( 'wpinv_get_emails', wpinv_get_data( 'email-settings' ) );
 }
 
+// The cached email settings hold translated defaults, so they must not outlive a locale switch.
+add_action( 'wpinv_switch_to_locale', array( 'GetPaid_Notification_Email', 'flush_options_cache' ) );
+add_action( 'wpinv_restore_locale', array( 'GetPaid_Notification_Email', 'flush_options_cache' ) );
+
 /**
  * Filter email settings.
  *

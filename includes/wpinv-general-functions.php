@@ -347,7 +347,10 @@ function wpinv_switch_to_locale( $locale = null ) {
     if ( ! empty( $invoicing ) && function_exists( 'switch_to_locale' ) ) {
         $locale = empty( $locale ) ? get_locale() : $locale;
 
-        switch_to_locale( $locale );
+        // Core refuses the switch when the locale is already active or its language pack is missing.
+        if ( ! switch_to_locale( $locale ) ) {
+            return false;
+        }
 
         $wpi_switch_locale = $locale;
 
@@ -356,7 +359,11 @@ function wpinv_switch_to_locale( $locale = null ) {
         $invoicing->load_textdomain();
 
         do_action( 'wpinv_switch_to_locale', $locale );
+
+        return true;
     }
+
+    return false;
 }
 
 function wpinv_restore_locale() {
@@ -372,7 +379,11 @@ function wpinv_restore_locale() {
         $invoicing->load_textdomain();
 
         do_action( 'wpinv_restore_locale' );
+
+        return true;
     }
+
+    return false;
 }
 
 /**
