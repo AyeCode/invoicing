@@ -4,7 +4,7 @@
  *
  * This template can be overridden by copying it to yourtheme/invoicing/invoice-receipt.php.
  *
- * @version 1.0.19
+ * @version 2.8.66
  */
 
 defined( 'ABSPATH' ) || exit;

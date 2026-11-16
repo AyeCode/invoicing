@@ -4,7 +4,7 @@ Donate link: https://www.ko-fi.com/stiofan
 Tags:  payments, invoicing, Paypal, Stripe, payment
 Requires at least: 6.0
 Tested up to: 7.1
-Stable tag: 2.8.65
+Stable tag: 2.8.66
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -146,10 +146,10 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
-= 2.8.66 - TBD =
+= 2.8.66 - 2026-11-16 =
 * A cancelled invoice can no longer be paid: the Pay Now buttons are removed and the checkout rejects it instead of taking the payment - FIXED
 * Invoice and subscription emails now use the customer's language, not the admin's - FIXED
-* An existing invoice keeps its own items when paid through a payment form: a buy button only replaces them on an unpaid checkout being resumed, not once the merchant has changed or sent it - FIXED
+* An existing invoice keeps its own items when paid through a payment form: a buy button only replaces them on an unpaid checkout being resumed, not once the merchant has changed or sent it (reported by Mohammed Dsleman) - FIXED
 
 = 2.8.65 - 2026-11-05 =
 * Quantities chosen on payment forms and buy buttons must be whole numbers and respect the item's maximum quantity (the admin invoice editor is unchanged) - FIXED
