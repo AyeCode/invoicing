@@ -4,7 +4,7 @@
  *
  * This template can be overridden by copying it to yourtheme/invoicing/invoice-history.php.
  *
- * @version 2.8.43
+ * @version 2.8.66
  */
 
 defined( 'ABSPATH' ) || exit;
