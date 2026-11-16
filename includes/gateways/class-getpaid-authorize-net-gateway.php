@@ -1171,7 +1171,8 @@ class GetPaid_Authorize_Net_Gateway extends GetPaid_Authorize_Net_Legacy_Gateway
 			return;
 		}
 
-		if ( ! $new_invoice->needs_payment() ) {
+		// A cancelled renewal invoice no longer needs payment, but it was never charged either.
+		if ( ! $new_invoice->needs_payment() && ! $new_invoice->is_cancelled() ) {
 			$subscription->renew();
 			$subscription->after_add_payment( $new_invoice );
 		} else {

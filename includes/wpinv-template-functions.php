@@ -1006,6 +1006,18 @@ function wpinv_checkout_form() {
 
     }
 
+    // A cancelled invoice can not be paid for.
+    if ( $invoice->is_cancelled() ) {
+
+        return aui()->alert(
+            array(
+                'type'    => 'warning',
+                'content' => __( 'This invoice has been cancelled and can no longer be paid for.', 'invoicing' ),
+            )
+        );
+
+    }
+
     // Set the global invoice id.
     $wpi_checkout_id = $invoice_id;
     $payment_form_id = (int) $invoice->get_meta( 'force_payment_form' );
@@ -1323,6 +1335,17 @@ function getpaid_display_invoice_payment_form( $invoice_id ) {
 			array(
 				'type'    => 'warning',
 				'content' => __( 'Invoice has already been paid', 'invoicing' ),
+			),
+			true
+		);
+		return;
+	}
+
+	if ( $invoice->is_cancelled() ) {
+		aui()->alert(
+			array(
+				'type'    => 'warning',
+				'content' => __( 'This invoice has been cancelled and can no longer be paid for.', 'invoicing' ),
 			),
 			true
 		);
