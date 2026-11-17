@@ -146,6 +146,10 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
+= 2.8.67 - TBD =
+* Abandoned free trial checkout marked as Trialling instead of Pending - FIXED
+* Completed free trial checkout showed subscription as Active instead of Trialling - FIXED
+
 = 2.8.66 - 2026-11-16 =
 * A cancelled invoice can no longer be paid: the Pay Now buttons are removed and the checkout rejects it instead of taking the payment - FIXED
 * Invoice and subscription emails now use the customer's language, not the admin's - FIXED

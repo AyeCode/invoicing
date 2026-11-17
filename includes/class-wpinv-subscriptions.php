@@ -117,8 +117,15 @@ class WPInv_Subscriptions {
         $new_status = $this->get_subscription_status_from_invoice_status( $invoice->get_status() );
 
         foreach ( $subscriptions as $subscription ) {
-            if ( ! $subscription->has_status( $new_status . ' expired completed' ) ) {
-                $subscription->set_status( $new_status );
+            $status = $new_status;
+
+            // Paying the first invoice of a free trial subscription starts the trial, not the paid period.
+            if ( 'active' === $status && $invoice->is_parent() && $subscription->has_trial_period() && $subscription->has_status( 'pending trialling' ) ) {
+                $status = 'trialling';
+            }
+
+            if ( ! $subscription->has_status( $status . ' expired completed' ) ) {
+                $subscription->set_status( $status );
                 $subscription->save();
             }
         }
@@ -282,15 +289,23 @@ class WPInv_Subscriptions {
         $subscription->set_bill_times( $totals['recurring_limit'] );
         $subscription->set_next_renewal_date( $totals['renews_on'] );
 
-        // Trial periods.
+        // Trial periods. The subscription stays pending until the invoice is paid, then activate() starts the trial.
         if ( ! empty( $totals['trialling'] ) ) {
             $subscription->set_trial_period( $totals['trialling'] );
-            $subscription->set_status( 'trialling' );
+
+            if ( $invoice->is_paid() ) {
+                $subscription->set_status( 'trialling' );
+            }
 
         // If initial amount is free, treat it as a free trial even if the subscription item does not have a free trial.
         } elseif ( empty( $initial_amt ) ) {
             $subscription->set_trial_period( $totals['interval'] . ' ' . $totals['period'] );
-            $subscription->set_status( 'trialling' );
+
+            if ( $invoice->is_paid() ) {
+                $subscription->set_status( 'trialling' );
+            }
+        } else {
+            $subscription->set_trial_period( '' );
         }
 
         $subscription->save();
@@ -517,17 +532,26 @@ class WPInv_Subscriptions {
         $period       = $subscription_item->get_recurring_period( true );
         $interval     = $subscription_item->get_recurring_interval();
 
+        $is_trial = false;
+
         // If the subscription item has a trial period...
         if ( $subscription_item->has_free_trial() ) {
             $period   = $subscription_item->get_trial_period( true );
             $interval = $subscription_item->get_trial_interval();
             $subscription->set_trial_period( $interval . ' ' . $period );
-            $subscription->set_status( 'trialling' );
+            $is_trial = true;
         }
 
         // If initial amount is free, treat it as a free trial even if the subscription item does not have a free trial.
         if ( $invoice->has_free_trial() ) {
             $subscription->set_trial_period( $interval . ' ' . $period );
+            $is_trial = true;
+        }
+
+        // The trial only starts once the invoice is paid (see WPInv_Subscription::activate()), so an abandoned checkout stays pending.
+        if ( ! $is_trial ) {
+            $subscription->set_trial_period( '' );
+        } elseif ( $invoice->is_paid() ) {
             $subscription->set_status( 'trialling' );
         }
 

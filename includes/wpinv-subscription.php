@@ -1430,7 +1430,8 @@ class WPInv_Subscription extends GetPaid_Data {
 	 * @return int subscription ID
 	 */
 	public function activate() {
-		$status = $this->has_trial_period() && 'trialling' === $this->get_status() ? 'trialling' : 'active';
+		// A trial subscription stays pending until checkout is completed, so activating it from pending starts the trial.
+		$status = $this->has_trial_period() && in_array( $this->get_status(), array( 'trialling', 'pending' ), true ) ? 'trialling' : 'active';
 		$this->set_status( $status );
 		return $this->save();
 	}
