@@ -3,9 +3,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: GetPaid 2.8.66\n"
+"Project-Id-Version: GetPaid 2.8.67\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/invoicing\n"
-"POT-Creation-Date: 2026-11-16 14:57+0530\n"
+"POT-Creation-Date: 2026-11-18 19:35+0530\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4176,32 +4176,32 @@ msgstr ""
 msgid "Please see the <a href=\"https://www.paypal.com/us/webapps/mpp/ua/privacy-full\">PayPal Privacy Policy</a> for more details."
 msgstr ""
 
-#: includes/class-wpinv-subscriptions.php:182
+#: includes/class-wpinv-subscriptions.php:189
 #, php-format
 msgid "User has initiated a subscription cancellation #%d."
 msgstr ""
 
-#: includes/class-wpinv-subscriptions.php:575
+#: includes/class-wpinv-subscriptions.php:599
 msgid "Subscription updated"
 msgstr ""
 
-#: includes/class-wpinv-subscriptions.php:605
+#: includes/class-wpinv-subscriptions.php:629
 msgid "We are unable to renew this subscription as the parent invoice does not exist."
 msgstr ""
 
-#: includes/class-wpinv-subscriptions.php:608
+#: includes/class-wpinv-subscriptions.php:632
 msgid "This subscription has been renewed and extended."
 msgstr ""
 
-#: includes/class-wpinv-subscriptions.php:642
+#: includes/class-wpinv-subscriptions.php:666
 msgid "This subscription has been deleted."
 msgstr ""
 
-#: includes/class-wpinv-subscriptions.php:644
+#: includes/class-wpinv-subscriptions.php:668
 msgid "We are unable to delete this subscription. Please try again."
 msgstr ""
 
-#: includes/class-wpinv-subscriptions.php:693
+#: includes/class-wpinv-subscriptions.php:717
 msgid "Manage Subscription"
 msgstr ""
 
