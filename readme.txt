@@ -146,6 +146,10 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 
 == Changelog ==
 
+= 2.8.68 - TBD =
+* A failed subscription renewal paid on a retry sent the "subscription is active" email twice and changed the status twice - FIXED
+* The "subscription is active" email is no longer sent when a failing subscription is paid on a retry, the paid invoice email covers it - CHANGED
+
 = 2.8.67 - 2026-11-18 =
 * Abandoned free trial checkout marked as Trialling instead of Pending - FIXED
 * Completed free trial checkout showed subscription as Active instead of Trialling - FIXED

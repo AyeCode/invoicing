@@ -1418,9 +1418,33 @@ class WPInv_Subscription extends GetPaid_Data {
 	 * @return int subscription ID
 	 */
 	public function save() {
+		$this->drop_saved_status_transition();
 		parent::save();
 		$this->status_transition();
 		return $this->get_id();
+	}
+
+	/**
+	 * Drops a status change that another copy of this subscription has already saved.
+	 *
+	 * Saving a renewal invoice activates the subscription through its own copy of it, then the gateway handler renews
+	 * the copy it read earlier, which still holds the old status. Without this the same change (e.g. Failing to Active)
+	 * is noted, hooked and emailed twice.
+	 *
+	 * @since 2.8.68
+	 */
+	protected function drop_saved_status_transition() {
+		global $wpdb;
+
+		if ( empty( $this->status_transition ) || ! $this->get_id() ) {
+			return;
+		}
+
+		$saved = $wpdb->get_var( $wpdb->prepare( "SELECT status FROM {$wpdb->prefix}wpinv_subscriptions WHERE id = %d", $this->get_id() ) );
+
+		if ( $saved === $this->status_transition['to'] ) {
+			$this->status_transition = false;
+		}
 	}
 
 	/**

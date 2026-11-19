@@ -255,8 +255,23 @@ class GetPaid_Subscription_Notification_Emails {
 	 * @since 2.8.4
 	 *
 	 * @param WPInv_Subscription $subscription
+	 * @param array              $transition The status change: 'from' and 'to'.
 	 */
-	public function subscription_active( $subscription ) {
+	public function subscription_active( $subscription, $transition = array() ) {
+		// A failing subscription that is active again was paid on a retry: the paid invoice email already says so.
+		$recovered = is_array( $transition ) && isset( $transition['from'] ) && 'failing' === $transition['from'];
+
+		/**
+		 * Filters whether the subscription active email is skipped when a failing subscription becomes active again.
+		 *
+		 * @since 2.8.68
+		 * @param bool               $skip         Whether to skip the email.
+		 * @param WPInv_Subscription $subscription The subscription.
+		 */
+		if ( $recovered && apply_filters( 'getpaid_skip_recovered_subscription_active_email', true, $subscription ) ) {
+			return;
+		}
+
 		$email = new GetPaid_Notification_Email( __FUNCTION__, $subscription );
 
 		$this->send_email( $subscription, $email, __FUNCTION__ );
