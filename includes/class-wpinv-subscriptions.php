@@ -185,8 +185,7 @@ class WPInv_Subscriptions {
      *
      * Only for a subscription that is no longer renewing. A refund does not stop a subscription (see
      * maybe_deactivate_invoice_subscription()), so one that is still running keeps its date: the gateway will charge it
-     * again on that date. Not for a fixed number of payments either: its last payment never moves the date. Each
-     * renewal is taken back once. A renewal paid after the subscription had lapsed moved the date from the day it was
+     * again on that date. Each renewal is taken back once. A renewal paid after the subscription had lapsed moved the date from the day it was
      * paid, so taking a period back leaves the customer the lapsed gap: deliberate, it errs in their favour.
      *
      * @since 2.8.68
@@ -196,7 +195,7 @@ class WPInv_Subscriptions {
     public function take_back_refunded_renewal_periods( $subscription ) {
         global $wpdb;
 
-        if ( empty( $subscription ) || ! $subscription->exists() || $subscription->has_status( 'active trialling failing pending' ) || $subscription->get_bill_times() > 0 ) {
+        if ( empty( $subscription ) || ! $subscription->exists() || $subscription->has_status( 'active trialling failing pending' ) ) {
             return false;
         }
 
@@ -207,19 +206,30 @@ class WPInv_Subscriptions {
                 $subscription->get_parent_payment_id()
             )
         );
+        $own      = array();
         $refunded = array();
 
+        // Leave out another subscription's renewals (one order can hold several subscriptions).
         foreach ( $renewals as $renewal ) {
-            // Another subscription's renewal (one order can hold several subscriptions).
             $renewal_subscription = (int) get_post_meta( $renewal->ID, '_wpinv_subscription_id', true );
 
-            if ( $renewal_subscription && $renewal_subscription !== (int) $subscription->get_id() ) {
-                continue;
+            if ( ! $renewal_subscription || $renewal_subscription === (int) $subscription->get_id() ) {
+                $own[] = $renewal;
             }
+        }
 
+        $bill_times = (int) $subscription->get_bill_times();
+        $payments   = count( $own ) + ( (float) $subscription->get_initial_amount() > 0 ? 1 : 0 );
+
+        foreach ( $own as $i => $renewal ) {
             // The latest renewal that is still paid: everything before it stands.
             if ( 'wpi-refunded' !== $renewal->post_status ) {
                 break;
+            }
+
+            // The payment that completed a fixed number of payments never moved the date (renew() completes instead).
+            if ( $bill_times > 0 && $payments - $i >= $bill_times ) {
+                continue;
             }
 
             $invoice = wpinv_get_invoice( $renewal->ID );
