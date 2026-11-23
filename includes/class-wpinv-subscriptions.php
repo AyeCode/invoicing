@@ -199,10 +199,11 @@ class WPInv_Subscriptions {
             return false;
         }
 
-        // Its renewals that were paid at some point, latest first.
+        // Its renewals that were paid at some point, latest first. As in getpaid_count_subscription_invoices(), a renewal
+        // held because the amount charged did not match was paid, and moved the date.
         $renewals = $wpdb->get_results(
             $wpdb->prepare(
-                "SELECT ID, post_status FROM $wpdb->posts WHERE post_parent = %d AND post_type = 'wpi_invoice' AND post_status IN ( 'publish', 'wpi-processing', 'wpi-renewal', 'wpi-refunded' ) ORDER BY post_date DESC, ID DESC",
+                "SELECT ID, post_status FROM $wpdb->posts WHERE post_parent = %d AND post_type = 'wpi_invoice' AND ( post_status IN ( 'publish', 'wpi-processing', 'wpi-renewal', 'wpi-refunded' ) OR ( post_status = 'wpi-onhold' AND ID IN ( SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_getpaid_charge_mismatch' ) ) ) ORDER BY post_date DESC, ID DESC",
                 $subscription->get_parent_payment_id()
             )
         );
@@ -218,8 +219,9 @@ class WPInv_Subscriptions {
             }
         }
 
+        // Payments made in all: those that count now, plus the renewals refunded since.
         $bill_times = (int) $subscription->get_bill_times();
-        $payments   = count( $own ) + ( (float) $subscription->get_initial_amount() > 0 ? 1 : 0 );
+        $payments   = $subscription->get_times_billed() + count( wp_list_filter( $own, array( 'post_status' => 'wpi-refunded' ) ) );
 
         foreach ( $own as $i => $renewal ) {
             // The latest renewal that is still paid: everything before it stands.
