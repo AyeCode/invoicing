@@ -147,7 +147,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 == Changelog ==
 
 = 2.8.68 - TBD =
-* Refunding a subscription renewal left the subscription date a period ahead: once the subscription is cancelled, expired or completed, a refunded renewal now moves the date back to when the customer last paid up to. A subscription that is still running is not changed - FIXED
+* Refunding a subscription renewal left the subscription date a period ahead: once the subscription is cancelled, expired or completed, its refunded latest renewals now move the date back to when the customer last paid up to. A subscription that is still running, or that has a fixed number of payments, is not changed - FIXED
 * A failed subscription renewal paid on a retry sent the "subscription is active" email twice and changed the status twice - FIXED
 * The "subscription is active" email is no longer sent when a failing subscription is paid on a retry, the paid invoice email covers it - CHANGED
 
