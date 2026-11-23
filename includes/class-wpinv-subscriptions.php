@@ -22,6 +22,10 @@ class WPInv_Subscriptions {
         // De-activate a subscription whenever the invoice changes payment statuses.
         add_action( 'getpaid_invoice_status_changed', array( $this, 'maybe_deactivate_invoice_subscription' ), 20, 1 );
 
+        // A refunded renewal gives back the period it paid for, once its subscription is no longer renewing.
+        add_action( 'getpaid_invoice_status_changed', array( $this, 'maybe_take_back_refunded_renewal' ), 30, 3 );
+        add_action( 'getpaid_subscription_status_changed', array( $this, 'maybe_take_back_ended_subscription_renewal' ), 20, 3 );
+
         // Handles subscription cancelations.
         add_action( 'getpaid_authenticated_action_subscription_cancel', array( $this, 'user_cancel_single_subscription' ) );
 
@@ -129,6 +133,176 @@ class WPInv_Subscriptions {
                 $subscription->save();
             }
         }
+    }
+
+    /**
+     * The invoice meta that marks a refunded renewal whose period was taken back from its subscription.
+     */
+    const PERIOD_TAKEN_BACK = '_getpaid_renewal_period_taken_back';
+
+    /**
+     * A renewal invoice was refunded, or a refunded one was paid again.
+     *
+     * @since 2.8.68
+     * @param WPInv_Invoice $invoice
+     * @param string        $from
+     * @param string        $to
+     */
+    public function maybe_take_back_refunded_renewal( $invoice, $from, $to ) {
+        $subscription = empty( $invoice ) || $invoice->is_parent() ? false : $this->get_invoice_subscription( $invoice );
+
+        if ( empty( $subscription ) || ! $subscription->exists() ) {
+            return;
+        }
+
+        if ( 'wpi-refunded' === $to ) {
+            $this->take_back_refunded_renewal_periods( $subscription );
+        } elseif ( $invoice->is_paid() && get_post_meta( $invoice->get_id(), self::PERIOD_TAKEN_BACK, true ) ) {
+            // Paid again (the refund was undone): the subscription gets the period back.
+            delete_post_meta( $invoice->get_id(), self::PERIOD_TAKEN_BACK );
+            $this->move_subscription_date( $subscription, '+', 1, $invoice->get_number() );
+        }
+    }
+
+    /**
+     * A subscription stopped renewing (cancelled, expired, completed): its last renewals may have been refunded before.
+     *
+     * @since 2.8.68
+     * @param WPInv_Subscription $subscription
+     * @param string             $from
+     * @param string             $to
+     */
+    public function maybe_take_back_ended_subscription_renewal( $subscription, $from, $to ) {
+        if ( in_array( $to, array( 'cancelled', 'expired', 'completed' ), true ) ) {
+            $this->take_back_refunded_renewal_periods( $subscription );
+        }
+    }
+
+    /**
+     * Takes back the periods that refunded renewals paid for: the subscription's date goes back one period for each of
+     * its latest renewals that is refunded, so whatever follows that date (a license, a membership) ends when the
+     * customer last paid up to.
+     *
+     * Only for a subscription that is no longer renewing. A refund does not stop a subscription (see
+     * maybe_deactivate_invoice_subscription()), so one that is still running keeps its date: the gateway will charge it
+     * again on that date. Each renewal is taken back once. A renewal paid after the subscription had lapsed moved the date from the day it was
+     * paid, so taking a period back leaves the customer the lapsed gap: deliberate, it errs in their favour.
+     *
+     * @since 2.8.68
+     * @param WPInv_Subscription $subscription
+     * @return bool Whether any period was taken back.
+     */
+    public function take_back_refunded_renewal_periods( $subscription ) {
+        global $wpdb;
+
+        if ( empty( $subscription ) || ! $subscription->exists() || $subscription->has_status( 'active trialling failing pending' ) ) {
+            return false;
+        }
+
+        // Its renewals that were paid at some point, latest first. As in getpaid_count_subscription_invoices(), a renewal
+        // held because the amount charged did not match was paid, and moved the date.
+        $renewals = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT ID, post_status FROM $wpdb->posts WHERE post_parent = %d AND post_type = 'wpi_invoice' AND ( post_status IN ( 'publish', 'wpi-processing', 'wpi-renewal', 'wpi-refunded' ) OR ( post_status = 'wpi-onhold' AND ID IN ( SELECT post_id FROM $wpdb->postmeta WHERE meta_key = '_getpaid_charge_mismatch' ) ) ) ORDER BY post_date DESC, ID DESC",
+                $subscription->get_parent_payment_id()
+            )
+        );
+        $own      = array();
+        $refunded = array();
+
+        // Leave out another subscription's renewals (one order can hold several subscriptions).
+        foreach ( $renewals as $renewal ) {
+            $renewal_subscription = (int) get_post_meta( $renewal->ID, '_wpinv_subscription_id', true );
+
+            if ( ! $renewal_subscription || $renewal_subscription === (int) $subscription->get_id() ) {
+                $own[] = $renewal;
+            }
+        }
+
+        // Payments made in all: those that count now, plus the renewals refunded since.
+        $bill_times = (int) $subscription->get_bill_times();
+        $payments   = $subscription->get_times_billed() + count( wp_list_filter( $own, array( 'post_status' => 'wpi-refunded' ) ) );
+
+        foreach ( $own as $i => $renewal ) {
+            // The latest renewal that is still paid: everything before it stands.
+            if ( 'wpi-refunded' !== $renewal->post_status ) {
+                break;
+            }
+
+            // The payment that completed a fixed number of payments never moved the date (renew() completes instead).
+            if ( $bill_times > 0 && $payments - $i >= $bill_times ) {
+                continue;
+            }
+
+            $invoice = wpinv_get_invoice( $renewal->ID );
+
+            // Not taken back already, was paid, and the subscription date is still past the renewal's own.
+            if ( $invoice && ! get_post_meta( $renewal->ID, self::PERIOD_TAKEN_BACK, true ) && (int) strtotime( (string) $invoice->get_date_completed() ) > 0 && strtotime( (string) $subscription->get_expiration() ) > strtotime( $invoice->get_date_created() ) ) {
+                $refunded[ $renewal->ID ] = $invoice->get_number();
+            }
+        }
+
+        if ( empty( $refunded ) || ! $this->move_subscription_date( $subscription, '-', count( $refunded ), implode( ', ', $refunded ) ) ) {
+            return false;
+        }
+
+        foreach ( array_keys( $refunded ) as $invoice_id ) {
+            update_post_meta( $invoice_id, self::PERIOD_TAKEN_BACK, 1 );
+        }
+
+        return true;
+    }
+
+    /**
+     * Moves a subscription's date back (a refunded renewal) or forward again (the refund undone) by whole periods,
+     * and notes it on the first invoice.
+     *
+     * @since 2.8.68
+     * @param WPInv_Subscription $subscription
+     * @param string             $direction '-' or '+'.
+     * @param int                $periods   How many periods.
+     * @param string             $invoices  The renewal invoice number(s), for the note.
+     * @return bool Whether the date moved.
+     */
+    protected function move_subscription_date( $subscription, $direction, $periods, $invoices ) {
+        $old    = $subscription->get_expiration();
+        $period = $subscription->get_period();
+        $count  = max( 1, (int) $subscription->get_frequency() ) * $periods;
+        $new    = empty( $period ) ? false : strtotime( "$direction $count $period", (int) strtotime( (string) $old ) );
+
+        if ( empty( $old ) || '0000-00-00 00:00:00' === $old || empty( $new ) ) {
+            return false;
+        }
+
+        $new = date( 'Y-m-d H:i:s', $new );
+
+        $subscription->set_expiration( $new );
+        $subscription->save();
+
+        $subscription->get_parent_payment()->add_note(
+            sprintf(
+                /* translators: 1: renewal invoice number(s), 2: old date, 3: new date */
+                '-' === $direction ? __( 'Renewal %1$s refunded: the subscription date moved back from %2$s to %3$s.', 'invoicing' ) : __( 'Renewal %1$s paid again: the subscription date moved on from %2$s to %3$s.', 'invoicing' ),
+                $invoices,
+                getpaid_format_date( $old ),
+                getpaid_format_date( $new )
+            ),
+            false,
+            false,
+            true
+        );
+
+        /**
+         * Fires after a subscription's date is moved because a renewal was refunded, or its refund undone.
+         *
+         * @since 2.8.68
+         * @param WPInv_Subscription $subscription The subscription, with its new date.
+         * @param string             $old          The date before.
+         * @param string             $new          The date now.
+         */
+        do_action( 'getpaid_subscription_renewal_date_moved', $subscription, $old, $new );
+
+        return true;
     }
 
     /**
