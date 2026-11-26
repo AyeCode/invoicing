@@ -544,27 +544,40 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 			return;
 		}
 
+		// Nothing to cancel in PayPal without a PayPal subscription.
+		$remote_id = $invoice->get_remote_subscription_id();
+
+		if ( empty( $remote_id ) ) {
+			return;
+		}
+
 		$mode	= $this->is_sandbox( $invoice ) ? 'sandbox' : 'live';
 		$result = GetPaid_PayPal_API::cancel_subscription( 
-			$invoice->get_remote_subscription_id(), 
+			$remote_id, 
 			array(
 				'reason' => __(' Customer requested cancellation', 'invoicing' ),
 			), 
 			$mode 
 		);
 
-		// PayPal refuses to cancel a subscription that has already ended there, e.g. one the customer cancelled in
-		// their PayPal account (that notice is what cancels it here) or one that expired. Nothing is left to cancel,
-		// so that is not an error.
 		if ( is_wp_error( $result ) ) {
-			$remote = GetPaid_PayPal_API::get_subscription( $invoice->get_remote_subscription_id(), $mode );
 
-			if ( ! is_wp_error( $remote ) && isset( $remote->status ) && in_array( strtoupper( (string) $remote->status ), array( 'CANCELLED', 'EXPIRED' ), true ) ) {
+			// PayPal only cancels a subscription that is active or suspended there. One that has already ended, e.g.
+			// one the customer cancelled in their PayPal account (that notice is what cancels it here), one that
+			// expired or one that was never approved, has nothing left to cancel, so that is not an error.
+			$remote = GetPaid_PayPal_API::get_subscription( $remote_id, $mode );
+
+			if ( ! is_wp_error( $remote ) && isset( $remote->status ) && ! in_array( strtoupper( (string) $remote->status ), array( 'ACTIVE', 'SUSPENDED' ), true ) ) {
+				$invoice->add_system_note(
+					sprintf(
+						// translators: %1$s is the subscription ID, %2$s is its status in PayPal.
+						__( 'Subscription #%1$s was not cancelled in PayPal: it is not running there (PayPal status: %2$s), so there was nothing to cancel.', 'invoicing' ),
+						$subscription->get_id(),
+						sanitize_text_field( (string) $remote->status )
+					)
+				);
 				return;
 			}
-		}
-
-		if ( is_wp_error( $result ) ) {
 
 			$error = sprintf(
 				// translators: %s is the subscription ID.
