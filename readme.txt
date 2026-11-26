@@ -147,6 +147,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 == Changelog ==
 
 = 2.8.68 - TBD =
+* A payment form's refunded, failed and cancelled amounts were never counted, and an invoice whose payment form no longer exists created an empty payment form each time it was refunded, cancelled or failed. Amounts are counted from this update on, earlier invoices are not added, and empty forms already created are not removed - FIXED
 * Refunding a subscription renewal left the subscription date a period ahead: once the subscription is cancelled, expired or completed, its refunded latest renewals now move the date back to when the customer last paid up to. A subscription that is still running is not changed, and subscriptions already in that state before this update are not corrected - FIXED
 * A failed subscription renewal paid on a retry sent the "subscription is active" email twice and changed the status twice - FIXED
 * The "subscription is active" email is no longer sent when a failing subscription is paid on a retry, the paid invoice email covers it - CHANGED

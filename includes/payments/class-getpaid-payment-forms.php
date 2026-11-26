@@ -69,12 +69,14 @@ class GetPaid_Payment_Forms {
 	public function update_form_failed_amount( $invoice, $from, $to ) {
 
 		$form = new GetPaid_Payment_Form( $invoice->get_payment_form() );
-		if ( $form->get_id() ) {
+
+		// Only for an invoice that came from a payment form which still exists. Saving an empty form would create one.
+		if ( ! $form->get_id() ) {
 			return;
 		}
 
 		if ( 'wpi-failed' == $from ) {
-			$form->set_failed( $form->get_failed() - $invoice->get_total() );
+			$form->set_failed( max( 0, (float) $form->get_failed() - (float) $invoice->get_total() ) ); // Never below zero: the amount may predate this being counted.
 			$form->save();
 		}
 
@@ -95,12 +97,14 @@ class GetPaid_Payment_Forms {
 	public function update_form_refunded_amount( $invoice, $from, $to ) {
 
 		$form = new GetPaid_Payment_Form( $invoice->get_payment_form() );
-		if ( $form->get_id() ) {
+
+		// Only for an invoice that came from a payment form which still exists. Saving an empty form would create one.
+		if ( ! $form->get_id() ) {
 			return;
 		}
 
 		if ( 'wpi-refunded' == $from ) {
-			$form->set_refunded( $form->get_refunded() - $invoice->get_total() );
+			$form->set_refunded( max( 0, (float) $form->get_refunded() - (float) $invoice->get_total() ) ); // Never below zero: the amount may predate this being counted.
 			$form->save();
 		}
 
@@ -121,12 +125,14 @@ class GetPaid_Payment_Forms {
 	public function update_form_cancelled_amount( $invoice, $from, $to ) {
 
 		$form = new GetPaid_Payment_Form( $invoice->get_payment_form() );
-		if ( $form->get_id() ) {
+
+		// Only for an invoice that came from a payment form which still exists. Saving an empty form would create one.
+		if ( ! $form->get_id() ) {
 			return;
 		}
 
 		if ( 'wpi-cancelled' == $from ) {
-			$form->set_cancelled( $form->get_cancelled() - $invoice->get_total() );
+			$form->set_cancelled( max( 0, (float) $form->get_cancelled() - (float) $invoice->get_total() ) ); // Never below zero: the amount may predate this being counted.
 			$form->save();
 		}
 
