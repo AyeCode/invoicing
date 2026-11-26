@@ -147,6 +147,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 == Changelog ==
 
 = 2.8.68 - TBD =
+* Cancelling a subscription that was already cancelled or expired in PayPal (e.g. cancelled by the customer in their PayPal account) showed "An error occured while trying to cancel subscription in PayPal": nothing is left to cancel there, so no error is shown - FIXED
 * Refunding a subscription renewal left the subscription date a period ahead: once the subscription is cancelled, expired or completed, its refunded latest renewals now move the date back to when the customer last paid up to. A subscription that is still running is not changed, and subscriptions already in that state before this update are not corrected - FIXED
 * A failed subscription renewal paid on a retry sent the "subscription is active" email twice and changed the status twice - FIXED
 * The "subscription is active" email is no longer sent when a failing subscription is paid on a retry, the paid invoice email covers it - CHANGED

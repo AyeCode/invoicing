@@ -553,6 +553,17 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 			$mode 
 		);
 
+		// PayPal refuses to cancel a subscription that has already ended there, e.g. one the customer cancelled in
+		// their PayPal account (that notice is what cancels it here) or one that expired. Nothing is left to cancel,
+		// so that is not an error.
+		if ( is_wp_error( $result ) ) {
+			$remote = GetPaid_PayPal_API::get_subscription( $invoice->get_remote_subscription_id(), $mode );
+
+			if ( ! is_wp_error( $remote ) && isset( $remote->status ) && in_array( strtoupper( (string) $remote->status ), array( 'CANCELLED', 'EXPIRED' ), true ) ) {
+				return;
+			}
+		}
+
 		if ( is_wp_error( $result ) ) {
 
 			$error = sprintf(
