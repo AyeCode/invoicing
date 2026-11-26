@@ -46,9 +46,6 @@ class GetPaid_Daily_Maintenance {
 			wp_schedule_event( $timestamp, 'daily', 'getpaid_daily_maintenance' );
 		}
 
-		// Starts the record of runs, so a job that never runs is noticed too.
-		self::get_run_record();
-
 	}
 
 	/**
@@ -141,42 +138,27 @@ class GetPaid_Daily_Maintenance {
 	public function log_cron_run() {
 		wpinv_error_log( 'GetPaid Daily Cron', false );
 
-		$record             = self::get_run_record();
-		$record['last_run'] = time();
-		update_option( 'getpaid_daily_maintenance_runs', $record, false );
+		update_option( 'getpaid_daily_maintenance_last_run', time(), false );
 	}
 
 	/**
-	 * When the daily job was first watched (since) and when it last ran (last_run, 0 if never), as timestamps.
+	 * When the daily job last ran, as a timestamp. 0 when no run has been recorded.
 	 *
 	 * @since 2.8.68
-	 * @return array
+	 * @return int
 	 */
-	public static function get_run_record() {
-		$record = get_option( 'getpaid_daily_maintenance_runs' );
-
-		if ( ! is_array( $record ) || empty( $record['since'] ) ) {
-			$record = array(
-				'since'    => time(),
-				'last_run' => 0,
-			);
-			update_option( 'getpaid_daily_maintenance_runs', $record, false );
-		}
-
-		$record['last_run'] = empty( $record['last_run'] ) ? 0 : (int) $record['last_run'];
-
-		return $record;
+	public static function get_last_run() {
+		return (int) get_option( 'getpaid_daily_maintenance_last_run', 0 );
 	}
 
 	/**
-	 * Whether the daily job is overdue: no run for two days (or never, two days after it was first watched).
+	 * Whether the daily job is overdue: it was due more than two days ago and is still waiting (WP-Cron is not
+	 * running), or its last recorded run is more than two days old.
 	 *
 	 * @since 2.8.68
 	 * @return bool
 	 */
 	public static function is_overdue() {
-		$record = self::get_run_record();
-		$last   = max( (int) $record['last_run'], (int) $record['since'] );
 
 		/**
 		 * Filters how long the daily job may go without running before it is reported.
@@ -184,7 +166,17 @@ class GetPaid_Daily_Maintenance {
 		 * @since 2.8.68
 		 * @param int $seconds Two days by default.
 		 */
-		return ( time() - $last ) > (int) apply_filters( 'getpaid_daily_maintenance_overdue_after', 2 * DAY_IN_SECONDS );
+		$grace = (int) apply_filters( 'getpaid_daily_maintenance_overdue_after', 2 * DAY_IN_SECONDS );
+		$next  = wp_next_scheduled( 'getpaid_daily_maintenance' );
+
+		// Due long ago and still in the queue. This also catches a job that has never run.
+		if ( $next && ( time() - $next ) > $grace ) {
+			return true;
+		}
+
+		$last_run = self::get_last_run();
+
+		return $last_run && ( time() - $last_run ) > $grace;
 	}
 
 	/**
@@ -211,7 +203,7 @@ class GetPaid_Daily_Maintenance {
 	 * @return array
 	 */
 	public function site_health_test() {
-		$record = self::get_run_record();
+		$last_run = self::get_last_run();
 
 		/**
 		 * Filters the list of things that depend on the daily job, shown in the Site Health test.
@@ -225,6 +217,7 @@ class GetPaid_Daily_Maintenance {
 				__( 'Expiring subscriptions that were not renewed', 'invoicing' ),
 				__( 'Subscription renewal reminders', 'invoicing' ),
 				__( 'Overdue invoice reminders', 'invoicing' ),
+				__( 'Data retention cleanup', 'invoicing' ),
 			)
 		);
 
@@ -249,22 +242,25 @@ class GetPaid_Daily_Maintenance {
 			return $result;
 		}
 
-		if ( empty( $record['last_run'] ) ) {
-			$when = __( 'The GetPaid daily job has never run on this site.', 'invoicing' );
+		// A job that has never run may just be a new site without visitors yet: recommended. One that ran before and
+		// stopped is critical.
+		$result['status'] = $last_run ? 'critical' : 'recommended';
+		$result['label']  = __( 'The GetPaid daily job is not running', 'invoicing' );
+		$result['badge']  = array(
+			'label' => __( 'GetPaid', 'invoicing' ),
+			'color' => $last_run ? 'red' : 'orange',
+		);
+
+		if ( ! $last_run ) {
+			$when = __( 'The GetPaid daily job was due more than two days ago and has not run.', 'invoicing' );
 		} else {
 			$when = sprintf(
 				/* translators: %s: how long ago, e.g. "3 days" */
 				__( 'The GetPaid daily job last ran %s ago.', 'invoicing' ),
-				human_time_diff( (int) $record['last_run'], time() )
+				human_time_diff( $last_run, time() )
 			);
 		}
 
-		$result['label']       = __( 'The GetPaid daily job is not running', 'invoicing' );
-		$result['status']      = 'critical';
-		$result['badge']       = array(
-			'label' => __( 'GetPaid', 'invoicing' ),
-			'color' => 'red',
-		);
 		$result['description'] = '<p>' . esc_html( $when ) . ' ' . esc_html__( 'This usually means WP-Cron is not running on this site. Until it runs again, these do not happen:', 'invoicing' ) . '</p><ul>' . $list . '</ul>';
 		$result['actions']     = '<p>' . esc_html__( 'Ask your host to check that WP-Cron (wp-cron.php) is being called, or set up a real cron job for it.', 'invoicing' ) . '</p>';
 
