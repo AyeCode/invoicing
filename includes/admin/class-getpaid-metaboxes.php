@@ -34,6 +34,49 @@ class GetPaid_Metaboxes {
 
 		// Save metaboxes.
 		add_action( 'save_post', 'GetPaid_Metaboxes::save_meta_boxes', 1, 2 );
+
+		// The edit screen's own status field must not overwrite an invoice's status.
+		add_filter( 'wp_insert_post_data', 'GetPaid_Metaboxes::keep_invoice_status', 10, 2 );
+	}
+
+	/**
+	 * Keeps an invoice's stored status when it is saved from the edit screen.
+	 *
+	 * The edit form still posts WordPress' own status field. It has no option for an invoice status (Paid renewal,
+	 * Refunded, Cancelled...), so the browser sends its first option, "pending", and WordPress wrote that over the
+	 * invoice's status before the invoice details were saved. The save then read the invoice as "pending": every
+	 * save of such an invoice ran a status change from "pending" to the status it already had, with its emails
+	 * (e.g. the refunded invoice email again on each save of a refunded invoice) and hooks, and a real change was
+	 * recorded as coming from "pending", so the refund and payment reversal hooks did not run.
+	 *
+	 * The status chosen in the invoice details box is applied by the meta box save, from the invoice's true status.
+	 *
+	 * @since 2.8.68
+	 * @param array $data    The post data about to be written.
+	 * @param array $postarr The post data as submitted.
+	 * @return array
+	 */
+	public static function keep_invoice_status( $data, $postarr ) {
+
+		// Only an existing invoice (or quote etc.) submitted through its own edit screen.
+		if ( empty( $postarr['ID'] ) || empty( $_POST['getpaid_meta_nonce'] ) || empty( $_POST['post_ID'] ) || ! is_scalar( $_POST['post_ID'] ) || absint( $_POST['post_ID'] ) !== absint( $postarr['ID'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification -- nothing is saved from the request here; save_meta_boxes() checks the nonce.
+			return $data;
+		}
+
+		if ( empty( $data['post_type'] ) || ! getpaid_is_invoice_post_type( $data['post_type'] ) ) {
+			return $data;
+		}
+
+		$current = get_post_field( 'post_status', absint( $postarr['ID'] ) );
+
+		// A new or trashed post is WordPress' to move on. "pending" is not an invoice status (that is wpi-pending).
+		if ( empty( $current ) || ! is_string( $current ) || in_array( $current, array( 'auto-draft', 'draft', 'pending', 'trash', 'inherit', 'future', 'private' ), true ) ) {
+			return $data;
+		}
+
+		$data['post_status'] = $current;
+
+		return $data;
 	}
 
 	/**
