@@ -23,6 +23,9 @@ class GetPaid_Daily_Maintenance {
 		// (Maybe) schedule a cron that runs daily.
 		add_action( 'wp', array( $this, 'maybe_create_scheduled_event' ) );
 
+		// In wp-admin too, so a missing event is put back before Site Health looks ("wp" does not fire there).
+		add_action( 'admin_init', array( $this, 'maybe_create_scheduled_event' ) );
+
 		// Fired everyday at 7 a.m (this might vary for sites with few visitors)
 		add_action( 'getpaid_daily_maintenance', array( $this, 'log_cron_run' ) );
 		add_action( 'getpaid_daily_maintenance', array( $this, 'backwards_compat' ) );
