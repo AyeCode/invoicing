@@ -50,6 +50,11 @@ class GetPaid_Metaboxes {
 	 * recorded as coming from "pending", so the refund and payment reversal hooks did not run.
 	 *
 	 * The status chosen in the invoice details box is applied by the meta box save, from the invoice's true status.
+	 * Both use is_edit_screen_submission(), so the status is only kept for a request the meta box save will handle.
+	 *
+	 * A draft is left alone on purpose: WordPress still moves it to "pending" first, as it always has, so an invoice
+	 * created in wp-admin is saved as an update and not as a new invoice. Keeping "draft" here would start firing
+	 * getpaid_new_invoice for those invoices, and with it the new invoice email to the admin.
 	 *
 	 * @since 2.8.68
 	 * @param array $data    The post data about to be written.
@@ -59,7 +64,7 @@ class GetPaid_Metaboxes {
 	public static function keep_invoice_status( $data, $postarr ) {
 
 		// Only an existing invoice (or quote etc.) submitted through its own edit screen.
-		if ( empty( $postarr['ID'] ) || empty( $_POST['getpaid_meta_nonce'] ) || empty( $_POST['post_ID'] ) || ! is_scalar( $_POST['post_ID'] ) || absint( $_POST['post_ID'] ) !== absint( $postarr['ID'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification -- nothing is saved from the request here; save_meta_boxes() checks the nonce.
+		if ( empty( $postarr['ID'] ) || ! self::is_edit_screen_submission( absint( $postarr['ID'] ) ) ) {
 			return $data;
 		}
 
@@ -69,14 +74,48 @@ class GetPaid_Metaboxes {
 
 		$current = get_post_field( 'post_status', absint( $postarr['ID'] ) );
 
-		// A new or trashed post is WordPress' to move on. "pending" is not an invoice status (that is wpi-pending).
-		if ( empty( $current ) || ! is_string( $current ) || in_array( $current, array( 'auto-draft', 'draft', 'pending', 'trash', 'inherit', 'future', 'private' ), true ) ) {
+		// A new, draft or trashed post is WordPress' to move on. "pending" is not an invoice status (that is wpi-pending).
+		if ( empty( $current ) || in_array( $current, array( 'auto-draft', 'draft', 'pending', 'trash', 'inherit', 'future', 'private' ), true ) ) {
 			return $data;
 		}
 
 		$data['post_status'] = $current;
 
 		return $data;
+	}
+
+	/**
+	 * Whether the current request is the edit screen saving the given post: not an ajax request, autosave or bulk
+	 * edit, the form's post, a valid meta box nonce and a user who may edit it.
+	 *
+	 * @since 2.8.68
+	 * @param int $post_id Post ID.
+	 * @return bool
+	 */
+	private static function is_edit_screen_submission( $post_id ) {
+
+		// Not for ajax requests, autosaves or bulk edits.
+		if ( ( defined( 'DOING_AJAX' ) && DOING_AJAX ) || ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || isset( $_REQUEST['bulk_edit'] ) ) {
+			return false;
+		}
+
+		// Only for posts submitted through the edit screen.
+		if ( empty( $post_id ) || empty( $_POST['post_ID'] ) || empty( $_POST['getpaid_meta_nonce'] ) ) {
+			return false;
+		}
+
+		// Check the post being saved == the $post_id to prevent triggering this call for other save_post events.
+		if ( ! is_scalar( $_POST['post_ID'] ) || absint( $_POST['post_ID'] ) !== absint( $post_id ) ) {
+			return false;
+		}
+
+		// Check the nonce.
+		if ( ! is_scalar( $_POST['getpaid_meta_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['getpaid_meta_nonce'] ) ), 'getpaid_meta_nonce' ) ) {
+			return false;
+		}
+
+		// Check user has permission to edit.
+		return current_user_can( 'edit_post', $post_id );
 	}
 
 	/**
@@ -260,16 +299,6 @@ class GetPaid_Metaboxes {
 			return;
 		}
 
-		// Do not save for ajax requests, autosaves or bulk edits.
-		if ( ( defined( 'DOING_AJAX' ) && DOING_AJAX ) || ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) || isset( $_REQUEST['bulk_edit'] ) ) {
-			return;
-		}
-
-		// Only for posts submitted through the edit screen.
-		if ( empty( $_POST['post_ID'] ) || empty( $_POST['getpaid_meta_nonce'] ) ) {
-			return;
-		}
-
 		// $post_id and $post are required.
 		$post_id = absint( $post_id );
 
@@ -277,18 +306,8 @@ class GetPaid_Metaboxes {
 			return;
 		}
 
-		// Check the post being saved == the $post_id to prevent triggering this call for other save_post events.
-		if ( ! is_scalar( $_POST['post_ID'] ) || absint( $_POST['post_ID'] ) !== $post_id ) {
-			return;
-		}
-
-		// Check the nonce.
-		if ( ! is_scalar( $_POST['getpaid_meta_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['getpaid_meta_nonce'] ) ), 'getpaid_meta_nonce' ) ) {
-			return;
-		}
-
-		// Check user has permission to edit.
-		if ( ! current_user_can( 'edit_post', $post_id ) ) {
+		// Only the edit screen saving this post: no ajax, autosave or bulk edit, a valid nonce and permission to edit.
+		if ( ! self::is_edit_screen_submission( $post_id ) ) {
 			return;
 		}
 
