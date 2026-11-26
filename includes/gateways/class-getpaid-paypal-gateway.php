@@ -565,9 +565,10 @@ class GetPaid_Paypal_Gateway extends GetPaid_Payment_Gateway {
 			// PayPal only cancels a subscription that is active or suspended there. One that has already ended, e.g.
 			// one the customer cancelled in their PayPal account (that notice is what cancels it here), one that
 			// expired or one that was never approved, has nothing left to cancel, so that is not an error.
+			// An approved one is not running yet but can still start billing, so it keeps the error.
 			$remote = GetPaid_PayPal_API::get_subscription( $remote_id, $mode );
 
-			if ( ! is_wp_error( $remote ) && isset( $remote->status ) && ! in_array( strtoupper( (string) $remote->status ), array( 'ACTIVE', 'SUSPENDED' ), true ) ) {
+			if ( ! is_wp_error( $remote ) && isset( $remote->status ) && ! in_array( strtoupper( (string) $remote->status ), array( 'ACTIVE', 'SUSPENDED', 'APPROVED' ), true ) ) {
 				$invoice->add_system_note(
 					sprintf(
 						// translators: %1$s is the subscription ID, %2$s is its status in PayPal.
