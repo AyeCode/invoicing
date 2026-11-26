@@ -147,6 +147,7 @@ Automatic updates should work seamlessly. To avoid unforeseen problems, we alway
 == Changelog ==
 
 = 2.8.68 - TBD =
+* Cancelling a subscription that is no longer running in PayPal (e.g. cancelled by the customer in their PayPal account, expired or never approved) showed "An error occured while trying to cancel subscription in PayPal": nothing is left to cancel there, so no error is shown and a note is added to the invoice - FIXED
 * Saving an invoice from the admin edit screen first reset its status to "pending": saving a refunded invoice sent the refunded email again each time, saving a paid renewal sent the paid email again, a status change was noted as "from pending", and refunding from the edit screen skipped the refund and payment reversal hooks. Each such save also added the invoice total to its payment form's earnings again. The invoice now keeps its status until the invoice details are saved; payment form earnings already inflated are not corrected - FIXED
 * Refunding a subscription renewal left the subscription date a period ahead: once the subscription is cancelled, expired or completed, its refunded latest renewals now move the date back to when the customer last paid up to. A subscription that is still running is not changed, and subscriptions already in that state before this update are not corrected - FIXED
 * A failed subscription renewal paid on a retry sent the "subscription is active" email twice and changed the status twice - FIXED
