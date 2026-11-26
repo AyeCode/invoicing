@@ -152,8 +152,8 @@ class GetPaid_Daily_Maintenance {
 	}
 
 	/**
-	 * Whether the daily job is overdue: it was due more than two days ago and is still waiting (WP-Cron is not
-	 * running), or its last recorded run is more than two days old.
+	 * Whether the daily job is overdue: it is not scheduled, it was due more than two days ago and is still waiting
+	 * (WP-Cron is not running), or its last recorded run is more than two days old.
 	 *
 	 * @since 2.8.68
 	 * @return bool
@@ -169,8 +169,13 @@ class GetPaid_Daily_Maintenance {
 		$grace = (int) apply_filters( 'getpaid_daily_maintenance_overdue_after', 2 * DAY_IN_SECONDS );
 		$next  = wp_next_scheduled( 'getpaid_daily_maintenance' );
 
+		// Nothing queued at all: never scheduled (it is scheduled on a front end visit), or the event was cleared.
+		if ( ! $next ) {
+			return true;
+		}
+
 		// Due long ago and still in the queue. This also catches a job that has never run.
-		if ( $next && ( time() - $next ) > $grace ) {
+		if ( ( time() - $next ) > $grace ) {
 			return true;
 		}
 
@@ -252,7 +257,7 @@ class GetPaid_Daily_Maintenance {
 		);
 
 		if ( ! $last_run ) {
-			$when = __( 'The GetPaid daily job was due more than two days ago and has not run.', 'invoicing' );
+			$when = __( 'The GetPaid daily job has not run on this site yet, or is not scheduled.', 'invoicing' );
 		} else {
 			$when = sprintf(
 				/* translators: %s: how long ago, e.g. "3 days" */
