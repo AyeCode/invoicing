@@ -63,16 +63,19 @@ class GetPaid_Metaboxes {
 	 */
 	public static function keep_invoice_status( $data, $postarr ) {
 
-		// Only an existing invoice (or quote etc.) submitted through its own edit screen.
-		if ( empty( $postarr['ID'] ) || ! self::is_edit_screen_submission( absint( $postarr['ID'] ) ) ) {
+		// Only an existing invoice (or quote etc.)...
+		$post_id = empty( $postarr['ID'] ) ? 0 : absint( $postarr['ID'] );
+
+		if ( empty( $post_id ) || empty( $data['post_type'] ) || ! getpaid_is_invoice_post_type( $data['post_type'] ) ) {
 			return $data;
 		}
 
-		if ( empty( $data['post_type'] ) || ! getpaid_is_invoice_post_type( $data['post_type'] ) ) {
+		// ... submitted through its own edit screen.
+		if ( ! self::is_edit_screen_submission( $post_id ) ) {
 			return $data;
 		}
 
-		$current = get_post_field( 'post_status', absint( $postarr['ID'] ) );
+		$current = get_post_field( 'post_status', $post_id );
 
 		// A new, draft or trashed post is WordPress' to move on. "pending" is not an invoice status (that is wpi-pending).
 		if ( empty( $current ) || in_array( $current, array( 'auto-draft', 'draft', 'pending', 'trash', 'inherit', 'future', 'private' ), true ) ) {
@@ -104,13 +107,13 @@ class GetPaid_Metaboxes {
 			return false;
 		}
 
-		// Check the post being saved == the $post_id to prevent triggering this call for other save_post events.
-		if ( ! is_scalar( $_POST['post_ID'] ) || absint( $_POST['post_ID'] ) !== absint( $post_id ) ) {
+		// Check the nonce.
+		if ( ! is_scalar( $_POST['getpaid_meta_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['getpaid_meta_nonce'] ) ), 'getpaid_meta_nonce' ) ) {
 			return false;
 		}
 
-		// Check the nonce.
-		if ( ! is_scalar( $_POST['getpaid_meta_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['getpaid_meta_nonce'] ) ), 'getpaid_meta_nonce' ) ) {
+		// Check the post being saved == the $post_id to prevent triggering this call for other save_post events.
+		if ( ! is_scalar( $_POST['post_ID'] ) || absint( $_POST['post_ID'] ) !== absint( $post_id ) ) {
 			return false;
 		}
 
